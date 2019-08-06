@@ -1,8 +1,0 @@
-security:
-  oauth2:
-    authorization:
-      jwt:
-        key-value: ${jwt.key}
-    client:
-      client-id: test
-      client-secret: test
