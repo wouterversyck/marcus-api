@@ -1,4 +1,4 @@
-package be.wouterversyck.shoppinglistapi.web.controllers;
+package be.wouterversyck.shoppinglistapi.test.controllers;
 
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -11,5 +11,10 @@ public class TestController {
     @GetMapping("test")
     public String test() {
         return "test";
+    }
+
+    @GetMapping("public")
+    public String publicTest() {
+        return "public";
     }
 }

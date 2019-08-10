@@ -1,8 +1,11 @@
-package be.wouterversyck.shoppinglistapi.config.security;
+package be.wouterversyck.shoppinglistapi.security.config;
 
-import be.wouterversyck.shoppinglistapi.services.security.JwtService;
+import be.wouterversyck.shoppinglistapi.security.filters.JwtAuthenticationFilter;
+import be.wouterversyck.shoppinglistapi.security.filters.JwtAuthorizationFilter;
+import be.wouterversyck.shoppinglistapi.users.services.UserService;
+import be.wouterversyck.shoppinglistapi.security.services.JwtService;
+import be.wouterversyck.shoppinglistapi.security.services.SecurityUserService;
 import org.springframework.context.annotation.Bean;
-import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -18,12 +21,19 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 @EnableGlobalMethodSecurity(securedEnabled = true)
 public class JwtSecurityConfiguration extends WebSecurityConfigurerAdapter {
 
+    private UserService userService;
+
+    public JwtSecurityConfiguration(UserService userService) {
+        this.userService = userService;
+    }
+
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http.cors().and()
                 .csrf().disable()
                 .authorizeRequests()
                 .antMatchers("/api/public").permitAll()
+                .antMatchers("/h2-console").permitAll()
                 .anyRequest().authenticated()
                 .and()
                 .addFilter(new JwtAuthenticationFilter(authenticationManager(), getJwtService()))
@@ -32,14 +42,9 @@ public class JwtSecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS);
     }
 
-    @Override
-    public void configure(AuthenticationManagerBuilder auth) throws Exception {
-        auth.inMemoryAuthentication()
-                .withUser("user")
-                .password(passwordEncoder().encode("password"))
-                .authorities("ROLE_USER");
-    }
-
+    /*
+        Will be picked up by spring boot security auto config
+     */
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
@@ -56,5 +61,13 @@ public class JwtSecurityConfiguration extends WebSecurityConfigurerAdapter {
     @Bean
     public JwtService getJwtService() {
         return new JwtService();
+    }
+
+    /*
+        Will be picked up by spring boot security auto config
+     */
+    @Bean
+    public SecurityUserService getSecurityUserService() {
+        return new SecurityUserService(userService);
     }
 }

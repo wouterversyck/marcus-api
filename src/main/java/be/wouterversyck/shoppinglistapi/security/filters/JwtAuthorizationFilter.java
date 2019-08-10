@@ -1,6 +1,7 @@
-package be.wouterversyck.shoppinglistapi.config.security;
+package be.wouterversyck.shoppinglistapi.security.filters;
 
-import be.wouterversyck.shoppinglistapi.services.security.JwtService;
+import be.wouterversyck.shoppinglistapi.security.SecurityConstants;
+import be.wouterversyck.shoppinglistapi.security.services.JwtService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.authentication.AuthenticationManager;
