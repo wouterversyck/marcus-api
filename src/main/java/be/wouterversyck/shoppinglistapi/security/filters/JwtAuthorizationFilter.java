@@ -17,7 +17,6 @@ import java.io.IOException;
 
 public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
 
-    private static final Logger log = LoggerFactory.getLogger(JwtAuthorizationFilter.class);
     private JwtService jwtService;
 
     public JwtAuthorizationFilter(AuthenticationManager authenticationManager, JwtService jwtService) {

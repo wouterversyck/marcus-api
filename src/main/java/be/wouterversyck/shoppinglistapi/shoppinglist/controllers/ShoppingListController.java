@@ -13,7 +13,7 @@ import java.security.Principal;
 import java.util.List;
 
 @RestController
-@RequestMapping("shoppinglist")
+@RequestMapping("api/shoppinglist")
 public class ShoppingListController {
     private ShoppingListService shoppingListService;
     private UserService userService;

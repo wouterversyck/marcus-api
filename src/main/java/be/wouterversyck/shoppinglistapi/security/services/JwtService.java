@@ -4,6 +4,7 @@ import be.wouterversyck.shoppinglistapi.security.utils.SecurityConstants;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
 import io.jsonwebtoken.security.SignatureException;
+import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -16,8 +17,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
+@Slf4j
 public class JwtService {
-    private static final Logger log = LoggerFactory.getLogger(JwtService.class);
 
     public String generateToken(User user) {
         var signingKey = SecurityConstants.JWT_SECRET.getBytes();

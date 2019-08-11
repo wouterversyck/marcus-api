@@ -35,6 +35,7 @@ public class JwtSecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .authorizeRequests()
                 .antMatchers("/api/public").permitAll()
                 .antMatchers("/h2-console").permitAll()
+                .antMatchers("/api/login").permitAll()
                 .anyRequest().authenticated()
                 .and()
                 .addFilter(new JwtAuthenticationFilter(authenticationManager(), getJwtService()))

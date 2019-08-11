@@ -3,10 +3,6 @@ logging:
     org.springframework.web: INFO
     be.wouterversyck.shoppinglistapi: INFO
 
-server:
-  servlet:
-    context-path: /api
-
 spring:
   jpa:
     open-in-view: false

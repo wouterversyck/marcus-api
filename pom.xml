@@ -17,6 +17,7 @@
     <properties>
         <java.version>12</java.version>
         <jjwt.version>0.10.5</jjwt.version>
+        <aspectj.version>1.9.2</aspectj.version>
     </properties>
 
     <dependencies>
@@ -43,6 +44,18 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-actuator</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-aop</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-cache</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.aspectj</groupId>
+            <artifactId>aspectjweaver</artifactId>
         </dependency>
 
         <dependency>
