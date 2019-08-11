@@ -1,4 +1,4 @@
-package be.wouterversyck.shoppinglistapi.security;
+package be.wouterversyck.shoppinglistapi.security.utils;
 
 public final class SecurityConstants {
 

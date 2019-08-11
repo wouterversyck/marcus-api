@@ -1,6 +1,6 @@
 package be.wouterversyck.shoppinglistapi.security.filters;
 
-import be.wouterversyck.shoppinglistapi.security.SecurityConstants;
+import be.wouterversyck.shoppinglistapi.security.utils.SecurityConstants;
 import be.wouterversyck.shoppinglistapi.security.services.JwtService;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.core.Authentication;
@@ -8,10 +8,8 @@ import org.springframework.security.core.userdetails.User;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 import javax.servlet.FilterChain;
-import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
 
 public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
 
@@ -27,7 +25,7 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 
     @Override
     protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response,
-                                            FilterChain filterChain, Authentication authentication) throws IOException, ServletException {
+                                            FilterChain filterChain, Authentication authentication) {
         var user = ((User) authentication.getPrincipal());
         String token = jwtService.generateToken(user);
         response.addHeader(SecurityConstants.RESPONSE_TOKEN_HEADER, token);

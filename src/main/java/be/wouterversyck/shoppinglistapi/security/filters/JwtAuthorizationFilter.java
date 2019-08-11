@@ -1,6 +1,6 @@
 package be.wouterversyck.shoppinglistapi.security.filters;
 
-import be.wouterversyck.shoppinglistapi.security.SecurityConstants;
+import be.wouterversyck.shoppinglistapi.security.utils.SecurityConstants;
 import be.wouterversyck.shoppinglistapi.security.services.JwtService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

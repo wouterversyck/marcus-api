@@ -1,6 +1,6 @@
 package be.wouterversyck.shoppinglistapi.security.services;
 
-import be.wouterversyck.shoppinglistapi.security.SecurityConstants;
+import be.wouterversyck.shoppinglistapi.security.utils.SecurityConstants;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
 import io.jsonwebtoken.security.SignatureException;
