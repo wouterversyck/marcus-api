@@ -2,3 +2,7 @@ logging:
   level:
     org.springframework.web: INFO
     be.wouterversyck.shoppinglistapi: INFO
+
+server:
+  servlet:
+    context-path: /api
