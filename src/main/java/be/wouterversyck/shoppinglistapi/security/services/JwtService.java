@@ -5,8 +5,7 @@ import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
 import io.jsonwebtoken.security.SignatureException;
 import lombok.extern.slf4j.Slf4j;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -20,8 +19,12 @@ import java.util.stream.Collectors;
 @Slf4j
 public class JwtService {
 
+    // provide key through jvm property (-DJWT_SECRET=<key>)
+    @Value("${JWT_SECRET}")
+    public String jwtSecretKey;
+
     public String generateToken(User user) {
-        var signingKey = SecurityConstants.JWT_SECRET.getBytes();
+        var signingKey = jwtSecretKey.getBytes();
 
         var roles = user.getAuthorities()
                 .stream()
@@ -44,7 +47,7 @@ public class JwtService {
             return null;
         }
         try {
-            var signingKey = SecurityConstants.JWT_SECRET.getBytes();
+            var signingKey = jwtSecretKey.getBytes();
 
             var parsedToken = Jwts.parser()
                     .setSigningKey(signingKey)

@@ -1,7 +1,7 @@
 package be.wouterversyck.shoppinglistapi.shoppinglist.services;
 
 import be.wouterversyck.shoppinglistapi.shoppinglist.daos.ShoppingListDao;
-import be.wouterversyck.shoppinglistapi.shoppinglist.models.ShoppingList;
+import be.wouterversyck.shoppinglistapi.shoppinglist.models.ShoppingListDto;
 import be.wouterversyck.shoppinglistapi.users.models.User;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
@@ -18,7 +18,7 @@ public class ShoppingListService {
     }
 
     @Cacheable("be.wouterversyck.shoppinglistapi.shoppinglist.findforuser")
-    public List<ShoppingList> getShoppingListsForUser(User user) {
+    public List<ShoppingListDto> getShoppingListsForUser(User user) {
         return shoppingListDao.findAllByOwner(user);
     }
 }

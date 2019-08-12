@@ -1,6 +1,6 @@
 logging:
   level:
-    be.wouterversyck.graphqlpoc: DEBUG
+    org.springframework.web: DEBUG
 
 spring:
   datasource:
@@ -10,3 +10,5 @@ spring:
   h2:
     console:
       enabled: true
+  jpa:
+    show-sql: true

@@ -6,3 +6,6 @@ logging:
 spring:
   jpa:
     open-in-view: false
+server:
+  servlet:
+    context-path: /api

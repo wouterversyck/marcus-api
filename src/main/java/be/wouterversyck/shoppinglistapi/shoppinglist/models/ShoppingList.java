@@ -1,7 +1,6 @@
 package be.wouterversyck.shoppinglistapi.shoppinglist.models;
 
 import be.wouterversyck.shoppinglistapi.users.models.User;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -20,11 +19,10 @@ public class ShoppingList {
     @Column
     private String name;
 
-    @JsonIgnore
-    @ManyToOne(optional = false)
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private User owner;
 
-    @OneToMany
+    @OneToMany(fetch = FetchType.EAGER)
     @JoinColumn(name = "shopping_list_id")
     private List<ShoppingListItem> items;
 }
