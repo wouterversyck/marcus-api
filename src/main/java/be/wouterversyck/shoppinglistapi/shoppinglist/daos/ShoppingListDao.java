@@ -6,8 +6,10 @@ import be.wouterversyck.shoppinglistapi.users.models.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface ShoppingListDao extends JpaRepository<ShoppingList, Long> {
 
     List<ShoppingListDto> findAllByOwner(User user);
+    Optional<ShoppingListDto> findByIdAndOwner(Long id, User user);
 }
