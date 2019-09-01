@@ -14,6 +14,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.Optional;
 
 @Slf4j
 public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
@@ -29,18 +30,18 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response,
                                     FilterChain filterChain) throws IOException, ServletException {
         var authentication = getAuthentication(request);
-        if (authentication == null) {
+        if (authentication.isEmpty()) {
             log.info("No authentication found on request");
             filterChain.doFilter(request, response);
             return;
         }
 
-        log.info("Authenticated request for user with username: [{}]", authentication.getPrincipal());
-        SecurityContextHolder.getContext().setAuthentication(authentication);
+        log.info("Authenticated request for user with username: [{}]", authentication.get().getPrincipal());
+        SecurityContextHolder.getContext().setAuthentication(authentication.get());
         filterChain.doFilter(request, response);
     }
 
-    private UsernamePasswordAuthenticationToken getAuthentication(HttpServletRequest request) {
+    private Optional<UsernamePasswordAuthenticationToken> getAuthentication(HttpServletRequest request) {
         var token = request.getHeader(SecurityConstants.TOKEN_HEADER);
 
         return jwtService.parseToken(token);

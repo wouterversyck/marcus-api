@@ -14,6 +14,7 @@ import org.springframework.util.StringUtils;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -42,9 +43,9 @@ public class JwtService {
                 .compact();
     }
 
-    public UsernamePasswordAuthenticationToken parseToken(String token) {
+    public Optional<UsernamePasswordAuthenticationToken> parseToken(String token) {
         if (StringUtils.isEmpty(token) || !token.startsWith(SecurityConstants.TOKEN_PREFIX)) {
-            return null;
+            return Optional.empty();
         }
         try {
             var signingKey = jwtSecretKey.getBytes();
@@ -63,7 +64,7 @@ public class JwtService {
                     .collect(Collectors.toList());
 
             if (!StringUtils.isEmpty(username)) {
-                return new UsernamePasswordAuthenticationToken(username, null, authorities);
+                return Optional.of(new UsernamePasswordAuthenticationToken(username, null, authorities));
             }
         } catch (ExpiredJwtException exception) {
             log.warn("Request to parse expired JWT : {} failed : {}", token, exception.getMessage());
@@ -76,6 +77,6 @@ public class JwtService {
         } catch (IllegalArgumentException exception) {
             log.warn("Request to parse empty or null JWT : {} failed : {}", token, exception.getMessage());
         }
-        return null;
+        return Optional.empty();
     }
 }
