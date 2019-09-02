@@ -2,6 +2,7 @@ package be.wouterversyck.shoppinglistapi.security.filters;
 
 import be.wouterversyck.shoppinglistapi.security.utils.SecurityConstants;
 import be.wouterversyck.shoppinglistapi.security.services.JwtService;
+import io.jsonwebtoken.JwtException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -29,19 +30,21 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response,
                                     FilterChain filterChain) throws IOException, ServletException {
-        var authentication = getAuthentication(request);
-        if (authentication.isEmpty()) {
-            log.info("No authentication found on request");
-            filterChain.doFilter(request, response);
-            return;
-        }
+        UsernamePasswordAuthenticationToken authenticationToken;
 
-        log.info("Authenticated request for user with username: [{}]", authentication.get().getPrincipal());
-        SecurityContextHolder.getContext().setAuthentication(authentication.get());
-        filterChain.doFilter(request, response);
+        try {
+            authenticationToken = getAuthentication(request);
+            log.info("Authenticated request for user with username: [{}]", authenticationToken.getPrincipal());
+
+            SecurityContextHolder.getContext().setAuthentication(authenticationToken);
+            filterChain.doFilter(request, response);
+        } catch(JwtException ex) {
+            log.warn(ex.getMessage());
+            filterChain.doFilter(request, response);
+        }
     }
 
-    private Optional<UsernamePasswordAuthenticationToken> getAuthentication(HttpServletRequest request) {
+    private UsernamePasswordAuthenticationToken getAuthentication(HttpServletRequest request) {
         var token = request.getHeader(SecurityConstants.TOKEN_HEADER);
 
         return jwtService.parseToken(token);

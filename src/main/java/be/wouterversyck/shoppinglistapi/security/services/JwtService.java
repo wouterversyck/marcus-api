@@ -3,7 +3,6 @@ package be.wouterversyck.shoppinglistapi.security.services;
 import be.wouterversyck.shoppinglistapi.security.utils.SecurityConstants;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
-import io.jsonwebtoken.security.SignatureException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -14,7 +13,6 @@ import org.springframework.util.StringUtils;
 
 import java.util.Date;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -43,40 +41,29 @@ public class JwtService {
                 .compact();
     }
 
-    public Optional<UsernamePasswordAuthenticationToken> parseToken(String token) {
+    public UsernamePasswordAuthenticationToken parseToken(String token) {
         if (StringUtils.isEmpty(token) || !token.startsWith(SecurityConstants.TOKEN_PREFIX)) {
-            return Optional.empty();
+            throw new MalformedJwtException("Token was empty");
         }
-        try {
-            var signingKey = jwtSecretKey.getBytes();
 
-            var parsedToken = Jwts.parser()
-                    .setSigningKey(signingKey)
-                    .parseClaimsJws(token.replace("Bearer ", ""));
+        var signingKey = jwtSecretKey.getBytes();
 
-            var username = parsedToken
-                    .getBody()
-                    .getSubject();
+        var parsedToken = Jwts.parser()
+                .setSigningKey(signingKey)
+                .parseClaimsJws(token.replace("Bearer ", ""));
 
-            var authorities = ((List<?>) parsedToken.getBody()
-                    .get("roles")).stream()
-                    .map(authority -> new SimpleGrantedAuthority((String) authority))
-                    .collect(Collectors.toList());
+        var username = parsedToken
+                .getBody()
+                .getSubject();
 
-            if (!StringUtils.isEmpty(username)) {
-                return Optional.of(new UsernamePasswordAuthenticationToken(username, null, authorities));
-            }
-        } catch (ExpiredJwtException exception) {
-            log.warn("Request to parse expired JWT : {} failed : {}", token, exception.getMessage());
-        } catch (UnsupportedJwtException exception) {
-            log.warn("Request to parse unsupported JWT : {} failed : {}", token, exception.getMessage());
-        } catch (MalformedJwtException exception) {
-            log.warn("Request to parse invalid JWT : {} failed : {}", token, exception.getMessage());
-        } catch (SignatureException exception) {
-            log.warn("Request to parse JWT with invalid signature : {} failed : {}", token, exception.getMessage());
-        } catch (IllegalArgumentException exception) {
-            log.warn("Request to parse empty or null JWT : {} failed : {}", token, exception.getMessage());
+        if (StringUtils.isEmpty(username)) {
+            throw new MalformedJwtException("No username found");
         }
-        return Optional.empty();
+        var authorities = ((List<?>) parsedToken.getBody()
+                .get("roles")).stream()
+                .map(authority -> new SimpleGrantedAuthority((String) authority))
+                .collect(Collectors.toList());
+
+        return new UsernamePasswordAuthenticationToken(username, null, authorities);
     }
 }

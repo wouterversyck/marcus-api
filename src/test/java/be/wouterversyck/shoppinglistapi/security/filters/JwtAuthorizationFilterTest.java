@@ -1,6 +1,7 @@
 package be.wouterversyck.shoppinglistapi.security.filters;
 
 import be.wouterversyck.shoppinglistapi.security.services.JwtService;
+import io.jsonwebtoken.JwtException;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -21,7 +22,6 @@ import javax.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
 import java.util.Collections;
-import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.verify;
@@ -60,7 +60,7 @@ public class JwtAuthorizationFilterTest {
     @Test
     public void shouldAuthorize_WhenValidTokenIsGiven() throws IOException, ServletException {
         when(jwtService.parseToken("token")).thenReturn(
-                Optional.of(new UsernamePasswordAuthenticationToken("test", null, Collections.emptyList()))
+                new UsernamePasswordAuthenticationToken("test", null, Collections.emptyList())
         );
 
         jwtAuthorizationFilter.doFilterInternal(httpServletRequest, httpServletResponse, filterChain);
@@ -73,7 +73,7 @@ public class JwtAuthorizationFilterTest {
 
     @Test
     public void shouldNotAuthorize_WhenInvalidTokenIsGiven() throws IOException, ServletException {
-        when(jwtService.parseToken("token")).thenReturn(Optional.empty());
+        when(jwtService.parseToken("token")).thenThrow(new JwtException("test"));
 
         jwtAuthorizationFilter.doFilterInternal(httpServletRequest, httpServletResponse, filterChain);
 
