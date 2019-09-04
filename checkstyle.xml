@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE module PUBLIC
+        "-//Puppy Crawl//DTD Check Configuration 1.2//EN"
+        "http://www.puppycrawl.com/dtds/configuration_1_2.dtd">
+<module name="Checker">
+    <!-- Make sure there are no tab characters in the source files. -->
+    <module name="FileTabCharacter">
+        <property name="eachLine" value="true" />
+        <property name="fileExtensions" value="css,java,js,jsp,xml" />
+    </module>
+    <!-- Long source files become very hard to understand. Make sure files don't exceed the maximum number of lines. -->
+    <module name="FileLength">
+        <property name="max" value="500" />
+        <property name="fileExtensions" value="java" />
+    </module>
+    <module name="TreeWalker">
+        <!-- Long lines are hard to read. Make sure lines don't exceed the maximum line length. -->
+        <module name="LineLength">
+            <property name="max" value="160" />
+        </module>
+        <!--  Limit the amount of parameters for one method. -->
+        <module name="ParameterNumber">
+            <property name="max" value="5" />
+        </module>
+        <!-- We don't use star imports. -->
+        <module name="AvoidStarImport" />
+        <!-- Avoid redundant or unused imports. -->
+        <module name="RedundantImport" />
+        <module name="UnusedImports" />
+        <!-- Don't allow to import sun.* packages. -->
+        <module name="IllegalImport"/>
+        <!-- Classes that override equals also override hash code. -->
+        <module name="EqualsHashCode" />
+        <!-- Checks for overly complicated boolean return statements or expressions. -->
+        <module name="SimplifyBooleanExpression"/>
+        <module name="SimplifyBooleanReturn" />
+        <!-- Checks that string literals are not used with == or !=. -->
+        <module name="StringLiteralEquality" />
+        <!-- Avoid excessive nesting. -->
+        <module name="NestedForDepth">
+            <property name="max" value="2" />
+        </module>
+        <module name="NestedIfDepth">
+            <property name="max" value="3" />
+        </module>
+        <module name="NestedTryDepth" />
+        <!-- Checks there is only one statement per line. The following line will be flagged as an error. -->
+        <module name="OneStatementPerLine" />
+        <!--  Detects empty statements (standalone ;). -->
+        <module name="EmptyStatement" />
+        <!-- Checks for illegal instantiations where a factory method is preferred. E.g. new Boolean(...) -->
+        <module name="IllegalInstantiation" />
+    </module>
+</module>

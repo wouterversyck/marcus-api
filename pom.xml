@@ -18,6 +18,7 @@
         <java.version>12</java.version>
         <jjwt.version>0.10.5</jjwt.version>
         <aspectj.version>1.9.2</aspectj.version>
+        <checkstyle-maven-plugin.version>3.1.0</checkstyle-maven-plugin.version>
     </properties>
 
     <dependencies>
@@ -175,6 +176,21 @@
                                 </rule>
                             </rules>
                         </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-checkstyle-plugin</artifactId>
+                <version>${checkstyle-maven-plugin.version}</version>
+                <configuration>
+                    <configLocation>checkstyle.xml</configLocation>
+                </configuration>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>check</goal>
+                        </goals>
                     </execution>
                 </executions>
             </plugin>
