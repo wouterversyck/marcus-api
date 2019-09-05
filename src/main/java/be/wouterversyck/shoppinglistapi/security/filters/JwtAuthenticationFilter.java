@@ -19,9 +19,9 @@ import java.util.Collections;
 
 public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
 
-    private JwtService jwtService;
+    private final JwtService jwtService;
 
-    public JwtAuthenticationFilter(AuthenticationManager authenticationManager, JwtService jwtService) {
+    public JwtAuthenticationFilter(final AuthenticationManager authenticationManager, final JwtService jwtService) {
         setFilterProcessesUrl(SecurityConstants.AUTH_LOGIN_URL);
         setAuthenticationManager(authenticationManager);
         setPostOnly(true);
@@ -30,8 +30,8 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
     }
 
     @Override
-    public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) throws AuthenticationException {
-        LoginRequest loginRequest = getLoginRequestFromHttpRequest(request);
+    public Authentication attemptAuthentication(final HttpServletRequest request, final HttpServletResponse response) throws AuthenticationException {
+        final LoginRequest loginRequest = getLoginRequestFromHttpRequest(request);
 
         return getAuthenticationManager().authenticate(
                 new UsernamePasswordAuthenticationToken(
@@ -42,22 +42,19 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
     }
 
     @Override
-    protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response,
-                                            FilterChain filterChain, Authentication authentication) {
-        var user = ((User) authentication.getPrincipal());
-        String token = jwtService.generateToken(user);
+    protected void successfulAuthentication(final HttpServletRequest request, final HttpServletResponse response,
+                                            final FilterChain filterChain, final Authentication authentication) {
+        final var user = ((User) authentication.getPrincipal());
+        final String token = jwtService.generateToken(user);
         response.addHeader(SecurityConstants.RESPONSE_TOKEN_HEADER, token);
     }
 
-    private LoginRequest getLoginRequestFromHttpRequest(HttpServletRequest request) {
-        LoginRequest loginRequest = null;
+    private LoginRequest getLoginRequestFromHttpRequest(final HttpServletRequest request) {
         try {
-            loginRequest = new ObjectMapper()
+            return new ObjectMapper()
                     .readValue(request.getInputStream(), LoginRequest.class);
-        } catch (IOException e) {
+        } catch (final IOException e) {
             throw new RuntimeException(e);
         }
-
-        return loginRequest;
     }
 }

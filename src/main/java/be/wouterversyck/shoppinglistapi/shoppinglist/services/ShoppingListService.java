@@ -12,19 +12,19 @@ import java.util.List;
 @Service
 public class ShoppingListService {
 
-    private ShoppingListDao shoppingListDao;
+    private final ShoppingListDao shoppingListDao;
 
-    public ShoppingListService(ShoppingListDao shoppingListDao) {
+    public ShoppingListService(final ShoppingListDao shoppingListDao) {
         this.shoppingListDao = shoppingListDao;
     }
 
     @Cacheable("be.wouterversyck.shoppinglistapi.shoppinglist.findforuser")
-    public List<ShoppingListDto> getShoppingListsForUser(User user) {
+    public List<ShoppingListDto> getShoppingListsForUser(final User user) {
         return shoppingListDao.findAllByOwner(user);
     }
 
     @Cacheable("be.wouterversyck.shoppinglistapi.shoppinglist.findfbyid")
-    public ShoppingListDto getShoppingListById(long id, User user) throws ShoppingListNotFoundException {
+    public ShoppingListDto getShoppingListById(final long id, final User user) throws ShoppingListNotFoundException {
         return shoppingListDao.findByIdAndOwner(id, user).orElseThrow(
                 () -> new ShoppingListNotFoundException(id)
         );

@@ -8,11 +8,11 @@ import org.springframework.stereotype.Service;
 public class UserService {
     private UserDao userDao;
 
-    public UserService(UserDao userDao) {
+    public UserService(final UserDao userDao) {
         this.userDao = userDao;
     }
 
-    public User getUserByUsername(String username) {
+    public User getUserByUsername(final String username) {
         return userDao.findByUsername(username);
     }
 

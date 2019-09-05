@@ -5,6 +5,7 @@ import be.wouterversyck.shoppinglistapi.security.filters.JwtAuthorizationFilter;
 import be.wouterversyck.shoppinglistapi.users.services.UserService;
 import be.wouterversyck.shoppinglistapi.security.services.JwtService;
 import be.wouterversyck.shoppinglistapi.security.services.SecurityUserService;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -22,14 +23,16 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 @EnableGlobalMethodSecurity(securedEnabled = true)
 public class JwtSecurityConfiguration extends WebSecurityConfigurerAdapter {
 
-    private UserService userService;
+    private final UserService userService;
+    private final String jwtSecretkey;
 
-    public JwtSecurityConfiguration(UserService userService) {
+    public JwtSecurityConfiguration(final UserService userService, @Value("${JWT_SECRET}") final String jwtSecretKey) {
         this.userService = userService;
+        this.jwtSecretkey = jwtSecretKey;
     }
 
     @Override
-    protected void configure(HttpSecurity http) throws Exception {
+    protected void configure(final HttpSecurity http) throws Exception {
         http.cors().and()
                 .csrf().disable()
                 .authorizeRequests()
@@ -60,7 +63,7 @@ public class JwtSecurityConfiguration extends WebSecurityConfigurerAdapter {
 
     @Bean
     public JwtService getJwtService() {
-        return new JwtService();
+        return new JwtService(jwtSecretkey);
     }
 
     /*

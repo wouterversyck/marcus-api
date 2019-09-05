@@ -12,15 +12,11 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 public class JwtServiceTest {
 
-    private JwtService jwtService = new JwtService();
+    private String jwtSecretKey = "dddddddddddddddddddfffffffffffffffffffffffcccccccccccccccccccccceeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee";
+    private JwtService jwtService = new JwtService(jwtSecretKey);
 
     private static final String USERNAME = "USERNAME";
     private static final String TOKEN = "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJpc3MiOiJzZWN1cmUtYXBpIiwiYXVkIjoic2VjdXJlLWFwcCIsInN1YiI6IlVTRVJOQU1FIiwiZXhwIjoxNTY4MzE3NDgxLCJyb2xlcyI6W119.U-iG5jWQJ6I7Qf7b02bS6Q7uz6KUNUA6423pq2ceHQ7QOEZSqpz-pSxkxa3cteDQDiTBpQbXFDxI1zePTmJpXQ";
-
-    @Before
-    public void setup() {
-        jwtService.jwtSecretKey = "dddddddddddddddddddfffffffffffffffffffffffcccccccccccccccccccccceeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee";
-    }
 
     @Test(expected = MalformedJwtException.class)
     public void shouldReturnEmpty_WhenInvalidTokenIsProvided() {
@@ -45,7 +41,7 @@ public class JwtServiceTest {
         String result = jwtService.generateToken(user);
 
         var parsedToken = Jwts.parser()
-                .setSigningKey(jwtService.jwtSecretKey.getBytes())
+                .setSigningKey(jwtSecretKey.getBytes())
                 .parseClaimsJws(result);
 
         assertThat(parsedToken.getBody().getSubject()).isEqualTo(USERNAME);

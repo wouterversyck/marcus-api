@@ -11,9 +11,9 @@ import org.springframework.stereotype.Component;
 public class LoginAudit {
 
     @EventListener
-    public void auditEventHappened(AuditApplicationEvent auditApplicationEvent) {
+    public void auditEventHappened(final AuditApplicationEvent auditApplicationEvent) {
 
-        AuditEvent auditEvent = auditApplicationEvent.getAuditEvent();
+        final AuditEvent auditEvent = auditApplicationEvent.getAuditEvent();
         log.info("Principal {} - {}", auditEvent.getPrincipal(), auditEvent.getType());
     }
 }

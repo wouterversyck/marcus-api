@@ -18,32 +18,30 @@ import java.io.IOException;
 @Slf4j
 public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
 
-    private JwtService jwtService;
+    private final JwtService jwtService;
 
-    public JwtAuthorizationFilter(AuthenticationManager authenticationManager, JwtService jwtService) {
+    public JwtAuthorizationFilter(final AuthenticationManager authenticationManager, final JwtService jwtService) {
         super(authenticationManager);
         this.jwtService = jwtService;
     }
 
     @Override
-    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response,
-                                    FilterChain filterChain) throws IOException, ServletException {
-        UsernamePasswordAuthenticationToken authenticationToken;
-
+    protected void doFilterInternal(final HttpServletRequest request, final HttpServletResponse response,
+                                    final FilterChain filterChain) throws IOException, ServletException {
         try {
-            authenticationToken = getAuthentication(request);
+            final var authenticationToken = getAuthentication(request);
             log.info("Authenticated request for user with username: [{}]", authenticationToken.getPrincipal());
 
             SecurityContextHolder.getContext().setAuthentication(authenticationToken);
             filterChain.doFilter(request, response);
-        } catch(JwtException ex) {
+        } catch(final JwtException ex) {
             log.warn(ex.getMessage());
             filterChain.doFilter(request, response);
         }
     }
 
-    private UsernamePasswordAuthenticationToken getAuthentication(HttpServletRequest request) {
-        var token = request.getHeader(SecurityConstants.TOKEN_HEADER);
+    private UsernamePasswordAuthenticationToken getAuthentication(final HttpServletRequest request) {
+        final var token = request.getHeader(SecurityConstants.TOKEN_HEADER);
 
         return jwtService.parseToken(token);
     }

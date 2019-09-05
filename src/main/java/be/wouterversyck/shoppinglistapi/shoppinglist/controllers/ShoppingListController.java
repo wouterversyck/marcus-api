@@ -22,37 +22,37 @@ import java.util.List;
 @RestController
 @RequestMapping("shoppinglist")
 public class ShoppingListController {
-    private ShoppingListService shoppingListService;
-    private UserService userService;
+    private final ShoppingListService shoppingListService;
+    private final UserService userService;
 
-    public ShoppingListController(ShoppingListService shoppingListService, UserService userService) {
+    public ShoppingListController(final ShoppingListService shoppingListService, final UserService userService) {
         this.shoppingListService = shoppingListService;
         this.userService = userService;
     }
 
     @GetMapping("all")
-    public List<ShoppingListDto> getShoppingLists(HttpServletRequest request) {
-        User user = getCurrentUser(request);
+    public List<ShoppingListDto> getShoppingLists(final HttpServletRequest request) {
+        final User user = getCurrentUser(request);
 
         log.info("Getting shopping list for user with username [{}]", user.getUsername());
         return shoppingListService.getShoppingListsForUser(user);
     }
 
     @GetMapping("{id}")
-    public ShoppingListDto getShoppingList(@PathVariable long id, HttpServletRequest request) throws ShoppingListNotFoundException {
-        User user = getCurrentUser(request);
+    public ShoppingListDto getShoppingList(@PathVariable final long id, final HttpServletRequest request) throws ShoppingListNotFoundException {
+        final User user = getCurrentUser(request);
 
         return shoppingListService.getShoppingListById(id, user);
     }
 
-    private User getCurrentUser(HttpServletRequest request) {
-        Principal principal = request.getUserPrincipal();
+    private User getCurrentUser(final HttpServletRequest request) {
+        final Principal principal = request.getUserPrincipal();
         return userService.getUserByUsername(principal.getName());
     }
 
     @ExceptionHandler(ShoppingListNotFoundException.class)
     @ResponseStatus(value = HttpStatus.NOT_FOUND)
-    public void handleShoppingListNotFound(ShoppingListNotFoundException exception) {
+    public void handleShoppingListNotFound(final ShoppingListNotFoundException exception) {
         log.info("Exception occurred while fetching shopping list: {}", exception.getMessage());
     }
 

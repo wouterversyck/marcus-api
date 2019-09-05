@@ -50,5 +50,18 @@
         <module name="EmptyStatement" />
         <!-- Checks for illegal instantiations where a factory method is preferred. E.g. new Boolean(...) -->
         <module name="IllegalInstantiation" />
+        <module name="WhitespaceAround">
+            <property name="tokens" value="LCURLY,RCURLY"/>
+        </module>
+        <module name="WhitespaceAfter">
+            <property name="tokens" value="COMMA, SEMI, TYPECAST, LITERAL_IF, LITERAL_ELSE, LITERAL_WHILE, LITERAL_DO, LITERAL_FOR, DO_WHILE"/>
+        </module>
+        <module name="ThrowsCount">
+            <property name="max" value="2"/>
+        </module>
+        <module name="VisibilityModifier"/>
+        <module name="FinalLocalVariable">
+            <property name="tokens" value="VARIABLE_DEF,PARAMETER_DEF"/>
+        </module>
     </module>
 </module>

@@ -6,7 +6,6 @@ import io.jsonwebtoken.MalformedJwtException;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -21,13 +20,16 @@ import java.util.stream.Collectors;
 public class JwtService {
 
     // provide key through jvm property (-DJWT_SECRET=<key>)
-    @Value("${JWT_SECRET}")
-    public String jwtSecretKey;
+    private final String jwtSecretKey;
 
-    public String generateToken(User user) {
-        var signingKey = jwtSecretKey.getBytes();
+    public JwtService(final String jwtSecretKey) {
+        this.jwtSecretKey = jwtSecretKey;
+    }
 
-        var roles = user.getAuthorities()
+    public String generateToken(final User user) {
+        final var signingKey = jwtSecretKey.getBytes();
+
+        final var roles = user.getAuthorities()
                 .stream()
                 .map(GrantedAuthority::getAuthority)
                 .collect(Collectors.toList());
@@ -43,25 +45,25 @@ public class JwtService {
                 .compact();
     }
 
-    public UsernamePasswordAuthenticationToken parseToken(String token) {
+    public UsernamePasswordAuthenticationToken parseToken(final String token) {
         if (StringUtils.isEmpty(token) || !token.startsWith(SecurityConstants.TOKEN_PREFIX)) {
             throw new MalformedJwtException("Token was empty");
         }
 
-        var signingKey = jwtSecretKey.getBytes();
+        final var signingKey = jwtSecretKey.getBytes();
 
-        var parsedToken = Jwts.parser()
+        final var parsedToken = Jwts.parser()
                 .setSigningKey(signingKey)
                 .parseClaimsJws(token.replace("Bearer ", ""));
 
-        var username = parsedToken
+        final var username = parsedToken
                 .getBody()
                 .getSubject();
 
         if (StringUtils.isEmpty(username)) {
             throw new MalformedJwtException("No username found");
         }
-        var authorities = ((List<?>) parsedToken.getBody()
+        final var authorities = ((List<?>) parsedToken.getBody()
                 .get("roles")).stream()
                 .map(authority -> new SimpleGrantedAuthority((String) authority))
                 .collect(Collectors.toList());
