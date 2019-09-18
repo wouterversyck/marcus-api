@@ -1,6 +1,5 @@
 logging:
-  level:
-    org.springframework.web: DEBUG
+  config: classpath:logging/logback-loc.xml
 
 spring:
   datasource:

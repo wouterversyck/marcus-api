@@ -1,13 +1,18 @@
 package be.wouterversyck.shoppinglistapi.security.services;
 
+import be.wouterversyck.shoppinglistapi.security.utils.SecurityConstants;
+import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.MalformedJwtException;
-import org.junit.Before;
+import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.security.Keys;
 import org.junit.Test;
-import org.springframework.security.core.userdetails.User;
 
+import java.util.Calendar;
 import java.util.Collections;
+import java.util.Date;
 
+import static java.lang.String.format;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class JwtServiceTest {
@@ -16,34 +21,75 @@ public class JwtServiceTest {
     private JwtService jwtService = new JwtService(jwtSecretKey);
 
     private static final String USERNAME = "USERNAME";
-    private static final String TOKEN = "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJpc3MiOiJzZWN1cmUtYXBpIiwiYXVkIjoic2VjdXJlLWFwcCIsInN1YiI6IlVTRVJOQU1FIiwiZXhwIjoxNTY4MzE3NDgxLCJyb2xlcyI6W119.U-iG5jWQJ6I7Qf7b02bS6Q7uz6KUNUA6423pq2ceHQ7QOEZSqpz-pSxkxa3cteDQDiTBpQbXFDxI1zePTmJpXQ";
 
     @Test(expected = MalformedJwtException.class)
-    public void shouldReturnEmpty_WhenInvalidTokenIsProvided() {
+    public void shouldThrowMalformedJwtException_WhenInvalidTokenIsProvided() {
         jwtService.parseToken("Bearer token");
     }
 
     @Test(expected = MalformedJwtException.class)
-    public void shouldReturnEmpty_WhenNoTokenIsProvided() {
+    public void shouldThrowMalformedJwtException_WhenNoTokenIsProvided() {
         jwtService.parseToken("");
+    }
+
+    @Test(expected = MalformedJwtException.class)
+    public void shouldThrowMalformedJwtException_WhenTokenDoesNotStartWithPrefix() {
+        jwtService.parseToken(generateRawToken());
+    }
+
+    @Test(expected = ExpiredJwtException.class)
+    public void shouldThrowExpiredJwtException_WhenTokenIsExpired() {
+        String token = generateExpiredToken();
+        jwtService.parseToken(token);
     }
 
     @Test
     public void shouldCreateCorrectUsernamePasswordAuthenticationToken_WhenTokenStringIsPassed() {
-        var authenticationToken = jwtService.parseToken(TOKEN);
+        String token = generateValidToken();
+
+        var authenticationToken = jwtService.parseToken(token);
 
         assertThat(authenticationToken.getPrincipal()).isEqualTo(USERNAME);
     }
 
     @Test
     public void shouldGenerateCorrectTokenString_WhenUserIsPassed() {
-        User user = new User(USERNAME, "password", Collections.emptyList());
-        String result = jwtService.generateToken(user);
+        String token = generateRawToken();
 
         var parsedToken = Jwts.parser()
                 .setSigningKey(jwtSecretKey.getBytes())
-                .parseClaimsJws(result);
+                .parseClaimsJws(token);
 
         assertThat(parsedToken.getBody().getSubject()).isEqualTo(USERNAME);
+    }
+
+    private String generateRawToken() {
+        return generateToken(new Date(System.currentTimeMillis() + 864000000));
+    }
+
+    private String generateValidToken() {
+        String token = generateToken(new Date(System.currentTimeMillis() + 864000000));
+
+        return format("Bearer %s", token);
+    }
+
+    private String generateExpiredToken() {
+        Calendar date = Calendar.getInstance();
+        date.add(Calendar.MONTH, -1);
+        String token = generateToken(date.getTime());
+
+        return format("Bearer %s", token);
+    }
+
+    private String generateToken(Date expirationDate) {
+        return Jwts.builder()
+                .signWith(Keys.hmacShaKeyFor(jwtSecretKey.getBytes()), SignatureAlgorithm.HS512)
+                .setHeaderParam("typ", SecurityConstants.TOKEN_TYPE)
+                .setIssuer(SecurityConstants.TOKEN_ISSUER)
+                .setAudience(SecurityConstants.TOKEN_AUDIENCE)
+                .setSubject(USERNAME)
+                .setExpiration(expirationDate)
+                .claim("roles", Collections.emptyList())
+                .compact();
     }
 }

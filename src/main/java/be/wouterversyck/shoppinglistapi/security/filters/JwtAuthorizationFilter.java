@@ -4,6 +4,7 @@ import be.wouterversyck.shoppinglistapi.security.utils.SecurityConstants;
 import be.wouterversyck.shoppinglistapi.security.services.JwtService;
 import io.jsonwebtoken.JwtException;
 import lombok.extern.slf4j.Slf4j;
+import org.slf4j.MDC;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -33,6 +34,8 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
             log.info("Authenticated request for user with username: [{}]", authenticationToken.getPrincipal());
 
             SecurityContextHolder.getContext().setAuthentication(authenticationToken);
+            MDC.put("user", authenticationToken.getName());
+
             filterChain.doFilter(request, response);
         } catch(final JwtException ex) {
             log.warn(ex.getMessage());

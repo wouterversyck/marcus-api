@@ -16,6 +16,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static java.lang.String.format;
+
 @Slf4j
 public class JwtService {
 
@@ -46,8 +48,12 @@ public class JwtService {
     }
 
     public UsernamePasswordAuthenticationToken parseToken(final String token) {
-        if (StringUtils.isEmpty(token) || !token.startsWith(SecurityConstants.TOKEN_PREFIX)) {
+        if (StringUtils.isEmpty(token)) {
             throw new MalformedJwtException("Token was empty");
+        }
+
+        if (!token.startsWith(SecurityConstants.TOKEN_PREFIX)) {
+            throw new MalformedJwtException(format("Token must start with %s", SecurityConstants.TOKEN_PREFIX));
         }
 
         final var signingKey = jwtSecretKey.getBytes();
