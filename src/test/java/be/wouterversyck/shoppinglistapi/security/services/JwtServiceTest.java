@@ -1,12 +1,10 @@
 package be.wouterversyck.shoppinglistapi.security.services;
 
 import be.wouterversyck.shoppinglistapi.security.utils.SecurityConstants;
-import io.jsonwebtoken.ExpiredJwtException;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.MalformedJwtException;
-import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
 import org.junit.Test;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 
 import java.util.Calendar;
 import java.util.Collections;
@@ -17,8 +15,10 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 public class JwtServiceTest {
 
-    private String jwtSecretKey = "dddddddddddddddddddfffffffffffffffffffffffcccccccccccccccccccccceeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee";
-    private JwtService jwtService = new JwtService(jwtSecretKey);
+    private static final String JWT_SECRET_KEY = "dddddddddddddddddddfffffffffffffffffffffffcccccccccccccccccccccceeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee";
+    private JwtService jwtService = new JwtService(JWT_SECRET_KEY);
+
+    private String NONE_ALG_JWT = "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJub25lIn0K.eyJpc3MiOiJzZWN1cmUtYXBpIiwiYXVkIjoic2VjdXJlLWFwcCIsInN1YiI6InVzZXIiLCJleHAiOjE1NzQwOTAxNDMsInJvbGVzIjpbIlVTRVIiXX0.";
 
     private static final String USERNAME = "USERNAME";
 
@@ -43,6 +43,11 @@ public class JwtServiceTest {
         jwtService.parseToken(token);
     }
 
+    @Test(expected = UnsupportedJwtException.class)
+    public void shouldThrowException_WhenANoneAlgJwtIsPassed() {
+        UsernamePasswordAuthenticationToken token = jwtService.parseToken(NONE_ALG_JWT);
+    }
+
     @Test
     public void shouldCreateCorrectUsernamePasswordAuthenticationToken_WhenTokenStringIsPassed() {
         String token = generateValidToken();
@@ -57,7 +62,7 @@ public class JwtServiceTest {
         String token = generateRawToken();
 
         var parsedToken = Jwts.parser()
-                .setSigningKey(jwtSecretKey.getBytes())
+                .setSigningKey(JWT_SECRET_KEY.getBytes())
                 .parseClaimsJws(token);
 
         assertThat(parsedToken.getBody().getSubject()).isEqualTo(USERNAME);
@@ -83,7 +88,7 @@ public class JwtServiceTest {
 
     private String generateToken(Date expirationDate) {
         return Jwts.builder()
-                .signWith(Keys.hmacShaKeyFor(jwtSecretKey.getBytes()), SignatureAlgorithm.HS512)
+                .signWith(Keys.hmacShaKeyFor(JWT_SECRET_KEY.getBytes()), SignatureAlgorithm.HS512)
                 .setHeaderParam("typ", SecurityConstants.TOKEN_TYPE)
                 .setIssuer(SecurityConstants.TOKEN_ISSUER)
                 .setAudience(SecurityConstants.TOKEN_AUDIENCE)
