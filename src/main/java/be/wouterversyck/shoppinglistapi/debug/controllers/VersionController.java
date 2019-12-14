@@ -10,6 +10,6 @@ public class VersionController {
 
     @GetMapping
     public String versionEndpoint() {
-        return getClass().getPackage().getImplementationVersion() + "testest";
+        return getClass().getPackage().getImplementationVersion();
     }
 }
