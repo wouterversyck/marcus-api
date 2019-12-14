@@ -15,7 +15,7 @@
     <description>Shopping list api</description>
 
     <properties>
-        <java.version>12</java.version>
+        <java.version>13</java.version>
         <jjwt.version>0.10.5</jjwt.version>
         <aspectj.version>1.9.2</aspectj.version>
         <checkstyle-maven-plugin.version>3.1.0</checkstyle-maven-plugin.version>
