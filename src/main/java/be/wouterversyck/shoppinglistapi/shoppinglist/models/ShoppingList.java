@@ -4,16 +4,17 @@ import be.wouterversyck.shoppinglistapi.users.models.User;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
-import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
+import javax.persistence.Table;
+import javax.persistence.Id;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
+import javax.persistence.SequenceGenerator;
+import javax.persistence.Column;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
-import javax.persistence.Table;
+import javax.persistence.FetchType;
+import javax.persistence.JoinColumn;
 import java.util.List;
 
 @Data
@@ -22,7 +23,9 @@ import java.util.List;
 @EqualsAndHashCode
 public class ShoppingList {
     @Id
-    @GeneratedValue(strategy= GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator="shopping_list_seq")
+    @SequenceGenerator(name = "shopping_list_seq", sequenceName = "shopping_list_seq", initialValue = 1000, allocationSize = 50)
+
     private long id;
 
     @Column

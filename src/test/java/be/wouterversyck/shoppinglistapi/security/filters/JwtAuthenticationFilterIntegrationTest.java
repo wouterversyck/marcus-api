@@ -14,6 +14,7 @@ import org.springframework.web.context.WebApplicationContext;
 
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 
@@ -53,6 +54,13 @@ public class JwtAuthenticationFilterIntegrationTest {
                         .contentType(MediaType.APPLICATION_JSON)
         )
                 .andExpect(status().isUnauthorized())
+                .andExpect(header().doesNotExist("X-Token"));
+    }
+
+    @Test
+    public void shouldAllowAccess_WhenNotLoggedIn_ToPublicEndPoint() throws Exception {
+        mvc.perform(get("/public/version"))
+                .andExpect(status().isOk())
                 .andExpect(header().doesNotExist("X-Token"));
     }
 
