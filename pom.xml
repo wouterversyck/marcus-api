@@ -104,12 +104,12 @@
     </dependencies>
 
     <build>
-        <finalName>shopping-list-api</finalName>
         <plugins>
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
                 <configuration>
+                    <finalName>shopping-list-api</finalName>
                     <executable>true</executable>
                 </configuration>
             </plugin>
