@@ -4,7 +4,6 @@ import be.wouterversyck.shoppinglistapi.debug.models.BuildPropertiesDTO;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.boot.info.BuildProperties;
