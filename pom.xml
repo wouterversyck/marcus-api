@@ -127,13 +127,6 @@
                 </executions>
             </plugin>
             <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-surefire-plugin</artifactId>
-                <configuration>
-                    <argLine>@{argLine} -DJWT_SECRET=ddddddddddddddddddddddddddddddddddddddfffffffffffffffffffffffffffffffffffffffffffffffeeeeeeeeeeeeeeeeeeeeeeeeeee</argLine>
-                </configuration>
-            </plugin>
-            <plugin>
                 <groupId>org.jacoco</groupId>
                 <artifactId>jacoco-maven-plugin</artifactId>
                 <version>0.8.4</version>
@@ -157,14 +150,17 @@
                         </goals>
                         <configuration>
                             <excludes>
-                                <exclude>**/*IntegrationTest.*</exclude>
-                                <exclude>**/*Application.*</exclude>
-                                <exclude>**/*Exception.*</exclude>
-                                <exclude>be/wouterversyck/shoppinglistapi/security/utils/SecurityConstants.*</exclude>
+                                <exclude>**/*IT.*</exclude>
+                                <exclude>**/*Application.class</exclude>
+                                <exclude>**/*Exception.class</exclude>
+                                <exclude>**/*Configuration.class</exclude>
+                                <exclude>be/wouterversyck/shoppinglistapi/security/utils/SecurityConstants.class</exclude>
+                                <exclude>be/wouterversyck/shoppinglistapi/security/utils/LoginAudit.class</exclude>
                                 <exclude>**/models/**</exclude>
                             </excludes>
                             <rules>
                                 <rule implementation="org.jacoco.maven.RuleConfiguration">
+                                    <!-- Application wide rules -->
                                     <element>BUNDLE</element>
                                     <limits>
                                         <limit implementation="org.jacoco.report.check.Limit">
@@ -180,12 +176,13 @@
                                     </limits>
                                 </rule>
                                 <rule>
+                                    <!-- Every class must meet these rules -->
                                     <element>CLASS</element>
                                     <limits>
                                         <limit>
                                             <counter>LINE</counter>
                                             <value>COVEREDRATIO</value>
-                                            <minimum>40%</minimum>
+                                            <minimum>0.55</minimum>
                                         </limit>
                                     </limits>
                                 </rule>
@@ -212,4 +209,25 @@
         </plugins>
     </build>
 
+    <profiles>
+        <profile>
+            <id>integration-tests</id>
+            <build>
+                <plugins>
+                    <!-- Run integration test -->
+                    <!-- The maven-surefire-plugin will ignore tests that end/start with IT -->
+                    <!-- while this plugin will only run tests that end/start with IT -->
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-failsafe-plugin</artifactId>
+                        <configuration>
+                            <forkCount>1</forkCount>
+                            <reuseForks>true</reuseForks>
+                            <argLine>@{argLine} -DJWT_SECRET=ddddddddddddddddddddddddddddddddddddddfffffffffffffffffffffffffffffffffffffffffffffffeeeeeeeeeeeeeeeeeeeeeeeeeee</argLine>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
 </project>

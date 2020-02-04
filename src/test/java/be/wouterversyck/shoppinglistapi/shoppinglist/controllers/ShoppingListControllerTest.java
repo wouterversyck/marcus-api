@@ -1,8 +1,8 @@
 package be.wouterversyck.shoppinglistapi.shoppinglist.controllers;
 
 import be.wouterversyck.shoppinglistapi.shoppinglist.models.ShoppingListDto;
-import be.wouterversyck.shoppinglistapi.shoppinglist.models.ShoppingListItemDto;
 import be.wouterversyck.shoppinglistapi.shoppinglist.services.ShoppingListService;
+import be.wouterversyck.shoppinglistapi.shoppinglist.services.ShoppingListServiceTest;
 import be.wouterversyck.shoppinglistapi.users.models.User;
 import be.wouterversyck.shoppinglistapi.users.services.UserService;
 import com.sun.net.httpserver.HttpPrincipal;
@@ -56,43 +56,14 @@ public class ShoppingListControllerTest {
 
     private List<ShoppingListDto> getShoppingLists() {
         return Arrays.asList(
-                ShoppingList.builder()
-                    .id(1)
-                    .name("test")
-                    .build(),
-                ShoppingList.builder()
-                    .id(2)
-                    .name("test2")
-                    .build()
-                );
-    }
-
-    @Builder
-    private static class ShoppingList implements ShoppingListDto {
-
-        private long id;
-        private String name;
-        private List<ShoppingListItemDto> items;
-
-        public ShoppingList(long id, String name, List<ShoppingListItemDto> items) {
-            this.id = id;
-            this.name = name;
-            this.items = items;
-        }
-
-        @Override
-        public long getId() {
-            return id;
-        }
-
-        @Override
-        public String getName() {
-            return name;
-        }
-
-        @Override
-        public List<ShoppingListItemDto> getItems() {
-            return items;
-        }
+                ShoppingListServiceTest.ShoppingList.builder()
+                        .id(1)
+                        .name("test")
+                        .build(),
+                ShoppingListServiceTest.ShoppingList.builder()
+                        .id(2)
+                        .name("test2")
+                        .build()
+        );
     }
 }
