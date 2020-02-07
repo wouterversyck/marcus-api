@@ -4,6 +4,7 @@ import be.wouterversyck.shoppinglistapi.security.models.LoginRequest;
 import be.wouterversyck.shoppinglistapi.security.utils.SecurityConstants;
 import be.wouterversyck.shoppinglistapi.security.services.JwtService;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -17,6 +18,9 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.Collections;
 
+import static java.lang.String.format;
+
+@Slf4j
 public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
 
     private final JwtService jwtService;
@@ -33,6 +37,8 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
     public Authentication attemptAuthentication(final HttpServletRequest request, final HttpServletResponse response) throws AuthenticationException {
         final LoginRequest loginRequest = getLoginRequestFromHttpRequest(request);
 
+        log.info(format("Attempting login for user: %s", loginRequest.getUsername()));
+
         return getAuthenticationManager().authenticate(
                 new UsernamePasswordAuthenticationToken(
                         loginRequest.getUsername(),
@@ -45,8 +51,17 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
     protected void successfulAuthentication(final HttpServletRequest request, final HttpServletResponse response,
                                             final FilterChain filterChain, final Authentication authentication) {
         final var user = ((User) authentication.getPrincipal());
+
+        log.info(format("User %s logged in", user.getUsername()));
+
         final String token = jwtService.generateToken(user);
         response.addHeader(SecurityConstants.RESPONSE_TOKEN_HEADER, token);
+    }
+
+    @Override
+    protected void unsuccessfulAuthentication(final HttpServletRequest request, final HttpServletResponse response,
+                                              final AuthenticationException failed) {
+        log.info(format("Authentication request failed: %s", failed.toString()), failed);
     }
 
     private LoginRequest getLoginRequestFromHttpRequest(final HttpServletRequest request) {
