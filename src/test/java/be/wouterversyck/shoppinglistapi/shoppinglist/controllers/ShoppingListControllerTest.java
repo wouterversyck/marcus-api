@@ -6,14 +6,13 @@ import be.wouterversyck.shoppinglistapi.shoppinglist.services.ShoppingListServic
 import be.wouterversyck.shoppinglistapi.users.models.User;
 import be.wouterversyck.shoppinglistapi.users.services.UserService;
 import com.sun.net.httpserver.HttpPrincipal;
-import lombok.Builder;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
-import org.springframework.mock.web.MockHttpServletRequest;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.Arrays;
 import java.util.List;
 
@@ -30,7 +29,7 @@ public class ShoppingListControllerTest {
     private UserService userService;
 
     @Mock
-    private MockHttpServletRequest httpServletRequest;
+    private HttpServletRequest httpServletRequest;
 
     @InjectMocks
     private ShoppingListController shoppingListController;

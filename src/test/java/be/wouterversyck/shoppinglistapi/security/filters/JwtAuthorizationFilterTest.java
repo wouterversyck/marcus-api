@@ -40,7 +40,7 @@ public class JwtAuthorizationFilterTest {
     private FilterChain filterChain;
 
     @InjectMocks
-    private JwtAuthorizationFilter jwtAuthorizationFilter;
+    private JwtAuthenticationFilter jwtAuthenticationFilter;
 
     private HttpServletResponse httpServletResponse;
     private HttpServletRequest httpServletRequest;
@@ -63,7 +63,7 @@ public class JwtAuthorizationFilterTest {
                 new UsernamePasswordAuthenticationToken("test", null, Collections.emptyList())
         );
 
-        jwtAuthorizationFilter.doFilterInternal(httpServletRequest, httpServletResponse, filterChain);
+        jwtAuthenticationFilter.doFilterInternal(httpServletRequest, httpServletResponse, filterChain);
 
         verify(filterChain).doFilter(httpServletRequest, httpServletResponse);
         var authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -75,7 +75,7 @@ public class JwtAuthorizationFilterTest {
     public void shouldNotAuthorize_WhenInvalidTokenIsGiven() throws IOException, ServletException {
         when(jwtService.parseToken("token")).thenThrow(new JwtException("test"));
 
-        jwtAuthorizationFilter.doFilterInternal(httpServletRequest, httpServletResponse, filterChain);
+        jwtAuthenticationFilter.doFilterInternal(httpServletRequest, httpServletResponse, filterChain);
 
         verify(filterChain).doFilter(httpServletRequest, httpServletResponse);
         var authentication = SecurityContextHolder.getContext().getAuthentication();

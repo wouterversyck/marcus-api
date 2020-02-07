@@ -13,6 +13,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.User;
+import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import javax.servlet.FilterChain;
@@ -38,12 +39,15 @@ public class JwtAuthenticationFilterTest {
     private HttpServletResponse httpServletResponse;
 
     @Mock
+    private AuthenticationFailureHandler authenticationFailureHandler;
+
+    @Mock
     private FilterChain filterChain;
 
-    HttpServletRequest httpServletRequest;
+    private HttpServletRequest httpServletRequest;
 
     @InjectMocks
-    private JwtAuthenticationFilter jwtAuthenticationFilter;
+    private JwtLoginFilter jwtAuthenticationFilter;
 
     @Before
     public void setup() {
