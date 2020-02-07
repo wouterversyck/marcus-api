@@ -39,20 +39,11 @@ public class JwtSecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .authorizeRequests()
                 .antMatchers("/public/*").permitAll()
                 .anyRequest().authenticated()
-
                 .and()
                 .addFilter(getJwtLoginFilter())
                 .addFilterAfter(getAuthorizationFilter(), JwtLoginFilter.class)
                 .sessionManagement()
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS);
-    }
-
-    /*
-        Will be picked up by spring boot security auto config
-     */
-    @Bean
-    public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
     }
 
     @Bean
@@ -73,6 +64,14 @@ public class JwtSecurityConfiguration extends WebSecurityConfigurerAdapter {
     @Bean
     public JwtService getJwtService() {
         return new JwtService(jwtSecretKey);
+    }
+
+    /*
+        Will be picked up by spring boot security auto config
+     */
+    @Bean
+    public PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
     }
 
     /*

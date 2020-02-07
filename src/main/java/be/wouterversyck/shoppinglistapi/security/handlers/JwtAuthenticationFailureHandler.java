@@ -17,7 +17,7 @@ public class JwtAuthenticationFailureHandler implements AuthenticationFailureHan
     public void onAuthenticationFailure(final HttpServletRequest httpServletRequest,
                                         final HttpServletResponse httpServletResponse,
                                         final AuthenticationException e) {
-        log.info(format("Authentication request failed: %s", e.toString()), e);
+        log.info(format("Authentication request failed: %s", e.toString()));
         httpServletResponse.setStatus(HttpStatus.UNAUTHORIZED.value());
     }
 };
