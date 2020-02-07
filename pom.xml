@@ -108,11 +108,13 @@
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
+                <!-- create executable version less jar -->
                 <configuration>
                     <finalName>shopping-list-api</finalName>
                     <executable>true</executable>
                 </configuration>
                 <executions>
+                    <!-- build info used in the version endpoint -->
                     <execution>
                         <goals>
                             <goal>build-info</goal>
