@@ -5,7 +5,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>2.2.2.RELEASE</version>
+        <version>2.2.4.RELEASE</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
 
@@ -17,8 +17,7 @@
 
     <properties>
         <java.version>13</java.version>
-        <jjwt.version>0.10.5</jjwt.version>
-        <aspectj.version>1.9.2</aspectj.version>
+        <jjwt.version>0.11.0</jjwt.version>
         <checkstyle-maven-plugin.version>3.1.0</checkstyle-maven-plugin.version>
     </properties>
 
