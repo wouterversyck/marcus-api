@@ -1,7 +1,7 @@
 package be.wouterversyck.shoppinglistapi.security.filters;
 
-import be.wouterversyck.shoppinglistapi.security.utils.SecurityConstants;
-import be.wouterversyck.shoppinglistapi.security.services.JwtService;
+import be.wouterversyck.shoppinglistapi.security.config.SecurityProperties;
+import be.wouterversyck.shoppinglistapi.security.utils.JwtService;
 import io.jsonwebtoken.JwtException;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.MDC;
@@ -19,9 +19,11 @@ import java.io.IOException;
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private final JwtService jwtService;
+    private final SecurityProperties properties;
 
-    public JwtAuthenticationFilter(final JwtService jwtService) {
+    public JwtAuthenticationFilter(final JwtService jwtService, final SecurityProperties properties) {
         this.jwtService = jwtService;
+        this.properties = properties;
     }
 
     @Override
@@ -42,7 +44,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     }
 
     private UsernamePasswordAuthenticationToken getAuthentication(final HttpServletRequest request) {
-        final var token = request.getHeader(SecurityConstants.TOKEN_HEADER);
+        final var token = request.getHeader(properties.getTokenHeader());
 
         return jwtService.parseToken(token);
     }

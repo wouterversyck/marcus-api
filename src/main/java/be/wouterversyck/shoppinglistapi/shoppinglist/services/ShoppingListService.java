@@ -23,7 +23,7 @@ public class ShoppingListService {
         return shoppingListDao.findAllByOwner(user);
     }
 
-    @Cacheable("be.wouterversyck.shoppinglistapi.shoppinglist.findbyid")
+    @Cacheable(value = "be.wouterversyck.shoppinglistapi.shoppinglist.findbyid", key = "#id")
     public ShoppingListDto getShoppingListById(final long id, final User user) throws ShoppingListNotFoundException {
         return shoppingListDao.findByIdAndOwner(id, user).orElseThrow(
                 () -> new ShoppingListNotFoundException(id)

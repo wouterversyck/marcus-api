@@ -1,8 +1,8 @@
 package be.wouterversyck.shoppinglistapi.security.filters;
 
 import be.wouterversyck.shoppinglistapi.security.models.LoginRequest;
-import be.wouterversyck.shoppinglistapi.security.utils.SecurityConstants;
-import be.wouterversyck.shoppinglistapi.security.services.JwtService;
+import be.wouterversyck.shoppinglistapi.security.config.SecurityProperties;
+import be.wouterversyck.shoppinglistapi.security.utils.JwtService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -25,15 +25,18 @@ import static java.lang.String.format;
 public class JwtLoginFilter extends UsernamePasswordAuthenticationFilter {
 
     private final JwtService jwtService;
+    private final SecurityProperties properties;
 
     public JwtLoginFilter(final AuthenticationManager authenticationManager, final JwtService jwtService,
-                          final AuthenticationFailureHandler failureHandler) {
-        setFilterProcessesUrl(SecurityConstants.AUTH_LOGIN_URL);
+                          final AuthenticationFailureHandler failureHandler,
+                          final SecurityProperties properties) {
+        setFilterProcessesUrl(properties.getAuthLoginUrl());
         setAuthenticationManager(authenticationManager);
         setAuthenticationFailureHandler(failureHandler);
         setPostOnly(true);
 
         this.jwtService = jwtService;
+        this.properties = properties;
     }
 
     @Override
@@ -58,7 +61,7 @@ public class JwtLoginFilter extends UsernamePasswordAuthenticationFilter {
         log.info(format("User %s logged in", user.getUsername()));
 
         final String token = jwtService.generateToken(user);
-        response.addHeader(SecurityConstants.RESPONSE_TOKEN_HEADER, token);
+        response.addHeader(properties.getResponseTokenHeader(), token);
     }
 
     private LoginRequest getLoginRequestFromHttpRequest(final HttpServletRequest request) {

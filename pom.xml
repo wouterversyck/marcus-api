@@ -156,8 +156,7 @@
                                 <exclude>**/*Application.class</exclude>
                                 <exclude>**/*Exception.class</exclude>
                                 <exclude>**/*Configuration.class</exclude>
-                                <exclude>be/wouterversyck/shoppinglistapi/security/utils/SecurityConstants.class</exclude>
-                                <exclude>be/wouterversyck/shoppinglistapi/security/utils/LoginAudit.class</exclude>
+                                <exclude>**/*Properties.class</exclude>
                                 <exclude>**/models/**</exclude>
                             </excludes>
                             <rules>

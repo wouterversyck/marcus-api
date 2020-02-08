@@ -9,3 +9,14 @@ spring:
 server:
   servlet:
     context-path: /api
+
+jwt:
+  auth-login-url: /login
+  token-header: Authorization
+  response-token-header: x-token
+  token-prefix: Bearer
+  token-type: JWT
+  token-issuer: secure-api
+  token-audience: secure-app
+  # 12 hours in millis
+  expiration: 43200000

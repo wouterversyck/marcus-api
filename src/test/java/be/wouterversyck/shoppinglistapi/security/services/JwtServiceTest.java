@@ -1,8 +1,10 @@
 package be.wouterversyck.shoppinglistapi.security.services;
 
-import be.wouterversyck.shoppinglistapi.security.utils.SecurityConstants;
+import be.wouterversyck.shoppinglistapi.security.utils.JwtService;
+import be.wouterversyck.shoppinglistapi.security.config.SecurityProperties;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
+import org.junit.Before;
 import org.junit.Test;
 
 import java.util.Calendar;
@@ -15,7 +17,21 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class JwtServiceTest {
 
     private static final String JWT_SECRET_KEY = "dddddddddddddddddddfffffffffffffffffffffffcccccccccccccccccccccceeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee";
-    private JwtService jwtService = new JwtService(JWT_SECRET_KEY);
+    private JwtService jwtService;
+    private SecurityProperties properties;
+
+    @Before
+    public void setup() {
+        properties = new SecurityProperties();
+        properties.setTokenHeader("Authorization");
+        properties.setResponseTokenHeader("x-token");
+        properties.setTokenPrefix("Bearer");
+        properties.setTokenType("JWT");
+        properties.setTokenIssuer("");
+        properties.setTokenAudience("");
+        jwtService = new JwtService(JWT_SECRET_KEY, properties);
+    }
+
 
     // TODO add test for non alg
     // removed the current test because jwt expires obviously so need to generate a non alg token first
@@ -85,9 +101,9 @@ public class JwtServiceTest {
     private String generateToken(Date expirationDate) {
         return Jwts.builder()
                 .signWith(Keys.hmacShaKeyFor(JWT_SECRET_KEY.getBytes()), SignatureAlgorithm.HS512)
-                .setHeaderParam("typ", SecurityConstants.TOKEN_TYPE)
-                .setIssuer(SecurityConstants.TOKEN_ISSUER)
-                .setAudience(SecurityConstants.TOKEN_AUDIENCE)
+                .setHeaderParam("typ", properties.getTokenType())
+                .setIssuer(properties.getTokenIssuer())
+                .setAudience(properties.getTokenAudience())
                 .setSubject(USERNAME)
                 .setExpiration(expirationDate)
                 .claim("roles", Collections.emptyList())

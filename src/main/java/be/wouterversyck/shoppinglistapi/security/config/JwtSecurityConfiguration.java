@@ -4,9 +4,10 @@ import be.wouterversyck.shoppinglistapi.security.filters.JwtLoginFilter;
 import be.wouterversyck.shoppinglistapi.security.filters.JwtAuthenticationFilter;
 import be.wouterversyck.shoppinglistapi.security.handlers.JwtAuthenticationFailureHandler;
 import be.wouterversyck.shoppinglistapi.users.services.UserService;
-import be.wouterversyck.shoppinglistapi.security.services.JwtService;
+import be.wouterversyck.shoppinglistapi.security.utils.JwtService;
 import be.wouterversyck.shoppinglistapi.security.services.SecurityUserService;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -22,14 +23,19 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(securedEnabled = true)
+@EnableConfigurationProperties(SecurityProperties.class)
 public class JwtSecurityConfiguration extends WebSecurityConfigurerAdapter {
 
     private final UserService userService;
     private final String jwtSecretKey;
+    private final SecurityProperties properties;
 
-    public JwtSecurityConfiguration(final UserService userService, @Value("${JWT_SECRET}") final String jwtSecretKey) {
+    public JwtSecurityConfiguration(final UserService userService,
+                                    @Value("${JWT_SECRET}") final String jwtSecretKey,
+                                    final SecurityProperties properties) {
         this.userService = userService;
         this.jwtSecretKey = jwtSecretKey;
+        this.properties = properties;
     }
 
     @Override
@@ -48,12 +54,12 @@ public class JwtSecurityConfiguration extends WebSecurityConfigurerAdapter {
 
     @Bean
     public UsernamePasswordAuthenticationFilter getJwtLoginFilter() throws Exception {
-        return new JwtLoginFilter(authenticationManager(), getJwtService(), getFailureHandler());
+        return new JwtLoginFilter(authenticationManager(), getJwtService(), getFailureHandler(), properties);
     }
 
     @Bean
     public OncePerRequestFilter getAuthorizationFilter() {
-        return new JwtAuthenticationFilter(getJwtService());
+        return new JwtAuthenticationFilter(getJwtService(), properties);
     }
 
     @Bean
@@ -63,7 +69,7 @@ public class JwtSecurityConfiguration extends WebSecurityConfigurerAdapter {
 
     @Bean
     public JwtService getJwtService() {
-        return new JwtService(jwtSecretKey);
+        return new JwtService(jwtSecretKey, properties);
     }
 
     /*
