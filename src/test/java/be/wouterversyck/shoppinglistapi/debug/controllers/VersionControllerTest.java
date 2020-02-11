@@ -1,23 +1,21 @@
 package be.wouterversyck.shoppinglistapi.debug.controllers;
 
 import be.wouterversyck.shoppinglistapi.debug.models.BuildPropertiesDTO;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.boot.info.BuildProperties;
 
 import java.time.Instant;
 
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import static org.assertj.core.api.Assertions.assertThat;
 
-@RunWith(MockitoJUnitRunner.class)
-public class VersionControllerTest {
-
-    @Mock
-    private BuildProperties buildProperties;
+@ExtendWith(MockitoExtension.class)
+class VersionControllerTest {
 
     private VersionController versionController;
 
@@ -28,8 +26,9 @@ public class VersionControllerTest {
     private static final String NAME = "NAME";
     private static final Instant TIME = Instant.now();
 
-    @Before
-    public void setup() {
+    @BeforeEach
+    void setup() {
+        BuildProperties buildProperties = mock(BuildProperties.class);
         when(buildProperties.getGroup()).thenReturn(GROUP);
         when(buildProperties.getArtifact()).thenReturn(ARTIFACT);
         when(buildProperties.getVersion()).thenReturn(VERSION);
@@ -41,7 +40,7 @@ public class VersionControllerTest {
     }
 
     @Test
-    public void shouldReturnCorrectInformation_WhenEndpointIsCalled() {
+    void shouldReturnCorrectInformation_WhenEndpointIsCalled() {
         BuildPropertiesDTO result = versionController.getBuildInfo();
 
         assertThat(result.getGroup()).isEqualTo(GROUP);

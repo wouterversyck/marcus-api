@@ -6,11 +6,12 @@ import be.wouterversyck.shoppinglistapi.shoppinglist.services.ShoppingListServic
 import be.wouterversyck.shoppinglistapi.users.models.User;
 import be.wouterversyck.shoppinglistapi.users.services.UserService;
 import com.sun.net.httpserver.HttpPrincipal;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.mock.web.MockHttpServletRequest;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Arrays;
@@ -19,7 +20,7 @@ import java.util.List;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
 
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
 public class ShoppingListControllerTest {
 
     @Mock
@@ -37,7 +38,7 @@ public class ShoppingListControllerTest {
     private static final String USERNAME = "USERNAME";
 
     @Test
-    public void shouldReturnLists_WhenUserIsSetInContext() {
+    void shouldReturnLists_WhenUserIsSetInContext() {
         User user = new User();
         user.setUsername(USERNAME);
         when(httpServletRequest.getUserPrincipal()).thenReturn(new HttpPrincipal(USERNAME, "REALM"));

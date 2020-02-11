@@ -4,8 +4,8 @@ import be.wouterversyck.shoppinglistapi.security.utils.JwtService;
 import be.wouterversyck.shoppinglistapi.security.config.SecurityProperties;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.util.Calendar;
 import java.util.Collections;
@@ -13,14 +13,15 @@ import java.util.Date;
 
 import static java.lang.String.format;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
-public class JwtServiceTest {
+class JwtServiceTest {
 
     private static final String JWT_SECRET_KEY = "dddddddddddddddddddfffffffffffffffffffffffcccccccccccccccccccccceeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee";
     private JwtService jwtService;
     private SecurityProperties properties;
 
-    @Before
+    @BeforeEach
     public void setup() {
         properties = new SecurityProperties();
         properties.setTokenHeader("Authorization");
@@ -39,29 +40,30 @@ public class JwtServiceTest {
 
     private static final String USERNAME = "USERNAME";
 
-    @Test(expected = MalformedJwtException.class)
-    public void shouldThrowMalformedJwtException_WhenInvalidTokenIsProvided() {
-        jwtService.parseToken("Bearer token");
-    }
+    @Test
+    void shouldThrowMalformedJwtException_WhenInvalidTokenIsProvided() {
+        assertThrows(MalformedJwtException.class, () -> jwtService.parseToken("Bearer token"));
 
-    @Test(expected = MalformedJwtException.class)
-    public void shouldThrowMalformedJwtException_WhenNoTokenIsProvided() {
-        jwtService.parseToken("");
-    }
-
-    @Test(expected = MalformedJwtException.class)
-    public void shouldThrowMalformedJwtException_WhenTokenDoesNotStartWithPrefix() {
-        jwtService.parseToken(generateRawToken());
-    }
-
-    @Test(expected = ExpiredJwtException.class)
-    public void shouldThrowExpiredJwtException_WhenTokenIsExpired() {
-        String token = generateExpiredToken();
-        jwtService.parseToken(token);
     }
 
     @Test
-    public void shouldCreateCorrectUsernamePasswordAuthenticationToken_WhenTokenStringIsPassed() {
+    void shouldThrowMalformedJwtException_WhenNoTokenIsProvided() {
+        assertThrows(MalformedJwtException.class, () -> jwtService.parseToken(""));
+    }
+
+    @Test
+    void shouldThrowMalformedJwtException_WhenTokenDoesNotStartWithPrefix() {
+        assertThrows(MalformedJwtException.class, () -> jwtService.parseToken(generateRawToken()));
+    }
+
+    @Test
+    void shouldThrowExpiredJwtException_WhenTokenIsExpired() {
+        String token = generateExpiredToken();
+        assertThrows(ExpiredJwtException.class, () -> jwtService.parseToken(token));
+    }
+
+    @Test
+    void shouldCreateCorrectUsernamePasswordAuthenticationToken_WhenTokenStringIsPassed() {
         String token = generateValidToken();
 
         var authenticationToken = jwtService.parseToken(token);
@@ -70,7 +72,7 @@ public class JwtServiceTest {
     }
 
     @Test
-    public void shouldGenerateCorrectTokenString_WhenUserIsPassed() {
+    void shouldGenerateCorrectTokenString_WhenUserIsPassed() {
         String token = generateRawToken();
 
         var parsedToken = Jwts.parser()

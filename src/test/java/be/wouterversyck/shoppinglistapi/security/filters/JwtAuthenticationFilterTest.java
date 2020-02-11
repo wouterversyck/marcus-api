@@ -3,11 +3,11 @@ package be.wouterversyck.shoppinglistapi.security.filters;
 import be.wouterversyck.shoppinglistapi.security.config.SecurityProperties;
 import be.wouterversyck.shoppinglistapi.security.utils.JwtService;
 import io.jsonwebtoken.JwtException;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockServletContext;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -26,8 +26,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-@RunWith(MockitoJUnitRunner.class)
-public class JwtAuthenticationFilterTest {
+@ExtendWith(MockitoExtension.class)
+class JwtAuthenticationFilterTest {
 
     @Mock
     private JwtService jwtService;
@@ -40,8 +40,8 @@ public class JwtAuthenticationFilterTest {
     private HttpServletResponse httpServletResponse;
     private HttpServletRequest httpServletRequest;
 
-    @Before
-    public void setup() {
+    @BeforeEach
+    void setup() {
         SecurityProperties properties;
         properties = new SecurityProperties();
         properties.setTokenHeader("Authorization");
@@ -59,7 +59,7 @@ public class JwtAuthenticationFilterTest {
     }
 
     @Test
-    public void shouldAuthorize_WhenValidTokenIsGiven() throws IOException, ServletException {
+    void shouldAuthorize_WhenValidTokenIsGiven() throws IOException, ServletException {
         when(jwtService.parseToken("token")).thenReturn(
                 new UsernamePasswordAuthenticationToken("test", null, Collections.emptyList())
         );
@@ -73,7 +73,7 @@ public class JwtAuthenticationFilterTest {
     }
 
     @Test
-    public void shouldNotAuthorize_WhenInvalidTokenIsGiven() throws IOException, ServletException {
+    void shouldNotAuthorize_WhenInvalidTokenIsGiven() throws IOException, ServletException {
         when(jwtService.parseToken("token")).thenThrow(new JwtException("test"));
 
         jwtAuthenticationFilter.doFilterInternal(httpServletRequest, httpServletResponse, filterChain);

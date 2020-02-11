@@ -2,19 +2,20 @@ package be.wouterversyck.shoppinglistapi.security.services;
 
 import be.wouterversyck.shoppinglistapi.users.models.User;
 import be.wouterversyck.shoppinglistapi.users.services.UserService;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.when;
 
-@RunWith(MockitoJUnitRunner.class)
-public class SecurityUserServiceTest {
+@ExtendWith(MockitoExtension.class)
+class SecurityUserServiceTest {
 
     @Mock
     private UserService userService;
@@ -26,7 +27,7 @@ public class SecurityUserServiceTest {
     private static final String PASSWORD = "PASSWORD";
 
     @Test
-    public void shouldReturnCorrectUserDetails_WhenUserIsFound() {
+    void shouldReturnCorrectUserDetails_WhenUserIsFound() {
         User user = new User();
         user.setPassword(PASSWORD);
         user.setUsername(USERNAME);
@@ -38,10 +39,10 @@ public class SecurityUserServiceTest {
         assertThat(result.getUsername()).isEqualTo(USERNAME);
     }
 
-    @Test(expected = UsernameNotFoundException.class)
-    public void shouldThrowException_WhenUserIsNotFound() {
+    @Test
+    void shouldThrowException_WhenUserIsNotFound() {
         when(userService.getUserByUsername(USERNAME)).thenReturn(null);
 
-        securityUserService.loadUserByUsername(USERNAME);
+        assertThrows(UsernameNotFoundException.class, () -> securityUserService.loadUserByUsername(USERNAME));
     }
 }

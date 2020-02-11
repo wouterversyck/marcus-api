@@ -6,11 +6,12 @@ import be.wouterversyck.shoppinglistapi.shoppinglist.models.ShoppingListDto;
 import be.wouterversyck.shoppinglistapi.shoppinglist.models.ShoppingListItemDto;
 import be.wouterversyck.shoppinglistapi.users.models.User;
 import lombok.Builder;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Arrays;
 import java.util.List;
@@ -19,7 +20,7 @@ import java.util.Optional;
 import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
 import static org.mockito.Mockito.when;
 
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
 public class ShoppingListServiceTest {
 
     private static final String PASSWORD = "PASSWORD";
@@ -34,7 +35,7 @@ public class ShoppingListServiceTest {
     private ShoppingListService shoppingListService;
 
     @Test
-    public void shouldReturnShoppingList_WhenUserIsPassed() {
+    void shouldReturnShoppingList_WhenUserIsPassed() {
         User user = createUser();
         when(shoppingListDao.findAllByOwner(user)).thenReturn(getShoppingLists());
 
@@ -46,7 +47,7 @@ public class ShoppingListServiceTest {
     }
 
     @Test
-    public void shouldReturnShoppingList_WhenIdIsPassed() throws ShoppingListNotFoundException {
+    void shouldReturnShoppingList_WhenIdIsPassed() throws ShoppingListNotFoundException {
         User user = createUser();
         when(shoppingListDao.findByIdAndOwner(1L, user)).thenReturn(Optional.of(getShoppingList()));
 

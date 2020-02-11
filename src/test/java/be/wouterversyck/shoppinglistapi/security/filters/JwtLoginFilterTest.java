@@ -2,11 +2,12 @@ package be.wouterversyck.shoppinglistapi.security.filters;
 
 import be.wouterversyck.shoppinglistapi.security.config.SecurityProperties;
 import be.wouterversyck.shoppinglistapi.security.utils.JwtService;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockServletContext;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -26,8 +27,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
-@RunWith(MockitoJUnitRunner.class)
-public class JwtLoginFilterTest {
+@ExtendWith(MockitoExtension.class)
+class JwtLoginFilterTest {
 
     @Mock
     private JwtService jwtService;
@@ -49,8 +50,8 @@ public class JwtLoginFilterTest {
 
     private JwtLoginFilter jwtLoginFilter;
 
-    @Before
-    public void setup() {
+    @BeforeEach
+    void setup() {
         properties = new SecurityProperties();
         properties.setResponseTokenHeader("x-token");
         properties.setAuthLoginUrl("login");
@@ -66,7 +67,7 @@ public class JwtLoginFilterTest {
     }
 
     @Test
-    public void shouldReturnCredentials_WhenLoginCredentialsAreProvided() {
+    void shouldReturnCredentials_WhenLoginCredentialsAreProvided() {
         Authentication authLogin = new UsernamePasswordAuthenticationToken("username", "password", Collections.emptyList());
         when(authenticationManager.authenticate(any())).thenReturn(authLogin);
 
@@ -78,7 +79,7 @@ public class JwtLoginFilterTest {
     }
 
     @Test
-    public void shouldSetTokenInHeader_WhenAuthenticationWasSuccessful() {
+    void shouldSetTokenInHeader_WhenAuthenticationWasSuccessful() {
         User user = new User("user", "password", Collections.emptyList());
         var userToken = new UsernamePasswordAuthenticationToken(user, "password", Collections.emptyList());
         when(jwtService.generateToken(user)).thenReturn("token");
