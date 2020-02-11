@@ -20,3 +20,8 @@ jwt:
   token-audience: secure-app
   # 12 hours in millis
   expiration: 43200000
+
+mdc:
+  correlationIdHeaderKey: x-correlation-id
+  userMdcKey: user
+  correlationIdMdcKey: correlationId
