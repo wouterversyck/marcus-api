@@ -6,6 +6,7 @@ import be.wouterversyck.shoppinglistapi.security.utils.JwtService;
 import org.slf4j.MDC;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.stereotype.Component;
+import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import javax.servlet.FilterChain;
@@ -13,6 +14,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.Optional;
 import java.util.UUID;
 
 @Component
@@ -37,17 +39,31 @@ public class MDCFilter extends OncePerRequestFilter {
         final var authToken = getAuthentication(request);
         final var correlationID = newCorrelationId();
 
-        MDC.put(mdcProperties.getUserMdcKey(), authToken.getName());
-        MDC.put(mdcProperties.getCorrelationIdMdcKey(), correlationID);
+        try {
+            authToken.ifPresent(
+                    usernamePasswordAuthenticationToken ->
+                            MDC.put(mdcProperties.getUserMdcKey(), usernamePasswordAuthenticationToken.getName()));
 
-        response.addHeader(mdcProperties.getCorrelationIdHeaderKey(), correlationID);
-        filterChain.doFilter(request, response);
+            MDC.put(mdcProperties.getCorrelationIdMdcKey(), correlationID);
+
+            response.addHeader(mdcProperties.getCorrelationIdHeaderKey(), correlationID);
+
+            // calls rest of filter chain, the last element of the chain is the target resource/servlet
+            filterChain.doFilter(request, response);
+        } finally {
+            // will always be called after the full chain has been called
+            MDC.remove(mdcProperties.getUserMdcKey());
+            MDC.remove(mdcProperties.getCorrelationIdMdcKey());
+        }
+
     }
 
-    private UsernamePasswordAuthenticationToken getAuthentication(final HttpServletRequest request) {
-        final var token = request.getHeader(securityProperties.getTokenHeader());
+    private Optional<UsernamePasswordAuthenticationToken> getAuthentication(final HttpServletRequest request) {
+        final String token = request.getHeader(securityProperties.getTokenHeader());
 
-        return jwtService.parseToken(token);
+        if (!StringUtils.hasText(token)) return Optional.empty();
+
+        return Optional.of(jwtService.parseToken(token));
     }
 
     private String newCorrelationId(){

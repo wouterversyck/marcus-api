@@ -3,6 +3,7 @@ package be.wouterversyck.shoppinglistapi.debug.filters;
 import be.wouterversyck.shoppinglistapi.debug.config.MDCProperties;
 import be.wouterversyck.shoppinglistapi.security.config.SecurityProperties;
 import be.wouterversyck.shoppinglistapi.security.utils.JwtService;
+import org.jboss.logging.MDC;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -33,6 +34,7 @@ class MDCFilterTest {
     private JwtService jwtService;
 
     private MDCFilter mdcFilter;
+    private MDCProperties mdcProperties;
 
     @BeforeEach
     void setup() {
@@ -41,7 +43,7 @@ class MDCFilterTest {
         var securityProperties = new SecurityProperties();
         securityProperties.setTokenHeader(TOKEN_HEADER_KEY);
 
-        var mdcProperties = new MDCProperties();
+        mdcProperties = new MDCProperties();
         mdcProperties.setCorrelationIdHeaderKey(CORRELATION_ID_HEADER_KEY);
         mdcProperties.setUserMdcKey(USER_MDC_KEY);
         mdcProperties.setCorrelationIdMdcKey(CORRELATION_ID_MDC_KEY);
@@ -51,7 +53,7 @@ class MDCFilterTest {
 
 
     @Test
-    void shouldAddCorrelationIdToHeader() throws ServletException, IOException {
+    void shouldAddCorrelationIdToHeaderAndClearTheMDCContextAfterChain() throws ServletException, IOException {
         MockHttpServletResponse response = new MockHttpServletResponse();
         MockHttpServletRequest request = new MockHttpServletRequest();
         request.addHeader(TOKEN_HEADER_KEY, TOKEN);
@@ -61,5 +63,9 @@ class MDCFilterTest {
         assertThat(response.getHeader(CORRELATION_ID_HEADER_KEY))
                 .isNotBlank()
                 .hasSize(36);
+
+        assertThat((String)MDC.get(mdcProperties.getCorrelationIdMdcKey())).isNull();
+        assertThat((String)MDC.get(mdcProperties.getUserMdcKey())).isNull();
     }
+
 }

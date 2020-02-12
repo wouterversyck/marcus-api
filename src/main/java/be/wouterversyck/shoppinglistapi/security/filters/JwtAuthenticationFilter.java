@@ -33,12 +33,12 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             log.info("Authenticated request for user with username: [{}]", authenticationToken.getPrincipal());
 
             SecurityContextHolder.getContext().setAuthentication(authenticationToken);
-
-            filterChain.doFilter(request, response);
         } catch(final JwtException ex) {
             log.warn(ex.getMessage());
-            filterChain.doFilter(request, response);
+            SecurityContextHolder.clearContext();
         }
+
+        filterChain.doFilter(request, response);
     }
 
     private UsernamePasswordAuthenticationToken getAuthentication(final HttpServletRequest request) {

@@ -27,8 +27,7 @@ class JwtLoginFilterIT {
         mvc.perform(
                 post("/login")
                         .content("{\"username\": \"user\",\"password\": \"password\"}")
-                        .contentType(MediaType.APPLICATION_JSON)
-        )
+                        .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(header().exists("X-Token"));
     }
@@ -38,8 +37,7 @@ class JwtLoginFilterIT {
         mvc.perform(
                 post("/login")
                         .content("{\"username\": \"wrong\",\"password\": \"wrong\"}")
-                        .contentType(MediaType.APPLICATION_JSON)
-        )
+                        .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isUnauthorized())
                 .andExpect(header().doesNotExist("X-Token"));
     }
