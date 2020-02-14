@@ -1,4 +1,4 @@
-package be.wouterversyck.shoppinglistapi.users.daos;
+package be.wouterversyck.shoppinglistapi.users.persistence;
 
 import be.wouterversyck.shoppinglistapi.users.models.User;
 import org.springframework.data.jpa.repository.JpaRepository;

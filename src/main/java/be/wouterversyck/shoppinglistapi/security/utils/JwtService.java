@@ -64,8 +64,9 @@ public class JwtService {
 
         final var signingKey = jwtSecretKey.getBytes();
 
-        final var parsedToken = Jwts.parser()
+        final var parsedToken = Jwts.parserBuilder()
                 .setSigningKey(signingKey)
+                .build()
                 .parseClaimsJws(token.replace(format("%s ", properties.getTokenPrefix()), ""));
 
         final var username = parsedToken

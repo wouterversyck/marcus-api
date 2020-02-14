@@ -45,6 +45,7 @@ public class JwtSecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .authorizeRequests()
                 .antMatchers("/public/*").permitAll()
                 .anyRequest().authenticated()
+                .antMatchers("/admin/**").hasRole("ADMIN")
                 .and()
                 .addFilter(getJwtLoginFilter())
                 .addFilterAfter(getAuthorizationFilter(), JwtLoginFilter.class)

@@ -1,6 +1,6 @@
 package be.wouterversyck.shoppinglistapi.users.services;
 
-import be.wouterversyck.shoppinglistapi.users.daos.UserDao;
+import be.wouterversyck.shoppinglistapi.users.persistence.UserDao;
 import be.wouterversyck.shoppinglistapi.users.models.User;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

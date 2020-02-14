@@ -1,8 +1,10 @@
 package be.wouterversyck.shoppinglistapi.users.models;
 
+import be.wouterversyck.shoppinglistapi.users.persistence.RoleConverter;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
+import javax.persistence.Convert;
 import javax.persistence.Entity;
 import javax.persistence.Table;
 import javax.persistence.Id;
@@ -26,4 +28,8 @@ public class User {
 
     @Column(nullable = false)
     private String password;
+
+    @Convert(converter = RoleConverter.class)
+    @Column
+    private Role role;
 }
