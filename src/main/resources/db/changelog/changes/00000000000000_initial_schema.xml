@@ -9,7 +9,7 @@
     <property name="now" value="now()" dbms="h2"/>
     <property name="now" value="current_timestamp" dbms="postgresql"/>
 
-    <changeSet id="00000000000000" author="wouterv">
+    <changeSet id="00000000000000" author="wouterv" context="default">
         <!-- Keep incrementBy at 50 to be able to run on remote postgres server -->
         <createSequence sequenceName="hibernate_sequence" startValue="1000" incrementBy="50"/>
     </changeSet>
@@ -17,7 +17,7 @@
     <!--
         The initial schema has the '00000000000001' id, so that it is over-written if we re-generate it.
     -->
-    <changeSet id="00000000000001" author="wouterv">
+    <changeSet id="00000000000001" author="wouterv" context="default">
 
         <createTable tableName="wv_user">
             <column name="id" type="bigint" autoIncrement="${autoIncrement}">
@@ -84,7 +84,9 @@
                                  constraintName="fk_shopping_list_item_shopping_list"
                                  referencedColumnNames="id"
                                  referencedTableName="wv_shopping_list"/>
+    </changeSet>
 
+    <changeSet id="00000000000002" author="wouterv" context="loc">
         <loadData file="db/changelog/seed_data/roles.csv"
                   separator=";"
                   tableName="wv_role">

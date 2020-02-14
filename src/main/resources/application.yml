@@ -6,6 +6,8 @@ logging:
 spring:
   jpa:
     open-in-view: false
+  liquibase:
+    contexts: default
 server:
   servlet:
     context-path: /api

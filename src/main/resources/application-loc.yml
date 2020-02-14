@@ -11,3 +11,5 @@ spring:
       enabled: true
   jpa:
     show-sql: true
+  liquibase:
+    contexts: loc,default
