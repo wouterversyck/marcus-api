@@ -22,7 +22,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import org.springframework.web.filter.OncePerRequestFilter;
 
 @EnableWebSecurity
-@EnableGlobalMethodSecurity(securedEnabled = true)
+@EnableGlobalMethodSecurity(prePostEnabled = true)
 @EnableConfigurationProperties(SecurityProperties.class)
 public class JwtSecurityConfiguration extends WebSecurityConfigurerAdapter {
 
@@ -45,10 +45,9 @@ public class JwtSecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .authorizeRequests()
                 .antMatchers("/public/*").permitAll()
                 .anyRequest().authenticated()
-                .antMatchers("/admin/**").hasRole("ADMIN")
                 .and()
                 .addFilter(getJwtLoginFilter())
-                .addFilterAfter(getAuthorizationFilter(), JwtLoginFilter.class)
+                .addFilterAfter(getAuthenticationFilter(), JwtLoginFilter.class)
                 .sessionManagement()
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS);
     }
@@ -59,7 +58,7 @@ public class JwtSecurityConfiguration extends WebSecurityConfigurerAdapter {
     }
 
     @Bean
-    public OncePerRequestFilter getAuthorizationFilter() {
+    public OncePerRequestFilter getAuthenticationFilter() {
         return new JwtAuthenticationFilter(getJwtService(), properties);
     }
 

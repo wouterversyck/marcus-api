@@ -30,6 +30,6 @@ public class User {
     private String password;
 
     @Convert(converter = RoleConverter.class)
-    @Column
+    @Column(name = "role_id")
     private Role role;
 }

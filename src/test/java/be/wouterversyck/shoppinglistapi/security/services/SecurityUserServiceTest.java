@@ -1,5 +1,6 @@
 package be.wouterversyck.shoppinglistapi.security.services;
 
+import be.wouterversyck.shoppinglistapi.users.models.Role;
 import be.wouterversyck.shoppinglistapi.users.models.User;
 import be.wouterversyck.shoppinglistapi.users.services.UserService;
 import org.junit.jupiter.api.Test;
@@ -31,6 +32,7 @@ class SecurityUserServiceTest {
         User user = new User();
         user.setPassword(PASSWORD);
         user.setUsername(USERNAME);
+        user.setRole(Role.USER);
         when(userService.getUserByUsername(USERNAME)).thenReturn(user);
 
         UserDetails result = securityUserService.loadUserByUsername(USERNAME);

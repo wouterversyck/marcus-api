@@ -8,11 +8,11 @@ public enum Role {
 
     private final Integer id;
 
-    Role(Integer id) {
+    Role(final Integer id) {
         this.id = id;
     }
 
-    public static Role fromId(Integer id) {
+    public static Role fromId(final Integer id) {
         return Arrays.stream(values())
                 .filter(role -> role.id.equals(id))
                 .findFirst()

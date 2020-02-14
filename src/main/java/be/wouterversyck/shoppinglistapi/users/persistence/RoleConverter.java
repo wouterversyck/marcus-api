@@ -7,12 +7,12 @@ import javax.persistence.AttributeConverter;
 public class RoleConverter implements AttributeConverter<Role, Integer> {
 
     @Override
-    public Integer convertToDatabaseColumn(Role role) {
+    public Integer convertToDatabaseColumn(final Role role) {
         return role.getId();
     }
 
     @Override
-    public Role convertToEntityAttribute(Integer id) {
+    public Role convertToEntityAttribute(final Integer id) {
         return Role.fromId(id);
     }
 }
