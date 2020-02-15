@@ -1,9 +1,10 @@
 package be.wouterversyck.shoppinglistapi.shoppinglist.controllers;
 
 import be.wouterversyck.shoppinglistapi.shoppinglist.ShoppingListNotFoundException;
-import be.wouterversyck.shoppinglistapi.shoppinglist.models.ShoppingListDto;
+import be.wouterversyck.shoppinglistapi.shoppinglist.models.ShoppingListView;
 import be.wouterversyck.shoppinglistapi.shoppinglist.services.ShoppingListService;
-import be.wouterversyck.shoppinglistapi.users.models.User;
+import be.wouterversyck.shoppinglistapi.users.exceptions.UserNotFoundException;
+import be.wouterversyck.shoppinglistapi.users.models.SecureUserView;
 import be.wouterversyck.shoppinglistapi.users.services.UserService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -31,21 +32,23 @@ public class ShoppingListController {
     }
 
     @GetMapping("all")
-    public List<ShoppingListDto> getShoppingLists(final HttpServletRequest request) {
-        final User user = getCurrentUser(request);
+    public List<ShoppingListView> getShoppingLists(final HttpServletRequest request) throws UserNotFoundException {
+        final var user = getCurrentUser(request);
 
         log.info("Getting shopping list for user with username [{}]", user.getUsername());
         return shoppingListService.getShoppingListsForUser(user);
     }
 
     @GetMapping("{id}")
-    public ShoppingListDto getShoppingList(@PathVariable final long id, final HttpServletRequest request) throws ShoppingListNotFoundException {
-        final User user = getCurrentUser(request);
+    public ShoppingListView getShoppingList(
+            @PathVariable final long id,
+            final HttpServletRequest request) throws ShoppingListNotFoundException, UserNotFoundException {
+        final var user = getCurrentUser(request);
 
         return shoppingListService.getShoppingListById(id, user);
     }
 
-    private User getCurrentUser(final HttpServletRequest request) {
+    private SecureUserView getCurrentUser(final HttpServletRequest request) throws UserNotFoundException {
         final Principal principal = request.getUserPrincipal();
         return userService.getUserByUsername(principal.getName());
     }

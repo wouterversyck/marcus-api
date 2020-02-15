@@ -2,9 +2,9 @@ package be.wouterversyck.shoppinglistapi.shoppinglist.models;
 
 import java.util.List;
 
-public interface ShoppingListDto {
+public interface ShoppingListView {
 
     long getId();
     String getName();
-    List<ShoppingListItemDto> getItems();
+    List<ShoppingListItemView> getItems();
 }

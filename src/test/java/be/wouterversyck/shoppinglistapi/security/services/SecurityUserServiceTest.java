@@ -1,8 +1,9 @@
 package be.wouterversyck.shoppinglistapi.security.services;
 
+import be.wouterversyck.shoppinglistapi.users.exceptions.UserNotFoundException;
 import be.wouterversyck.shoppinglistapi.users.models.Role;
-import be.wouterversyck.shoppinglistapi.users.models.User;
 import be.wouterversyck.shoppinglistapi.users.services.UserService;
+import be.wouterversyck.shoppinglistapi.users.testmodels.DangerUserImpl;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -28,12 +29,14 @@ class SecurityUserServiceTest {
     private static final String PASSWORD = "PASSWORD";
 
     @Test
-    void shouldReturnCorrectUserDetails_WhenUserIsFound() {
-        User user = new User();
-        user.setPassword(PASSWORD);
-        user.setUsername(USERNAME);
-        user.setRole(Role.USER);
-        when(userService.getUserByUsername(USERNAME)).thenReturn(user);
+    void shouldReturnCorrectUserDetails_WhenUserIsFound() throws UserNotFoundException {
+        var user = DangerUserImpl.builder()
+                .password(PASSWORD)
+                .username(USERNAME)
+                .role(Role.USER)
+                .build();
+
+        when(userService.getSecurityUserByUsername(USERNAME)).thenReturn(user);
 
         UserDetails result = securityUserService.loadUserByUsername(USERNAME);
 
@@ -42,8 +45,8 @@ class SecurityUserServiceTest {
     }
 
     @Test
-    void shouldThrowException_WhenUserIsNotFound() {
-        when(userService.getUserByUsername(USERNAME)).thenReturn(null);
+    void shouldThrowException_WhenUserIsNotFound() throws UserNotFoundException {
+        when(userService.getSecurityUserByUsername(USERNAME)).thenThrow(new UserNotFoundException(""));
 
         assertThrows(UsernameNotFoundException.class, () -> securityUserService.loadUserByUsername(USERNAME));
     }

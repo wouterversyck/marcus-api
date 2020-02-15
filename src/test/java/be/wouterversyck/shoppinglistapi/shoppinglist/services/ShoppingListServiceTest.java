@@ -2,15 +2,14 @@ package be.wouterversyck.shoppinglistapi.shoppinglist.services;
 
 import be.wouterversyck.shoppinglistapi.shoppinglist.ShoppingListNotFoundException;
 import be.wouterversyck.shoppinglistapi.shoppinglist.daos.ShoppingListDao;
-import be.wouterversyck.shoppinglistapi.shoppinglist.models.ShoppingListDto;
-import be.wouterversyck.shoppinglistapi.shoppinglist.models.ShoppingListItemDto;
-import be.wouterversyck.shoppinglistapi.users.models.User;
-import lombok.Builder;
+import be.wouterversyck.shoppinglistapi.shoppinglist.models.ShoppingListView;
+import be.wouterversyck.shoppinglistapi.shoppinglist.testmodels.ShoppingListImpl;
+import be.wouterversyck.shoppinglistapi.users.models.SecureUserView;
+import be.wouterversyck.shoppinglistapi.users.testmodels.SecureUserImpl;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Arrays;
@@ -18,12 +17,12 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 public class ShoppingListServiceTest {
 
-    private static final String PASSWORD = "PASSWORD";
     private static final String USERNAME = "USERNAME";
     private static final String SHOPPING_LIST_NAME_A = "SHOPPING_LIST_NAME_A";
     private static final String SHOPPING_LIST_NAME_B = "SHOPPING_LIST_NAME_B";
@@ -36,10 +35,10 @@ public class ShoppingListServiceTest {
 
     @Test
     void shouldReturnShoppingList_WhenUserIsPassed() {
-        User user = createUser();
+        var user = createUser();
         when(shoppingListDao.findAllByOwner(user)).thenReturn(getShoppingLists());
 
-        List<ShoppingListDto> result = shoppingListService.getShoppingListsForUser(user);
+        List<ShoppingListView> result = shoppingListService.getShoppingListsForUser(user);
 
         assertThat(result.size()).isEqualTo(2);
         assertThat(result).extracting("name")
@@ -48,69 +47,46 @@ public class ShoppingListServiceTest {
 
     @Test
     void shouldReturnShoppingList_WhenIdIsPassed() throws ShoppingListNotFoundException {
-        User user = createUser();
+        var user = createUser();
         when(shoppingListDao.findByIdAndOwner(1L, user)).thenReturn(Optional.of(getShoppingList()));
 
-        ShoppingListDto result = shoppingListService.getShoppingListById(1L, user);
+        ShoppingListView result = shoppingListService.getShoppingListById(1L, user);
 
         assertThat(result).extracting("name")
                 .isEqualTo(SHOPPING_LIST_NAME_A);
     }
 
-    private User createUser() {
-        User user = new User();
-        user.setPassword(PASSWORD);
-        user.setUsername(USERNAME);
+    @Test
+    void shouldThrowException_WhenShoppingListIsNotFound() {
+        var user = createUser();
+        when(shoppingListDao.findByIdAndOwner(1L, user)).thenReturn(Optional.empty());
 
-        return user;
+        assertThrows(ShoppingListNotFoundException.class, () -> shoppingListService.getShoppingListById(1L, user));
     }
 
-    private ShoppingListDto getShoppingList() {
-        return ShoppingList.builder()
+    private SecureUserView createUser() {
+        return SecureUserImpl.builder()
+                .username(USERNAME)
+                .build();
+    }
+
+    private ShoppingListView getShoppingList() {
+        return ShoppingListImpl.builder()
                 .id(1)
                 .name(SHOPPING_LIST_NAME_A)
                 .build();
     }
 
-    private List<ShoppingListDto> getShoppingLists() {
+    private List<ShoppingListView> getShoppingLists() {
         return Arrays.asList(
-                ShoppingList.builder()
+                ShoppingListImpl.builder()
                         .id(1)
                         .name(SHOPPING_LIST_NAME_A)
                         .build(),
-                ShoppingList.builder()
+                ShoppingListImpl.builder()
                         .id(2)
                         .name(SHOPPING_LIST_NAME_B)
                         .build()
         );
-    }
-
-    @Builder
-    public static class ShoppingList implements ShoppingListDto {
-
-        private long id;
-        private String name;
-        private List<ShoppingListItemDto> items;
-
-        public ShoppingList(long id, String name, List<ShoppingListItemDto> items) {
-            this.id = id;
-            this.name = name;
-            this.items = items;
-        }
-
-        @Override
-        public long getId() {
-            return id;
-        }
-
-        @Override
-        public String getName() {
-            return name;
-        }
-
-        @Override
-        public List<ShoppingListItemDto> getItems() {
-            return items;
-        }
     }
 }

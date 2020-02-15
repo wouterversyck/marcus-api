@@ -28,13 +28,8 @@ class AdminControllerIT {
         String token = login("user", "password");
 
         mvc.perform(
-                get("/admin")
+                get("/admin/users/0/1")
                 .header("Authorization", format("Bearer %s", token)))
-                .andExpect(status().isForbidden());
-
-        mvc.perform(
-                get("/admin/test")
-                        .header("Authorization", format("Bearer %s", token)))
                 .andExpect(status().isForbidden());
     }
 
@@ -43,12 +38,7 @@ class AdminControllerIT {
         String token = login("admin", "secure");
 
         mvc.perform(
-                get("/admin")
-                        .header("Authorization", format("Bearer %s", token)))
-                .andExpect(status().isOk());
-
-        mvc.perform(
-                get("/admin/test")
+                get("/admin/users/0/4")
                         .header("Authorization", format("Bearer %s", token)))
                 .andExpect(status().isOk());
     }
