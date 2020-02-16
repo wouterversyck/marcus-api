@@ -26,7 +26,7 @@ public class ShoppingListService {
         return shoppingListDao.findAllByOwner(user);
     }
 
-    @Cacheable(value = "be.wouterversyck.shoppinglistapi.shoppinglist.findbyid", key = "#id")
+    @Cacheable(value = "be.wouterversyck.shoppinglistapi.shoppinglist.findbyid")
     public ShoppingListView getShoppingListById(final long id, final SecureUserView user) throws ShoppingListNotFoundException {
         log.info("Fetching shopping lists form db (cache miss)");
         return shoppingListDao.findByIdAndOwner(id, user).orElseThrow(

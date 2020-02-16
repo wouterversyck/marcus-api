@@ -13,6 +13,6 @@ public interface ShoppingListDao extends JpaRepository<ShoppingList, Long> {
     @Query("select s from ShoppingList s join s.owner o where o.id = :#{#user.id}")
     List<ShoppingListView> findAllByOwner(SecureUserView user);
 
-    @Query("select s from ShoppingList s join s.owner o where o.id = :#{#owner.id} and s.id = ?3")
+    @Query("select s from ShoppingList s join s.owner o where o.id = :#{#owner.id} and s.id = :#{#shoppingListId}")
     Optional<ShoppingListView> findByIdAndOwner(Long shoppingListId, SecureUserView owner);
 }
