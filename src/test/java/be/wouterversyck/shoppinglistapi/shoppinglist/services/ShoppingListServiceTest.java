@@ -4,8 +4,6 @@ import be.wouterversyck.shoppinglistapi.shoppinglist.ShoppingListNotFoundExcepti
 import be.wouterversyck.shoppinglistapi.shoppinglist.daos.ShoppingListDao;
 import be.wouterversyck.shoppinglistapi.shoppinglist.models.ShoppingListView;
 import be.wouterversyck.shoppinglistapi.shoppinglist.testmodels.ShoppingListImpl;
-import be.wouterversyck.shoppinglistapi.users.models.SecureUserView;
-import be.wouterversyck.shoppinglistapi.users.testmodels.SecureUserImpl;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -21,9 +19,9 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-public class ShoppingListServiceTest {
+class ShoppingListServiceTest {
 
-    private static final String USERNAME = "USERNAME";
+    private static final long USERID = 1;
     private static final String SHOPPING_LIST_NAME_A = "SHOPPING_LIST_NAME_A";
     private static final String SHOPPING_LIST_NAME_B = "SHOPPING_LIST_NAME_B";
 
@@ -35,10 +33,9 @@ public class ShoppingListServiceTest {
 
     @Test
     void shouldReturnShoppingList_WhenUserIsPassed() {
-        var user = createUser();
-        when(shoppingListDao.findAllByOwner(user)).thenReturn(getShoppingLists());
+        when(shoppingListDao.findAllByOwner(USERID)).thenReturn(getShoppingLists());
 
-        List<ShoppingListView> result = shoppingListService.getShoppingListsForUser(user);
+        List<ShoppingListView> result = shoppingListService.getShoppingListsForUser(USERID);
 
         assertThat(result.size()).isEqualTo(2);
         assertThat(result).extracting("name")
@@ -47,10 +44,9 @@ public class ShoppingListServiceTest {
 
     @Test
     void shouldReturnShoppingList_WhenIdIsPassed() throws ShoppingListNotFoundException {
-        var user = createUser();
-        when(shoppingListDao.findByIdAndOwner(1L, user)).thenReturn(Optional.of(getShoppingList()));
+        when(shoppingListDao.findByIdAndOwner(1L, USERID)).thenReturn(Optional.of(getShoppingList()));
 
-        ShoppingListView result = shoppingListService.getShoppingListById(1L, user);
+        ShoppingListView result = shoppingListService.getShoppingListById(1L, USERID);
 
         assertThat(result).extracting("name")
                 .isEqualTo(SHOPPING_LIST_NAME_A);
@@ -58,16 +54,9 @@ public class ShoppingListServiceTest {
 
     @Test
     void shouldThrowException_WhenShoppingListIsNotFound() {
-        var user = createUser();
-        when(shoppingListDao.findByIdAndOwner(1L, user)).thenReturn(Optional.empty());
+        when(shoppingListDao.findByIdAndOwner(1L, USERID)).thenReturn(Optional.empty());
 
-        assertThrows(ShoppingListNotFoundException.class, () -> shoppingListService.getShoppingListById(1L, user));
-    }
-
-    private SecureUserView createUser() {
-        return SecureUserImpl.builder()
-                .username(USERNAME)
-                .build();
+        assertThrows(ShoppingListNotFoundException.class, () -> shoppingListService.getShoppingListById(1L, USERID));
     }
 
     private ShoppingListView getShoppingList() {

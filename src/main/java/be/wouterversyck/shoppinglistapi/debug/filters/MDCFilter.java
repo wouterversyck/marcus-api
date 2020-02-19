@@ -5,6 +5,7 @@ import be.wouterversyck.shoppinglistapi.security.config.SecurityProperties;
 import be.wouterversyck.shoppinglistapi.security.utils.JwtService;
 import org.slf4j.MDC;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
@@ -41,8 +42,7 @@ public class MDCFilter extends OncePerRequestFilter {
 
         try {
             authToken.ifPresent(
-                    usernamePasswordAuthenticationToken ->
-                            MDC.put(mdcProperties.getUserMdcKey(), usernamePasswordAuthenticationToken.getName()));
+                    authentication -> MDC.put(mdcProperties.getUserMdcKey(), authentication.getName()));
 
             MDC.put(mdcProperties.getCorrelationIdMdcKey(), correlationID);
 
@@ -58,7 +58,7 @@ public class MDCFilter extends OncePerRequestFilter {
 
     }
 
-    private Optional<UsernamePasswordAuthenticationToken> getAuthentication(final HttpServletRequest request) {
+    private Optional<Authentication> getAuthentication(final HttpServletRequest request) {
         final String token = request.getHeader(securityProperties.getTokenHeader());
 
         if (!StringUtils.hasText(token)) return Optional.empty();

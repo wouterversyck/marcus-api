@@ -1,19 +1,15 @@
 package be.wouterversyck.shoppinglistapi.shoppinglist.controllers;
 
+import be.wouterversyck.shoppinglistapi.security.models.JwtUserPrincipal;
 import be.wouterversyck.shoppinglistapi.shoppinglist.models.ShoppingListView;
 import be.wouterversyck.shoppinglistapi.shoppinglist.services.ShoppingListService;
 import be.wouterversyck.shoppinglistapi.shoppinglist.testmodels.ShoppingListImpl;
-import be.wouterversyck.shoppinglistapi.users.exceptions.UserNotFoundException;
-import be.wouterversyck.shoppinglistapi.users.services.UserService;
-import be.wouterversyck.shoppinglistapi.users.testmodels.SecureUserImpl;
-import com.sun.net.httpserver.HttpPrincipal;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import javax.servlet.http.HttpServletRequest;
 import java.util.Arrays;
 import java.util.List;
 
@@ -21,32 +17,23 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-public class ShoppingListControllerTest {
+class ShoppingListControllerTest {
 
     @Mock
     private ShoppingListService shoppingListService;
-
-    @Mock
-    private UserService userService;
-
-    @Mock
-    private HttpServletRequest httpServletRequest;
 
     @InjectMocks
     private ShoppingListController shoppingListController;
 
     private static final String USERNAME = "USERNAME";
+    private static final long USER_ID = 1;
 
     @Test
-    void shouldReturnLists_WhenUserIsSetInContext() throws UserNotFoundException {
-        var user = SecureUserImpl.builder()
-                .username(USERNAME).build();
+    void shouldReturnLists_WhenUserIsSetInContext() {
 
-        when(httpServletRequest.getUserPrincipal()).thenReturn(new HttpPrincipal(USERNAME, "REALM"));
-        when(userService.getUserByUsername(USERNAME)).thenReturn(user);
-        when(shoppingListService.getShoppingListsForUser(user)).thenReturn(getShoppingLists());
+        when(shoppingListService.getShoppingListsForUser(USER_ID)).thenReturn(getShoppingLists());
 
-        List<ShoppingListView> items = shoppingListController.getShoppingLists(httpServletRequest);
+        List<ShoppingListView> items = shoppingListController.getShoppingLists(new JwtUserPrincipal(USER_ID, USERNAME, null, true));
 
         assertThat(items).hasSize(2);
         assertThat(items).extracting("name")

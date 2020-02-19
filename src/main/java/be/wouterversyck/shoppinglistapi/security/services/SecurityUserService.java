@@ -1,12 +1,15 @@
 package be.wouterversyck.shoppinglistapi.security.services;
 
+import be.wouterversyck.shoppinglistapi.security.models.JwtUserDetails;
 import be.wouterversyck.shoppinglistapi.users.exceptions.UserNotFoundException;
 import be.wouterversyck.shoppinglistapi.users.models.DangerUserView;
 import be.wouterversyck.shoppinglistapi.users.services.UserService;
-import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+
+import java.util.Collections;
 
 public class SecurityUserService implements UserDetailsService {
     private UserService userService;
@@ -24,10 +27,10 @@ public class SecurityUserService implements UserDetailsService {
             throw new UsernameNotFoundException(e.getMessage());
         }
 
-        return User.builder()
-                .password(user.getPassword())
-                .username(user.getUsername())
-                .roles(user.getRole().name())
-                .build();
+        return new JwtUserDetails(
+                user.getId(),
+                user.getUsername(),
+                user.getPassword(),
+                Collections.singletonList(new SimpleGrantedAuthority(user.getRole().name())));
     }
 }

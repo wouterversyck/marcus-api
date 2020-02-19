@@ -1,5 +1,6 @@
 package be.wouterversyck.shoppinglistapi.security.services;
 
+import be.wouterversyck.shoppinglistapi.security.models.JwtUserPrincipal;
 import be.wouterversyck.shoppinglistapi.security.utils.JwtService;
 import be.wouterversyck.shoppinglistapi.security.config.SecurityProperties;
 import io.jsonwebtoken.*;
@@ -33,12 +34,8 @@ class JwtServiceTest {
         jwtService = new JwtService(JWT_SECRET_KEY, properties);
     }
 
-
-    // TODO add test for non alg
-    // removed the current test because jwt expires obviously so need to generate a non alg token first
-    private String NONE_ALG_JWT = "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJub25lIn0K.eyJpc3MiOiJzZWN1cmUtYXBpIiwiYXVkIjoic2VjdXJlLWFwcCIsInN1YiI6InVzZXIiLCJleHAiOjE1NzQwOTAxNDMsInJvbGVzIjpbIlVTRVIiXX0.";
-
     private static final String USERNAME = "USERNAME";
+    private static final String USER_ID = "1";
 
     @Test
     void shouldThrowMalformedJwtException_WhenInvalidTokenIsProvided() {
@@ -63,12 +60,13 @@ class JwtServiceTest {
     }
 
     @Test
-    void shouldCreateCorrectUsernamePasswordAuthenticationToken_WhenTokenStringIsPassed() {
+    void shouldCreateCorrectPrincipal_WhenTokenStringIsPassed() {
         String token = generateValidToken();
 
-        var authenticationToken = jwtService.parseToken(token);
+        var principal = (JwtUserPrincipal)jwtService.parseToken(token);
 
-        assertThat(authenticationToken.getPrincipal()).isEqualTo(USERNAME);
+        assertThat(principal.getName()).isEqualTo(USERNAME);
+        assertThat(principal.getId()).isEqualTo(Long.parseLong(USER_ID));
     }
 
     @Test
@@ -79,7 +77,8 @@ class JwtServiceTest {
                 .setSigningKey(JWT_SECRET_KEY.getBytes())
                 .parseClaimsJws(token);
 
-        assertThat(parsedToken.getBody().getSubject()).isEqualTo(USERNAME);
+        assertThat(parsedToken.getBody().get("username")).isEqualTo(USERNAME);
+        assertThat(parsedToken.getBody().getSubject()).isEqualTo(USER_ID);
     }
 
     private String generateRawToken() {
@@ -106,7 +105,8 @@ class JwtServiceTest {
                 .setHeaderParam("typ", properties.getTokenType())
                 .setIssuer(properties.getTokenIssuer())
                 .setAudience(properties.getTokenAudience())
-                .setSubject(USERNAME)
+                .setSubject(USER_ID)
+                .claim("username", USERNAME)
                 .setExpiration(expirationDate)
                 .claim("roles", Collections.emptyList())
                 .compact();

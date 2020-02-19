@@ -10,7 +10,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 class AdminControllerIT extends AbstractIT {
 
     @Test
-    public void shouldDenyAccess_WhenNotLoggedInAsAdmin() throws Exception {
+    void shouldDenyAccess_WhenNotLoggedInAsAdmin() throws Exception {
         String token = login("user", "password");
 
         getMvc()
@@ -20,7 +20,7 @@ class AdminControllerIT extends AbstractIT {
     }
 
     @Test
-    public void shouldAllowAccess_WhenLoggedInAsAdmin() throws Exception {
+    void shouldAllowAccess_WhenLoggedInAsAdmin() throws Exception {
         String token = login("admin", "secure");
 
         getMvc()
@@ -30,7 +30,7 @@ class AdminControllerIT extends AbstractIT {
     }
 
     @Test
-    public void shouldNotShowUserPassword_WhenUsersEndpointIsQueried() throws Exception {
+    void shouldNotShowUserPassword_WhenUsersEndpointIsQueried() throws Exception {
         String token = login("admin", "secure");
 
         getMvc()
