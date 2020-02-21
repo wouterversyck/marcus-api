@@ -2,7 +2,6 @@ package be.wouterversyck.shoppinglistapi.shoppinglist.daos;
 
 import be.wouterversyck.shoppinglistapi.shoppinglist.models.ShoppingList;
 import be.wouterversyck.shoppinglistapi.shoppinglist.models.ShoppingListView;
-import be.wouterversyck.shoppinglistapi.users.models.SecureUserView;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 

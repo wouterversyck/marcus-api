@@ -1,7 +1,6 @@
 package be.wouterversyck.shoppinglistapi.debug.controllers;
 
 import be.wouterversyck.shoppinglistapi.debug.models.BuildPropertiesDTO;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

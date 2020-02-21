@@ -4,7 +4,6 @@ import be.wouterversyck.shoppinglistapi.debug.config.MDCProperties;
 import be.wouterversyck.shoppinglistapi.security.config.SecurityProperties;
 import be.wouterversyck.shoppinglistapi.security.utils.JwtService;
 import org.slf4j.MDC;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;

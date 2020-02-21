@@ -14,7 +14,11 @@ public class JwtUserPrincipal extends AbstractAuthenticationToken {
     private Object credentials;
     private Object principal;
 
-    public JwtUserPrincipal(long id, String name, Collection<? extends GrantedAuthority> authorities, boolean isAuthenticated) {
+    public JwtUserPrincipal(
+            final long id,
+            final String name,
+            final Collection<? extends GrantedAuthority> authorities,
+            final boolean isAuthenticated) {
         super(authorities);
         this.name = name;
         this.id = id;

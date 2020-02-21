@@ -39,7 +39,7 @@ public class JwtService {
     public String generateToken(final Authentication authentication) {
         final var signingKey = jwtSecretKey.getBytes();
 
-        var user = (JwtUserDetails) authentication.getPrincipal();
+        final var user = (JwtUserDetails) authentication.getPrincipal();
 
         final var roles = authentication.getAuthorities()
                 .stream()
@@ -77,23 +77,23 @@ public class JwtService {
                 .build()
                 .parseClaimsJws(token.replace(format("%s ", properties.getTokenPrefix()), ""));
 
-        var authorities = getAuthorities(parsedToken);
+        final var authorities = getAuthorities(parsedToken);
         return new JwtUserPrincipal(getId(parsedToken), getUsername(parsedToken), authorities, true);
     }
 
-    private long getId(Jws<Claims> parsedToken) {
+    private long getId(final Jws<Claims> parsedToken) {
         return Long.parseLong(parsedToken
                 .getBody()
                 .getSubject());
     }
 
-    private String getUsername(Jws<Claims> parsedToken) {
-        return (String)parsedToken
+    private String getUsername(final Jws<Claims> parsedToken) {
+        return (String) parsedToken
                 .getBody()
                 .get("username");
     }
 
-    private List<GrantedAuthority> getAuthorities(Jws<Claims> parsedToken) {
+    private List<GrantedAuthority> getAuthorities(final Jws<Claims> parsedToken) {
         return ((List<?>) parsedToken.getBody()
                 .get("roles")).stream()
                 .map(authority -> new SimpleGrantedAuthority((String) authority))

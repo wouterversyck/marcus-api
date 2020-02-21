@@ -30,12 +30,12 @@ class AdminControllerTest {
     private AdminController adminController;
 
     @Test
-    public void shouldReturnUsersPage_WhenControllerMethodIsCalled() {
-        ;
-        when(userService.getAllUsers(PageRequest.of(0, 1)))
+    void shouldReturnUsersPage_WhenControllerMethodIsCalled() {
+        var page = PageRequest.of(0, 20);
+        when(userService.getAllUsers(page))
                 .thenReturn(createUserPage());
 
-        Page<SecureUserView> result = adminController.getUsers(0, 1);
+        Page<SecureUserView> result = adminController.getUsers(page);
 
         assertThat(result.getTotalElements()).isEqualTo(2);
         assertThat(result.getContent())

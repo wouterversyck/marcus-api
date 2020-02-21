@@ -4,10 +4,11 @@ import be.wouterversyck.shoppinglistapi.users.models.SecureUserView;
 import be.wouterversyck.shoppinglistapi.users.services.UserService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.SortDefault;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -23,8 +24,9 @@ public class AdminController {
         this.userService = userService;
     }
 
-    @GetMapping("users/{page}/{size}")
-    public Page<SecureUserView> getUsers(@PathVariable final int page, @PathVariable final int size) {
-        return userService.getAllUsers(PageRequest.of(page, size));
+    @GetMapping("users")
+    public Page<SecureUserView> getUsers(
+            @SortDefault(sort = "username", direction = Sort.Direction.ASC) final Pageable page) {
+        return userService.getAllUsers(page);
     }
 }
