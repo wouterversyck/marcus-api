@@ -3,6 +3,8 @@ package be.wouterversyck.shoppinglistapi.security.config;
 import be.wouterversyck.shoppinglistapi.security.filters.JwtLoginFilter;
 import be.wouterversyck.shoppinglistapi.security.filters.JwtAuthenticationFilter;
 import be.wouterversyck.shoppinglistapi.security.handlers.JwtAuthenticationFailureHandler;
+import be.wouterversyck.shoppinglistapi.users.persistence.RolesDao;
+import be.wouterversyck.shoppinglistapi.users.persistence.UserDao;
 import be.wouterversyck.shoppinglistapi.users.services.UserService;
 import be.wouterversyck.shoppinglistapi.security.utils.JwtService;
 import be.wouterversyck.shoppinglistapi.security.services.SecurityUserService;
@@ -26,14 +28,17 @@ import org.springframework.web.filter.OncePerRequestFilter;
 @EnableConfigurationProperties(SecurityProperties.class)
 public class JwtSecurityConfiguration extends WebSecurityConfigurerAdapter {
 
-    private final UserService userService;
+    private final UserDao userDao;
+    private final RolesDao rolesDao;
     private final String jwtSecretKey;
     private final SecurityProperties properties;
 
-    public JwtSecurityConfiguration(final UserService userService,
+    public JwtSecurityConfiguration(final UserDao userDao,
+                                    final RolesDao rolesDao,
                                     @Value("${JWT_SECRET}") final String jwtSecretKey,
                                     final SecurityProperties properties) {
-        this.userService = userService;
+        this.userDao = userDao;
+        this.rolesDao = rolesDao;
         this.jwtSecretKey = jwtSecretKey;
         this.properties = properties;
     }
@@ -80,11 +85,16 @@ public class JwtSecurityConfiguration extends WebSecurityConfigurerAdapter {
         return new BCryptPasswordEncoder();
     }
 
+    @Bean
+    public UserService userService() {
+        return new UserService(userDao, rolesDao, passwordEncoder());
+    }
+
     /*
         Will be picked up by spring boot security auto config
      */
     @Bean
     public UserDetailsService getSecurityUserService() {
-        return new SecurityUserService(userService);
+        return new SecurityUserService(userService());
     }
 }

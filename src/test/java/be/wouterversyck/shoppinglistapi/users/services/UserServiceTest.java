@@ -9,15 +9,16 @@ import be.wouterversyck.shoppinglistapi.users.persistence.RolesDao;
 import be.wouterversyck.shoppinglistapi.users.persistence.UserDao;
 import be.wouterversyck.shoppinglistapi.users.testmodels.DangerUserImpl;
 import be.wouterversyck.shoppinglistapi.users.testmodels.SecureUserImpl;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import java.util.Collections;
 import java.util.List;
@@ -42,8 +43,12 @@ class UserServiceTest {
     @Mock
     private RolesDao rolesDao;
 
-    @InjectMocks
     private UserService userService;
+
+    @BeforeEach
+    void setup() {
+        userService = new UserService(userDao, rolesDao, new BCryptPasswordEncoder());
+    }
 
     @Test
     void shouldReturnUser_WhenUsernameIsPassed() throws UserNotFoundException {
@@ -101,7 +106,7 @@ class UserServiceTest {
 
         userService.addUser(user);
 
-        assertThat(user.getPassword()).isNotBlank().hasSize(8);
+        assertThat(user.getPassword()).isNotBlank().hasSize(60);
         verify(userDao).save(user);
     }
 

@@ -11,18 +11,19 @@ import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.stereotype.Service;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.List;
 
-@Service
 public class UserService {
     private UserDao userDao;
     private RolesDao rolesDao;
+    private PasswordEncoder passwordEncoder;
 
-    public UserService(final UserDao userDao, final RolesDao rolesDao) {
+    public UserService(final UserDao userDao, final RolesDao rolesDao, final PasswordEncoder passwordEncoder) {
         this.userDao = userDao;
         this.rolesDao = rolesDao;
+        this.passwordEncoder = passwordEncoder;
     }
 
     // only for internal use
@@ -51,6 +52,7 @@ public class UserService {
     }
 
     private String generateRandomPassword() {
-        return RandomStringUtils.randomAlphanumeric(8);
+        final var string = RandomStringUtils.randomAlphanumeric(8);
+        return passwordEncoder.encode(string);
     }
 }
