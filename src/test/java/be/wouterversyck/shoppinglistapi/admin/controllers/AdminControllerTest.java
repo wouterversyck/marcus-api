@@ -1,6 +1,8 @@
 package be.wouterversyck.shoppinglistapi.admin.controllers;
 
+import be.wouterversyck.shoppinglistapi.users.models.RoleEntity;
 import be.wouterversyck.shoppinglistapi.users.models.SecureUserView;
+import be.wouterversyck.shoppinglistapi.users.models.User;
 import be.wouterversyck.shoppinglistapi.users.services.UserService;
 import be.wouterversyck.shoppinglistapi.users.testmodels.SecureUserImpl;
 import org.junit.jupiter.api.Test;
@@ -12,9 +14,11 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 
+import java.util.Collections;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -22,6 +26,7 @@ class AdminControllerTest {
 
     private static final String USERNAME_1 = "USERNAME_1";
     private static final String USERNAME_2 = "USERNAME_2";
+    private static final String ROLE_NAME = "USER";
 
     @Mock
     private UserService userService;
@@ -41,6 +46,30 @@ class AdminControllerTest {
         assertThat(result.getContent())
                 .extracting("username")
                 .contains(USERNAME_1, USERNAME_2);
+    }
+
+    @Test
+    void shouldDelegateToUserService_WhenUserIsAdded() {
+        var user = new User();
+        user.setUsername(USERNAME_1);
+
+        adminController.addUser(user);
+
+        verify(userService).addUser(user);
+    }
+
+    @Test
+    void shouldReturnRoles_WhenGetRolesRequestIsMade() {
+        var role = new RoleEntity();
+        role.setName(ROLE_NAME);
+
+        when(userService.getRoles()).thenReturn(Collections.singletonList(role));
+
+        var roles = adminController.getRoles();
+
+        assertThat(roles.size()).isEqualTo(1);
+        assertThat(roles).extracting("name")
+                .contains(ROLE_NAME);
     }
 
     private Page<SecureUserView> createUserPage() {
