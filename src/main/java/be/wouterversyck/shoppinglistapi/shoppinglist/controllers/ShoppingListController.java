@@ -1,7 +1,7 @@
 package be.wouterversyck.shoppinglistapi.shoppinglist.controllers;
 
 import be.wouterversyck.shoppinglistapi.security.models.JwtUserPrincipal;
-import be.wouterversyck.shoppinglistapi.shoppinglist.ShoppingListNotFoundException;
+import be.wouterversyck.shoppinglistapi.shoppinglist.exceptions.ShoppingListNotFoundException;
 import be.wouterversyck.shoppinglistapi.shoppinglist.models.ShoppingListView;
 import be.wouterversyck.shoppinglistapi.shoppinglist.services.ShoppingListService;
 import lombok.extern.slf4j.Slf4j;

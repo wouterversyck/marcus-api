@@ -50,6 +50,10 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-cache</artifactId>
         </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-mail</artifactId>
+        </dependency>
 
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -89,7 +93,6 @@
             <version>${jjwt.version}</version>
             <scope>runtime</scope>
         </dependency>
-
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-text</artifactId>
@@ -229,7 +232,7 @@
                         <configuration>
                             <forkCount>1</forkCount>
                             <reuseForks>true</reuseForks>
-                            <argLine>@{argLine} -Dspring.profiles.active=loc -DJWT_SECRET=ddddddddddddddddddddddddddddddddddddddfffffffffffffffffffffffffffffffffffffffffffffffeeeeeeeeeeeeeeeeeeeeeeeeeee</argLine>
+                            <argLine>@{argLine} -Dspring.profiles.active=loc -DMAIL_PWD=NOMAILINTESTS -DMAIL_USER=NOMAIL@gmail.com -DJWT_SECRET=ddddddddddddddddddddddddddddddddddddddfffffffffffffffffffffffffffffffffffffffffffffffeeeeeeeeeeeeeeeeeeeeeeeeeee</argLine>
                         </configuration>
                     </plugin>
                 </plugins>

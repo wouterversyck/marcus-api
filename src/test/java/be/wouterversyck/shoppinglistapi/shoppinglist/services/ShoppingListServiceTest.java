@@ -1,6 +1,6 @@
 package be.wouterversyck.shoppinglistapi.shoppinglist.services;
 
-import be.wouterversyck.shoppinglistapi.shoppinglist.ShoppingListNotFoundException;
+import be.wouterversyck.shoppinglistapi.shoppinglist.exceptions.ShoppingListNotFoundException;
 import be.wouterversyck.shoppinglistapi.shoppinglist.daos.ShoppingListDao;
 import be.wouterversyck.shoppinglistapi.shoppinglist.models.ShoppingListView;
 import be.wouterversyck.shoppinglistapi.shoppinglist.testmodels.ShoppingListImpl;

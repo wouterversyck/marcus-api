@@ -1,5 +1,6 @@
 package be.wouterversyck.shoppinglistapi.users.services;
 
+import be.wouterversyck.shoppinglistapi.mail.services.MailService;
 import be.wouterversyck.shoppinglistapi.users.exceptions.UserNotFoundException;
 import be.wouterversyck.shoppinglistapi.users.models.DangerUserView;
 import be.wouterversyck.shoppinglistapi.users.models.RoleEntity;
@@ -20,19 +21,20 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
+import javax.mail.MessagingException;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class UserServiceTest {
 
     private static final String USERNAME = "USERNAME";
+    private static final String EMAIL = "EMAIL";
     private static final String NOT_KNOWN = "NOT_KNOWN";
     private static final String USERNAME_2 = "USERNAME_2";
     private static final String PASSWORD = "PASSWORD";
@@ -42,12 +44,14 @@ class UserServiceTest {
     private UserDao userDao;
     @Mock
     private RolesDao rolesDao;
+    @Mock
+    private MailService mailService;
 
     private UserService userService;
 
     @BeforeEach
     void setup() {
-        userService = new UserService(userDao, rolesDao, new BCryptPasswordEncoder());
+        userService = new UserService(userDao, rolesDao, new BCryptPasswordEncoder(), mailService);
     }
 
     @Test
@@ -100,13 +104,27 @@ class UserServiceTest {
     }
 
     @Test
-    void shouldSetPasswordAndDelegateToDao_WhenUserIsAdded() {
+    void shouldSendMailAndDelegateToDao_WhenUserIsAdded() throws MessagingException {
         var user = new User();
         user.setUsername(USERNAME);
+        user.setEmail(EMAIL);
 
         userService.addUser(user);
 
-        assertThat(user.getPassword()).isNotBlank().hasSize(60);
+        verify(mailService).sendPasswordSetMail(EMAIL);
+        verify(userDao).save(user);
+    }
+
+    @Test
+    void shouldStillAddUser_WhenMailErrorOccurs() throws MessagingException {
+        var user = new User();
+        user.setId(1);
+        user.setEmail(EMAIL);
+
+        doThrow(new MessagingException()).when(mailService).sendPasswordSetMail(EMAIL);
+
+        assertThrows(MessagingException.class, () -> userService.addUser(user));
+
         verify(userDao).save(user);
     }
 
@@ -122,6 +140,27 @@ class UserServiceTest {
         assertThat(roles.size()).isEqualTo(1);
         assertThat(roles).extracting("name")
                 .contains(ROLE_NAME);
+    }
+
+    @Test
+    void shouldSendPasswordSetMail_WhenMethodIsCalled() throws MessagingException, UserNotFoundException {
+        var user = new User();
+        user.setId(1);
+        user.setEmail(EMAIL);
+        when(userDao.findById(1L)).thenReturn(Optional.of(user));
+
+        userService.sendPasswordSetMailForUser(1L);
+
+        verify(mailService).sendPasswordSetMail(EMAIL);
+    }
+
+    @Test
+    void shouldNotSendPasswordSetMail_WhenUserIsNotFound() {
+        when(userDao.findById(1L)).thenReturn(Optional.empty());
+
+        assertThrows(UserNotFoundException.class, () -> userService.sendPasswordSetMailForUser(1L));
+
+        verifyNoInteractions(mailService);
     }
 
     private Optional<SecureUserView> createSecureUser() {

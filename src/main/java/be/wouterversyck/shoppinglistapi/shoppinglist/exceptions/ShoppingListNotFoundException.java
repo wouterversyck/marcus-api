@@ -1,4 +1,4 @@
-package be.wouterversyck.shoppinglistapi.shoppinglist;
+package be.wouterversyck.shoppinglistapi.shoppinglist.exceptions;
 
 import static java.lang.String.format;
 

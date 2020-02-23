@@ -1,5 +1,6 @@
 package be.wouterversyck.shoppinglistapi.admin.controllers;
 
+import be.wouterversyck.shoppinglistapi.users.exceptions.UserNotFoundException;
 import be.wouterversyck.shoppinglistapi.users.models.RoleEntity;
 import be.wouterversyck.shoppinglistapi.users.models.SecureUserView;
 import be.wouterversyck.shoppinglistapi.users.models.User;
@@ -14,6 +15,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 
+import javax.mail.MessagingException;
 import java.util.Collections;
 import java.util.List;
 
@@ -49,7 +51,7 @@ class AdminControllerTest {
     }
 
     @Test
-    void shouldDelegateToUserService_WhenUserIsAdded() {
+    void shouldDelegateToUserService_WhenUserIsAdded() throws MessagingException {
         var user = new User();
         user.setUsername(USERNAME_1);
 
@@ -70,6 +72,13 @@ class AdminControllerTest {
         assertThat(roles.size()).isEqualTo(1);
         assertThat(roles).extracting("name")
                 .contains(ROLE_NAME);
+    }
+
+    @Test
+    void shouldDelegateToService_WhenPasswordSetMailRequestIsMade() throws MessagingException, UserNotFoundException {
+        adminController.sendPasswordSetMail(1);
+
+        verify(userService).sendPasswordSetMailForUser(1);
     }
 
     private Page<SecureUserView> createUserPage() {

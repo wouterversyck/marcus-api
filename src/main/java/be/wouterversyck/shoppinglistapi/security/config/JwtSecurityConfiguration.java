@@ -3,11 +3,7 @@ package be.wouterversyck.shoppinglistapi.security.config;
 import be.wouterversyck.shoppinglistapi.security.filters.JwtLoginFilter;
 import be.wouterversyck.shoppinglistapi.security.filters.JwtAuthenticationFilter;
 import be.wouterversyck.shoppinglistapi.security.handlers.JwtAuthenticationFailureHandler;
-import be.wouterversyck.shoppinglistapi.users.persistence.RolesDao;
-import be.wouterversyck.shoppinglistapi.users.persistence.UserDao;
-import be.wouterversyck.shoppinglistapi.users.services.UserService;
 import be.wouterversyck.shoppinglistapi.security.utils.JwtService;
-import be.wouterversyck.shoppinglistapi.security.services.SecurityUserService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
@@ -16,7 +12,6 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
@@ -28,17 +23,11 @@ import org.springframework.web.filter.OncePerRequestFilter;
 @EnableConfigurationProperties(SecurityProperties.class)
 public class JwtSecurityConfiguration extends WebSecurityConfigurerAdapter {
 
-    private final UserDao userDao;
-    private final RolesDao rolesDao;
     private final String jwtSecretKey;
     private final SecurityProperties properties;
 
-    public JwtSecurityConfiguration(final UserDao userDao,
-                                    final RolesDao rolesDao,
-                                    @Value("${JWT_SECRET}") final String jwtSecretKey,
+    public JwtSecurityConfiguration(@Value("${JWT_SECRET}") final String jwtSecretKey,
                                     final SecurityProperties properties) {
-        this.userDao = userDao;
-        this.rolesDao = rolesDao;
         this.jwtSecretKey = jwtSecretKey;
         this.properties = properties;
     }
@@ -83,18 +72,5 @@ public class JwtSecurityConfiguration extends WebSecurityConfigurerAdapter {
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
-    }
-
-    @Bean
-    public UserService userService() {
-        return new UserService(userDao, rolesDao, passwordEncoder());
-    }
-
-    /*
-        Will be picked up by spring boot security auto config
-     */
-    @Bean
-    public UserDetailsService getSecurityUserService() {
-        return new SecurityUserService(userService());
     }
 }
