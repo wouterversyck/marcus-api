@@ -1,6 +1,5 @@
 package be.wouterversyck.shoppinglistapi.admin.controllers;
 
-import be.wouterversyck.shoppinglistapi.shoppinglist.exceptions.ShoppingListNotFoundException;
 import be.wouterversyck.shoppinglistapi.users.exceptions.UserNotFoundException;
 import be.wouterversyck.shoppinglistapi.users.models.RoleEntity;
 import be.wouterversyck.shoppinglistapi.users.models.SecureUserView;
@@ -57,9 +56,9 @@ public class AdminController {
 
     @GetMapping("users/exists")
     public boolean doesUsernameExist(
-            @RequestParam(name = "username", required = false) String username,
-            @RequestParam(name = "email", required = false) String email) {
-        if(username != null) {
+            @RequestParam(name = "username", required = false) final String username,
+            @RequestParam(name = "email", required = false) final String email) {
+        if (username != null) {
             return userService.userExistsByUsername(username);
         }
         return userService.userExistsByEmail(email);

@@ -63,7 +63,7 @@ public class UserService {
     }
 
     public boolean userExistsByUsername(final String username) {
-        var user = new User();
+        final var user = new User();
         user.setUsername(username);
         return userDao.exists(
                 Example.of(
@@ -74,7 +74,7 @@ public class UserService {
     }
 
     public boolean userExistsByEmail(final String email) {
-        var user = new User();
+        final var user = new User();
         user.setEmail(email);
         return userDao.exists(
                 Example.of(

@@ -165,6 +165,7 @@
                                 <exclude>**/*Exception.class</exclude>
                                 <exclude>**/*Configuration.class</exclude>
                                 <exclude>**/*Properties.class</exclude>
+                                <exclude>be/wouterversyck/shoppinglistapi/users/persistence/RoleConverter.class</exclude>
                                 <exclude>**/models/**</exclude>
                             </excludes>
                             <rules>

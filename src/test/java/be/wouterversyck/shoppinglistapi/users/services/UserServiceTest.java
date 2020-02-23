@@ -15,6 +15,8 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.Example;
+import org.springframework.data.domain.ExampleMatcher;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
@@ -29,6 +31,7 @@ import java.util.Optional;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
+import static org.springframework.data.domain.ExampleMatcher.GenericPropertyMatchers.ignoreCase;
 
 @ExtendWith(MockitoExtension.class)
 class UserServiceTest {
@@ -161,6 +164,36 @@ class UserServiceTest {
         assertThrows(UserNotFoundException.class, () -> userService.sendPasswordSetMailForUser(1L));
 
         verifyNoInteractions(mailService);
+    }
+
+    @Test
+    void shouldReturnTrue_WhenUserNameExists() {
+        var user = new User();
+        user.setUsername(USERNAME);
+        var example = Example.of(user,
+                ExampleMatcher.matching()
+                        .withIgnorePaths("id")
+                        .withMatcher("username", ignoreCase()));
+        when(userDao.exists(example)).thenReturn(true);
+
+        var result = userService.userExistsByUsername(USERNAME);
+
+        assertThat(result).isTrue();
+    }
+
+    @Test
+    void shouldReturnTrue_WhenEmailExists() {
+        var user = new User();
+        user.setEmail(EMAIL);
+        var example = Example.of(user,
+                ExampleMatcher.matching()
+                        .withIgnorePaths("id")
+                        .withMatcher("email", ignoreCase()));
+        when(userDao.exists(example)).thenReturn(true);
+
+        var result = userService.userExistsByEmail(EMAIL);
+
+        assertThat(result).isTrue();
     }
 
     private Optional<SecureUserView> createSecureUser() {
