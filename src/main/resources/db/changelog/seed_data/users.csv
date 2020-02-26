@@ -1,3 +1,13 @@
 id;username;email;password;role_id
 1;user;wouter.versyck@gmail.com;$2a$10$rjeK.XnrvzJ5hirzDFCAp.JkOg2Hp812SHqy8byB1A1KG4Li9Vm0S;2
 2;admin;wouter.versyck2@gmail.com;$2a$10$lJ0pTGBpHghlKpdIarje1OpZhBuMn0P1jPCg5QZ7JNtu2NH5kjUOm;1
+3;bert;bert@woopsel.be;$2a$10$rjeK.XnrvzJ5hirzDFCAp.JkOg2Hp812SHqy8byB1A1KG4Li9Vm0S;2
+4;frank;frank@woopsel.be;$2a$10$lJ0pTGBpHghlKpdIarje1OpZhBuMn0P1jPCg5QZ7JNtu2NH5kjUOm;1
+5;guy;guy@woopsel.be;$2a$10$rjeK.XnrvzJ5hirzDFCAp.JkOg2Hp812SHqy8byB1A1KG4Li9Vm0S;2
+6;tom;tom@woopsel.be;$2a$10$lJ0pTGBpHghlKpdIarje1OpZhBuMn0P1jPCg5QZ7JNtu2NH5kjUOm;1
+7;jan;jan@woopsel.be;$2a$10$rjeK.XnrvzJ5hirzDFCAp.JkOg2Hp812SHqy8byB1A1KG4Li9Vm0S;2
+8;koen;koen@woopsel.be;$2a$10$lJ0pTGBpHghlKpdIarje1OpZhBuMn0P1jPCg5QZ7JNtu2NH5kjUOm;1
+9;gabriel;gabriel@woopsel.be;$2a$10$rjeK.XnrvzJ5hirzDFCAp.JkOg2Hp812SHqy8byB1A1KG4Li9Vm0S;2
+10;luc;luc@woopsel.be;$2a$10$lJ0pTGBpHghlKpdIarje1OpZhBuMn0P1jPCg5QZ7JNtu2NH5kjUOm;1
+11;sam;sam@woopsel.be;$2a$10$rjeK.XnrvzJ5hirzDFCAp.JkOg2Hp812SHqy8byB1A1KG4Li9Vm0S;2
+12;kenny;kenny@woopsel.be;$2a$10$lJ0pTGBpHghlKpdIarje1OpZhBuMn0P1jPCg5QZ7JNtu2NH5kjUOm;1

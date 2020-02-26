@@ -31,7 +31,8 @@ class JwtServiceTest {
         properties.setTokenType("JWT");
         properties.setTokenIssuer("");
         properties.setTokenAudience("");
-        jwtService = new JwtService(JWT_SECRET_KEY, properties);
+        properties.setSecretKey(JWT_SECRET_KEY);
+        jwtService = new JwtService(properties);
     }
 
     private static final String USERNAME = "USERNAME";

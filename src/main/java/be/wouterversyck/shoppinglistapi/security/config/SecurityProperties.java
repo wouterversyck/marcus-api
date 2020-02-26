@@ -9,6 +9,8 @@ public class SecurityProperties {
 
     private String authLoginUrl;
 
+    private String secretKey;
+
     // JWT token defaults
     private String tokenHeader;
     private String responseTokenHeader;

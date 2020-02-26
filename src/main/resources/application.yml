@@ -15,6 +15,7 @@ server:
     include-stacktrace: on_trace_param
 
 jwt:
+  secret-key: ${JWT_SECRET}
   auth-login-url: /login
   token-header: Authorization
   response-token-header: x-token
@@ -26,6 +27,14 @@ jwt:
   expiration: 43200000
 
 mdc:
-  correlationIdHeaderKey: x-correlation-id
-  userMdcKey: user
-  correlationIdMdcKey: correlationId
+  correlation-id-header-key: x-correlation-id
+  user-mdc-key: user
+  correlation-id-mdc-key: correlationId
+
+mail:
+  smtp-username: ${MAIL_USER}
+  smtp-password: ${MAIL_PWD}
+  smtp-host: smtp.gmail.com
+  smtp-port: 587
+  smtp-auth: true
+  smtp-start-ttls: true

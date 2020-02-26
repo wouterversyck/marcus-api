@@ -1,6 +1,7 @@
 package be.wouterversyck.shoppinglistapi.mail.config;
 
-import org.springframework.beans.factory.annotation.Value;
+import lombok.AllArgsConstructor;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -9,30 +10,24 @@ import org.springframework.mail.javamail.JavaMailSenderImpl;
 import java.util.Properties;
 
 @Configuration
+@AllArgsConstructor
+@EnableConfigurationProperties(ApplicationMailProperties.class)
 public class MailConfiguration {
-    private final String mailPassword;
-    private final String mailUser;
-
-    public MailConfiguration(
-            @Value("${MAIL_PWD}") final String mailPassword,
-            @Value("${MAIL_USER}") final String mailUser) {
-        this.mailPassword = mailPassword;
-        this.mailUser = mailUser;
-    }
+    private ApplicationMailProperties mailProperties;
 
     @Bean
     public JavaMailSender getJavaMailSender() {
         final JavaMailSenderImpl mailSender = new JavaMailSenderImpl();
-        mailSender.setHost("smtp.gmail.com");
-        mailSender.setPort(587);
+        mailSender.setHost(mailProperties.getSmtpHost());
+        mailSender.setPort(mailProperties.getSmtpPort());
 
-        mailSender.setUsername(mailUser);
-        mailSender.setPassword(mailPassword);
+        mailSender.setUsername(mailProperties.getSmtpUsername());
+        mailSender.setPassword(mailProperties.getSmtpPassword());
 
         final Properties props = mailSender.getJavaMailProperties();
         props.put("mail.transport.protocol", "smtp");
-        props.put("mail.smtp.auth", "true");
-        props.put("mail.smtp.starttls.enable", "true");
+        props.put("mail.smtp.auth", String.valueOf(mailProperties.isSmtpAuth()));
+        props.put("mail.smtp.starttls.enable", String.valueOf(mailProperties.isSmtpStartTtls()));
 
         return mailSender;
     }

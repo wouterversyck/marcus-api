@@ -9,13 +9,8 @@ public class SecureUserImpl implements SecureUserView {
 
     private long id;
     private String username;
+    private String email;
     private Role role;
-
-    public SecureUserImpl(long id, String username, Role role) {
-        this.role = role;
-        this.id = id;
-        this.username = username;
-    }
 
     @Override
     public long getId() {
@@ -30,5 +25,10 @@ public class SecureUserImpl implements SecureUserView {
     @Override
     public Role getRole() {
         return role;
+    }
+
+    @Override
+    public String getEmail() {
+        return email;
     }
 }

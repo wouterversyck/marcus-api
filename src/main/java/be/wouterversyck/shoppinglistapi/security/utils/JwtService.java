@@ -9,6 +9,7 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.MalformedJwtException;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
@@ -25,19 +26,13 @@ import static java.lang.String.format;
 import static java.time.temporal.ChronoUnit.MILLIS;
 
 @Slf4j
+@AllArgsConstructor
 public class JwtService {
 
-    // provide key through jvm property (-DJWT_SECRET=<key>)
-    private final String jwtSecretKey;
     private final SecurityProperties properties;
 
-    public JwtService(final String jwtSecretKey, final SecurityProperties properties) {
-        this.jwtSecretKey = jwtSecretKey;
-        this.properties = properties;
-    }
-
     public String generateToken(final Authentication authentication) {
-        final var signingKey = jwtSecretKey.getBytes();
+        final var signingKey = properties.getSecretKey().getBytes();
 
         final var user = (JwtUserDetails) authentication.getPrincipal();
 
@@ -70,7 +65,7 @@ public class JwtService {
             throw new MalformedJwtException(format("Token must start with %s", properties.getTokenPrefix()));
         }
 
-        final var signingKey = jwtSecretKey.getBytes();
+        final var signingKey = properties.getSecretKey().getBytes();
 
         final var parsedToken = Jwts.parserBuilder()
                 .setSigningKey(signingKey)

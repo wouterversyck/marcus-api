@@ -4,7 +4,7 @@ import be.wouterversyck.shoppinglistapi.security.filters.JwtLoginFilter;
 import be.wouterversyck.shoppinglistapi.security.filters.JwtAuthenticationFilter;
 import be.wouterversyck.shoppinglistapi.security.handlers.JwtAuthenticationFailureHandler;
 import be.wouterversyck.shoppinglistapi.security.utils.JwtService;
-import org.springframework.beans.factory.annotation.Value;
+import lombok.AllArgsConstructor;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
@@ -20,17 +20,10 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(prePostEnabled = true)
+@AllArgsConstructor
 @EnableConfigurationProperties(SecurityProperties.class)
 public class JwtSecurityConfiguration extends WebSecurityConfigurerAdapter {
-
-    private final String jwtSecretKey;
     private final SecurityProperties properties;
-
-    public JwtSecurityConfiguration(@Value("${JWT_SECRET}") final String jwtSecretKey,
-                                    final SecurityProperties properties) {
-        this.jwtSecretKey = jwtSecretKey;
-        this.properties = properties;
-    }
 
     @Override
     protected void configure(final HttpSecurity http) throws Exception {
@@ -63,7 +56,7 @@ public class JwtSecurityConfiguration extends WebSecurityConfigurerAdapter {
 
     @Bean
     public JwtService getJwtService() {
-        return new JwtService(jwtSecretKey, properties);
+        return new JwtService(properties);
     }
 
     /*
