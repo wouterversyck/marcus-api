@@ -37,11 +37,10 @@ class AdminControllerIT extends AbstractIT {
                 .perform(
                         getWithToken("/admin/users", token))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.content.length()", is(2)))
                 .andExpect(jsonPath("$.content[0].username", is("admin")))
                 .andExpect(jsonPath("$.content[0].role", is("ADMIN")))
                 .andExpect(jsonPath("$.content[0].password").doesNotExist())
-                .andExpect(jsonPath("$.content[1].username", is("user")))
+                .andExpect(jsonPath("$.content[1].username", is("bert")))
                 .andExpect(jsonPath("$.content[1].role", is("USER")))
                 .andExpect(jsonPath("$.content[1].password").doesNotExist());
     }
@@ -67,7 +66,6 @@ class AdminControllerIT extends AbstractIT {
                 .perform(
                         getWithToken("/admin/users?sort=id,asc", token))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.content.length()", is(2)))
                 .andExpect(jsonPath("$.content[0].username", is("user")))
                 .andExpect(jsonPath("$.content[1].username", is("admin")));
     }
@@ -80,8 +78,7 @@ class AdminControllerIT extends AbstractIT {
                 .perform(
                         getWithToken("/admin/users?sort=username,desc", token))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.content.length()", is(2)))
                 .andExpect(jsonPath("$.content[0].username", is("user")))
-                .andExpect(jsonPath("$.content[1].username", is("admin")));
+                .andExpect(jsonPath("$.content[1].username", is("tom")));
     }
 }
