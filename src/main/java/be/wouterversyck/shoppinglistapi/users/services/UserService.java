@@ -8,13 +8,12 @@ import be.wouterversyck.shoppinglistapi.users.models.DangerUserView;
 import be.wouterversyck.shoppinglistapi.users.models.User;
 import be.wouterversyck.shoppinglistapi.users.persistence.RolesDao;
 import be.wouterversyck.shoppinglistapi.users.persistence.UserDao;
-import org.apache.commons.lang3.RandomStringUtils;
+import lombok.AllArgsConstructor;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.ExampleMatcher;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import javax.mail.MessagingException;
@@ -23,19 +22,11 @@ import java.util.List;
 import static org.springframework.data.domain.ExampleMatcher.GenericPropertyMatchers.ignoreCase;
 
 @Service
+@AllArgsConstructor
 public class UserService {
     private UserDao userDao;
     private RolesDao rolesDao;
-    private PasswordEncoder passwordEncoder;
     private MailService mailService;
-
-    public UserService(final UserDao userDao, final RolesDao rolesDao,
-                       final PasswordEncoder passwordEncoder, final MailService mailService) {
-        this.userDao = userDao;
-        this.rolesDao = rolesDao;
-        this.passwordEncoder = passwordEncoder;
-        this.mailService = mailService;
-    }
 
     // only for internal use
     public DangerUserView getSecurityUserByUsername(final String username) throws UserNotFoundException {
@@ -87,10 +78,5 @@ public class UserService {
     public void sendPasswordSetMailForUser(final long id) throws MessagingException, UserNotFoundException {
         final var user = userDao.findById(id).orElseThrow(() -> new UserNotFoundException(id));
         mailService.sendPasswordSetMail(user.getEmail());
-    }
-
-    private String generateRandomPassword() {
-        final var string = RandomStringUtils.randomAlphanumeric(8);
-        return passwordEncoder.encode(string);
     }
 }

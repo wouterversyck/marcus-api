@@ -54,7 +54,7 @@ class UserServiceTest {
 
     @BeforeEach
     void setup() {
-        userService = new UserService(userDao, rolesDao, new BCryptPasswordEncoder(), mailService);
+        userService = new UserService(userDao, rolesDao, mailService);
     }
 
     @Test
