@@ -1,5 +1,6 @@
 package be.wouterversyck.shoppinglistapi.security.services;
 
+import be.wouterversyck.shoppinglistapi.security.models.JwtUserDetails;
 import be.wouterversyck.shoppinglistapi.security.models.JwtUserPrincipal;
 import be.wouterversyck.shoppinglistapi.security.utils.JwtService;
 import be.wouterversyck.shoppinglistapi.security.config.SecurityProperties;
@@ -7,12 +8,17 @@ import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
+import java.time.temporal.ChronoUnit;
 import java.util.Calendar;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 
 import static java.lang.String.format;
+import static java.time.Instant.now;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
@@ -31,12 +37,14 @@ class JwtServiceTest {
         properties.setTokenType("JWT");
         properties.setTokenIssuer("");
         properties.setTokenAudience("");
+        properties.setExpiration(43200000);
         properties.setSecretKey(JWT_SECRET_KEY);
         jwtService = new JwtService(properties);
     }
 
     private static final String USERNAME = "USERNAME";
     private static final String USER_ID = "1";
+    private static final String USER_ROLE = "USER";
 
     @Test
     void shouldThrowMalformedJwtException_WhenInvalidTokenIsProvided() {
@@ -64,7 +72,7 @@ class JwtServiceTest {
     void shouldCreateCorrectPrincipal_WhenTokenStringIsPassed() {
         String token = generateValidToken();
 
-        var principal = (JwtUserPrincipal)jwtService.parseToken(token);
+        var principal = (JwtUserPrincipal) jwtService.parseToken(token);
 
         assertThat(principal.getName()).isEqualTo(USERNAME);
         assertThat(principal.getId()).isEqualTo(Long.parseLong(USER_ID));
@@ -72,14 +80,24 @@ class JwtServiceTest {
 
     @Test
     void shouldGenerateCorrectTokenString_WhenUserIsPassed() {
-        String token = generateRawToken();
+        var roles = Collections.singletonList(new SimpleGrantedAuthority(USER_ROLE));
+        var authentication = new UsernamePasswordAuthenticationToken(
+                new JwtUserDetails(
+                        Long.parseLong(USER_ID),
+                        USERNAME,
+                        "pass",
+                        roles), null, roles);
 
-        var parsedToken = Jwts.parser()
-                .setSigningKey(JWT_SECRET_KEY.getBytes())
-                .parseClaimsJws(token);
+        var rawToken = jwtService.generateToken(authentication);
+        var parsedToken = parseToken(rawToken);
 
+        assertThat(parsedToken.getBody().getExpiration())
+                .isInSameMinuteAs(Date.from(now().plus(properties.getExpiration(), ChronoUnit.MILLIS)));
         assertThat(parsedToken.getBody().get("username")).isEqualTo(USERNAME);
         assertThat(parsedToken.getBody().getSubject()).isEqualTo(USER_ID);
+        assertThat((Collection<String>) parsedToken.getBody().get("roles")).contains(USER_ROLE);
+        assertThat(parsedToken.getBody().getId()).isNotBlank().hasSize(36);
+        assertThat(parsedToken.getSignature()).isNotBlank().hasSize(86);
     }
 
     private String generateRawToken() {
@@ -111,5 +129,12 @@ class JwtServiceTest {
                 .setExpiration(expirationDate)
                 .claim("roles", Collections.emptyList())
                 .compact();
+    }
+
+    private Jws<Claims> parseToken(String token) {
+        return Jwts.parserBuilder()
+                .setSigningKey(JWT_SECRET_KEY.getBytes())
+                .build()
+                .parseClaimsJws(token);
     }
 }
