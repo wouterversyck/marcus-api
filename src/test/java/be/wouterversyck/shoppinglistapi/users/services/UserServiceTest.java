@@ -3,6 +3,7 @@ package be.wouterversyck.shoppinglistapi.users.services;
 import be.wouterversyck.shoppinglistapi.mail.services.MailService;
 import be.wouterversyck.shoppinglistapi.users.exceptions.UserNotFoundException;
 import be.wouterversyck.shoppinglistapi.users.models.DangerUserView;
+import be.wouterversyck.shoppinglistapi.users.models.Role;
 import be.wouterversyck.shoppinglistapi.users.models.RoleEntity;
 import be.wouterversyck.shoppinglistapi.users.models.SecureUserView;
 import be.wouterversyck.shoppinglistapi.users.models.User;
@@ -21,7 +22,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import javax.mail.MessagingException;
 import java.util.Collections;
@@ -107,28 +107,18 @@ class UserServiceTest {
     }
 
     @Test
-    void shouldSendMailAndDelegateToDao_WhenUserIsAdded() throws MessagingException {
-        var user = new User();
-        user.setUsername(USERNAME);
-        user.setEmail(EMAIL);
+    void shouldReturnProperResult_WhenUserIsAdded() {
+        var user = createUser();
+        when(userDao.save(user)).thenReturn(user);
 
-        userService.addUser(user);
-
-        verify(mailService).sendPasswordSetMail(EMAIL);
-        verify(userDao).save(user);
-    }
-
-    @Test
-    void shouldStillAddUser_WhenMailErrorOccurs() throws MessagingException {
-        var user = new User();
-        user.setId(1);
-        user.setEmail(EMAIL);
-
-        doThrow(new MessagingException()).when(mailService).sendPasswordSetMail(EMAIL);
-
-        assertThrows(MessagingException.class, () -> userService.addUser(user));
+        var result = userService.addUser(user);
 
         verify(userDao).save(user);
+
+        assertThat(result.getUsername()).isEqualTo(USERNAME);
+        assertThat(result.getEmail()).isEqualTo(EMAIL);
+        assertThat(result.getId()).isEqualTo(1);
+        assertThat(result.getRole()).isEqualTo(Role.USER);
     }
 
     @Test
@@ -215,5 +205,16 @@ class UserServiceTest {
                 .username(USERNAME)
                 .password(PASSWORD)
                 .build());
+    }
+
+    private User createUser() {
+        var user = new User();
+        user.setUsername(USERNAME);
+        user.setEmail(EMAIL);
+        user.setId(1);
+        user.setRole(Role.USER);
+        user.setPassword(PASSWORD);
+
+        return user;
     }
 }

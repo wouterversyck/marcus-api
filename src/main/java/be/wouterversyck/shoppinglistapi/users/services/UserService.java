@@ -5,6 +5,7 @@ import be.wouterversyck.shoppinglistapi.users.exceptions.UserNotFoundException;
 import be.wouterversyck.shoppinglistapi.users.models.RoleEntity;
 import be.wouterversyck.shoppinglistapi.users.models.SecureUserView;
 import be.wouterversyck.shoppinglistapi.users.models.DangerUserView;
+import be.wouterversyck.shoppinglistapi.users.models.SecureUserViewImpl;
 import be.wouterversyck.shoppinglistapi.users.models.User;
 import be.wouterversyck.shoppinglistapi.users.persistence.RolesDao;
 import be.wouterversyck.shoppinglistapi.users.persistence.UserDao;
@@ -43,9 +44,15 @@ public class UserService {
         return userDao.findAllProjectedBy(page, SecureUserView.class);
     }
 
-    public void addUser(final User user) throws MessagingException {
-        userDao.save(user);
-        mailService.sendPasswordSetMail(user.getEmail());
+    public SecureUserView addUser(final User user) {
+        final var userResult = userDao.save(user);
+
+        return SecureUserViewImpl.builder()
+                .email(userResult.getEmail())
+                .id(userResult.getId())
+                .role(userResult.getRole())
+                .username(userResult.getUsername())
+                .build();
     }
 
     @Cacheable(value = "be.wouterversyck.shoppinglistapi.users.role")

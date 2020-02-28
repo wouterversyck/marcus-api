@@ -14,12 +14,14 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.http.HttpStatus;
 
 import javax.mail.MessagingException;
 import java.util.Collections;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -51,13 +53,40 @@ class AdminControllerTest {
     }
 
     @Test
-    void shouldDelegateToUserService_WhenUserIsAdded() throws MessagingException {
+    void shouldDelegateToUserServiceAndReturnProperResponse_WhenUserIsAdded() throws UserNotFoundException, MessagingException {
         var user = new User();
         user.setUsername(USERNAME_1);
+        when(userService.addUser(user)).thenReturn(
+                SecureUserImpl.builder()
+                        .id(1)
+                        .username(USERNAME_1).build());
 
-        adminController.addUser(user);
+        var result = adminController.addUser(user);
 
+        verify(userService).sendPasswordSetMailForUser(1);
         verify(userService).addUser(user);
+
+        assertThat(result.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(result.getBody().getUsername()).isEqualTo(USERNAME_1);
+    }
+
+    @Test
+    void shouldDelegateToUserServiceAndReturnProperResponse_WhenUserIsAddedButEmailSendingFailed() throws UserNotFoundException, MessagingException {
+        var user = new User();
+        user.setUsername(USERNAME_1);
+        when(userService.addUser(user)).thenReturn(
+                SecureUserImpl.builder()
+                        .id(1)
+                        .username(USERNAME_1).build());
+        doThrow(new MessagingException("test")).when(userService).sendPasswordSetMailForUser(1);
+
+        var result = adminController.addUser(user);
+
+        verify(userService).sendPasswordSetMailForUser(1);
+        verify(userService).addUser(user);
+
+        assertThat(result.getStatusCode()).isEqualTo(HttpStatus.MULTI_STATUS);
+        assertThat(result.getBody().getUsername()).isEqualTo(USERNAME_1);
     }
 
     @Test
