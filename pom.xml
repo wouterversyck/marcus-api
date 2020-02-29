@@ -17,6 +17,7 @@
 
     <properties>
         <java.version>13</java.version>
+        <sentry.version>1.7.30</sentry.version>
         <jjwt.version>0.11.0</jjwt.version>
         <checkstyle-maven-plugin.version>3.1.0</checkstyle-maven-plugin.version>
     </properties>
@@ -92,6 +93,11 @@
             <artifactId>jjwt-jackson</artifactId>
             <version>${jjwt.version}</version>
             <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>io.sentry</groupId>
+            <artifactId>sentry-spring</artifactId>
+            <version>${sentry.version}</version>
         </dependency>
 
         <dependency>
