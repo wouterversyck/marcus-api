@@ -23,6 +23,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.server.ResponseStatusException;
 
 import javax.mail.MessagingException;
 import java.util.Collection;
@@ -39,12 +40,15 @@ public class AdminController {
     @GetMapping("users")
     public Page<SecureUserView> getUsers(
             @SortDefault(sort = "username", direction = Sort.Direction.ASC) final Pageable page) {
+        log.info("requesting user page");
         return userService.getAllUsers(page);
     }
 
     @PostMapping("users")
     public ResponseEntity<SecureUserView> addUser(@RequestBody final User user) throws UserNotFoundException {
+        log.info("add user request for username {}", user.getUsername());
         final var userResult = userService.addUser(user);
+
         try {
             userService.sendPasswordSetMailForUser(userResult.getId());
             return ResponseEntity.ok(userResult);
@@ -59,13 +63,18 @@ public class AdminController {
     @GetMapping("users/passwordSet/{id}")
     public void sendPasswordSetMail(@PathVariable final long id)
             throws MessagingException, UserNotFoundException {
+        log.info("add user request for userId {}", id);
         userService.sendPasswordSetMailForUser(id);
     }
 
     @GetMapping("users/exists")
-    public boolean doesUsernameExist(
+    public boolean doesUserExist(
             @RequestParam(name = "username", required = false) final String username,
             @RequestParam(name = "email", required = false) final String email) {
+        log.info("user exists request with params [username: {}, email: {}]", username, email);
+        if (username == null && email == null) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "either email or username need to be provided");
+        }
         if (username != null) {
             return userService.userExistsByUsername(username);
         }
@@ -74,6 +83,7 @@ public class AdminController {
 
     @GetMapping("roles")
     public Collection<RoleEntity> getRoles() {
+        log.info("get roles request");
         return userService.getRoles();
     }
 

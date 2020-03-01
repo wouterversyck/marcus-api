@@ -17,6 +17,7 @@
 
     <properties>
         <java.version>13</java.version>
+        <sentry.version>1.7.30</sentry.version>
         <jjwt.version>0.11.0</jjwt.version>
         <checkstyle-maven-plugin.version>3.1.0</checkstyle-maven-plugin.version>
     </properties>
@@ -93,6 +94,12 @@
             <version>${jjwt.version}</version>
             <scope>runtime</scope>
         </dependency>
+        <dependency>
+            <groupId>io.sentry</groupId>
+            <artifactId>sentry-logback</artifactId>
+            <version>${sentry.version}</version>
+        </dependency>
+
 
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -160,8 +167,9 @@
                                 <exclude>**/*Exception.class</exclude>
                                 <exclude>**/*Configuration.class</exclude>
                                 <exclude>**/*Properties.class</exclude>
-                                <exclude>be/wouterversyck/shoppinglistapi/users/persistence/RoleConverter.class</exclude>
                                 <exclude>**/models/**</exclude>
+                                <exclude>be/wouterversyck/shoppinglistapi/users/persistence/RoleConverter.class</exclude>
+                                <exclude>be/wouterversyck/shoppinglistapi/mail/services/StubbedMailSender.class</exclude>
                             </excludes>
                             <rules>
                                 <rule implementation="org.jacoco.maven.RuleConfiguration">
@@ -228,7 +236,7 @@
                         <configuration>
                             <forkCount>1</forkCount>
                             <reuseForks>true</reuseForks>
-                            <argLine>@{argLine} -Dspring.profiles.active=loc -DMAIL_PWD=NOMAILINTESTS -DMAIL_USER=NOMAIL@gmail.com -DJWT_SECRET=ddddddddddddddddddddddddddddddddddddddfffffffffffffffffffffffffffffffffffffffffffffffeeeeeeeeeeeeeeeeeeeeeeeeeee</argLine>
+                            <argLine>@{argLine} -Dspring.profiles.active=loc,stubs -DMAIL_PWD=NOMAILINTESTS -DMAIL_USER=NOMAIL@gmail.com -DJWT_SECRET=ddddddddddddddddddddddddddddddddddddddfffffffffffffffffffffffffffffffffffffffffffffffeeeeeeeeeeeeeeeeeeeeeeeeeee</argLine>
                         </configuration>
                     </plugin>
                 </plugins>

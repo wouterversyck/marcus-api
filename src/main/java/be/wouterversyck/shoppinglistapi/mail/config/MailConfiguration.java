@@ -1,12 +1,13 @@
 package be.wouterversyck.shoppinglistapi.mail.config;
 
+import be.wouterversyck.shoppinglistapi.mail.services.StubbedMailSender;
 import lombok.AllArgsConstructor;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Profile;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
-
 import java.util.Properties;
 
 @Configuration
@@ -16,6 +17,7 @@ public class MailConfiguration {
     private ApplicationMailProperties mailProperties;
 
     @Bean
+    @Profile("!stubs")
     public JavaMailSender getJavaMailSender() {
         final JavaMailSenderImpl mailSender = new JavaMailSenderImpl();
         mailSender.setHost(mailProperties.getSmtpHost());
@@ -32,4 +34,9 @@ public class MailConfiguration {
         return mailSender;
     }
 
+    @Bean
+    @Profile("stubs")
+    public JavaMailSender getStubbedJavaMailSender() {
+        return new StubbedMailSender();
+    }
 }

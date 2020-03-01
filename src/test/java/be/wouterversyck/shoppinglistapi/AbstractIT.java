@@ -33,6 +33,7 @@ public class AbstractIT {
 
     protected MockHttpServletRequestBuilder getWithToken(String url, String token) {
         return get(url)
+                .accept(MediaType.APPLICATION_JSON)
                 .header("Authorization", format("Bearer %s", token));
     }
 }

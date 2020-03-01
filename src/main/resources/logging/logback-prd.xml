@@ -25,6 +25,17 @@
         </rollingPolicy>
     </appender>
 
+    <!-- Configure the Sentry appender, overriding the logging threshold to the WARN level -->
+    <appender name="sentry" class="io.sentry.logback.SentryAppender">
+        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+            <level>WARN</level>
+        </filter>
+        <!-- Optionally add an encoder -->
+        <encoder>
+            <pattern>%d{HH:mm:ss.SSS} %-5level %logger{36} | %X{user} : %X{correlationId} | - %msg%n</pattern>
+        </encoder>
+    </appender>
+
     <logger name="be.wouterversyck.shoppinglistapi" level="INFO" additivity="false">
         <appender-ref ref="consoleAppender"/>
         <appender-ref ref="fileAppender"/>
@@ -37,5 +48,6 @@
     <root level="INFO">
         <appender-ref ref="consoleAppender"/>
         <appender-ref ref="fileAppender"/>
+        <appender-ref ref="sentry" />
     </root>
 </configuration>

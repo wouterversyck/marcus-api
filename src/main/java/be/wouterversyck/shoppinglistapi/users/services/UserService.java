@@ -10,6 +10,7 @@ import be.wouterversyck.shoppinglistapi.users.models.User;
 import be.wouterversyck.shoppinglistapi.users.persistence.RolesDao;
 import be.wouterversyck.shoppinglistapi.users.persistence.UserDao;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.ExampleMatcher;
@@ -24,6 +25,7 @@ import static org.springframework.data.domain.ExampleMatcher.GenericPropertyMatc
 
 @Service
 @AllArgsConstructor
+@Slf4j
 public class UserService {
     private UserDao userDao;
     private RolesDao rolesDao;
@@ -31,6 +33,7 @@ public class UserService {
 
     // only for internal use
     public DangerUserView getSecurityUserByUsername(final String username) throws UserNotFoundException {
+        log.info("retrieving user model with password, use only internally");
         return userDao.findByUsername(username, DangerUserView.class)
                 .orElseThrow(() -> new UserNotFoundException(username));
     }
@@ -46,7 +49,7 @@ public class UserService {
 
     public SecureUserView addUser(final User user) {
         final var userResult = userDao.save(user);
-
+        log.info("user {} added, sending mail", user.getUsername());
         return SecureUserViewImpl.builder()
                 .email(userResult.getEmail())
                 .id(userResult.getId())
@@ -83,7 +86,12 @@ public class UserService {
     }
 
     public void sendPasswordSetMailForUser(final long id) throws MessagingException, UserNotFoundException {
+        log.info("sending email for userId {}, verifying user exists", id);
         final var user = userDao.findById(id).orElseThrow(() -> new UserNotFoundException(id));
+
+        log.info("sending email for userId {}, user exists [username: {}] -> sending email", id, user.getUsername());
         mailService.sendPasswordSetMail(user.getEmail());
+
+        log.info("mail sent for [userId: {}, username: {}]", user.getId(), user.getUsername());
     }
 }

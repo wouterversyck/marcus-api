@@ -15,12 +15,14 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
+import org.springframework.web.server.ResponseStatusException;
 
 import javax.mail.MessagingException;
 import java.util.Collections;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -30,6 +32,7 @@ class AdminControllerTest {
 
     private static final String USERNAME_1 = "USERNAME_1";
     private static final String USERNAME_2 = "USERNAME_2";
+    private static final String EMAIL = "EMAIL";
     private static final String ROLE_NAME = "USER";
 
     @Mock
@@ -108,6 +111,23 @@ class AdminControllerTest {
         adminController.sendPasswordSetMail(1);
 
         verify(userService).sendPasswordSetMailForUser(1);
+    }
+
+    @Test
+    void shouldThrowException_WhenBothParamsAreNullOnExistsMethod() {
+        assertThrows(ResponseStatusException.class, () -> adminController.doesUserExist(null, null));
+    }
+
+    @Test
+    void shouldDelegateToService_WhenUsernameIsProvidedToExistsMethod() {
+        adminController.doesUserExist(USERNAME_1, null);
+        verify(userService).userExistsByUsername(USERNAME_1);
+    }
+
+    @Test
+    void shouldDelegateToService_WhenEmailIsProvidedToExistsMethod() {
+        adminController.doesUserExist(null, EMAIL);
+        verify(userService).userExistsByEmail(EMAIL);
     }
 
     private Page<SecureUserView> createUserPage() {

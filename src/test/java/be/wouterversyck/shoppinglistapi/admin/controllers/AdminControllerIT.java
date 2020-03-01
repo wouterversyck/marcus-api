@@ -4,6 +4,7 @@ import be.wouterversyck.shoppinglistapi.AbstractIT;
 import org.junit.jupiter.api.Test;
 
 import static org.hamcrest.Matchers.is;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -80,5 +81,37 @@ class AdminControllerIT extends AbstractIT {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.content[0].username", is("user")))
                 .andExpect(jsonPath("$.content[1].username", is("tom")));
+    }
+
+    @Test
+    void shouldReturnBadRequest_WhenNoRequestParamsAreProvidedToExistsEndpoint() throws Exception {
+        String token = login("admin", "secure");
+
+        getMvc()
+                .perform(
+                        getWithToken("/admin/users/exists", token))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    void shouldReturnTrue_WhenExistingUsernameIsProvidedToExistsEndpoint() throws Exception {
+        String token = login("admin", "secure");
+
+        getMvc()
+                .perform(
+                        getWithToken("/admin/users/exists?username=user", token))
+                .andExpect(status().isOk())
+                .andExpect(content().string("true"));
+    }
+
+    @Test
+    void shouldReturnTrue_WhenExistingEmailIsProvidedToExistsEndpoint() throws Exception {
+        String token = login("admin", "secure");
+
+        getMvc()
+                .perform(
+                        getWithToken("/admin/users/exists?email=wouter.versyck@gmail.com", token))
+                .andExpect(status().isOk())
+                .andExpect(content().string("true"));
     }
 }
