@@ -44,6 +44,11 @@
         <appender-ref ref="consoleAppender"/>
         <appender-ref ref="fileAppender"/>
     </logger>
+    <logger name="org.springframework.web.filter.CommonsRequestLoggingFilter">
+        <level value="DEBUG" />
+        <appender-ref ref="consoleAppender"/>
+        <appender-ref ref="fileAppender"/>
+    </logger>
 
     <root level="INFO">
         <appender-ref ref="consoleAppender"/>

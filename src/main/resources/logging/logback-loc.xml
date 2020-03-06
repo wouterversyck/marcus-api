@@ -8,11 +8,14 @@
         </filter>
     </appender>
 
-    <logger name="be.wouterversyck.shoppinglistapi" level="INFO" additivity="false">
+    <logger name="be.wouterversyck.shoppinglistapi" level="DEBUG" additivity="false">
         <appender-ref ref="consoleAppender"/>
     </logger>
-    <logger name="org.springframework" level="ERROR" additivity="false">
+    <logger name="org.springframework" level="INFO" additivity="false">
         <appender-ref ref="consoleAppender"/>
+    </logger>
+    <logger name="org.springframework.web.filter.CommonsRequestLoggingFilter">
+        <level value="DEBUG" />
     </logger>
 
     <root level="INFO">
