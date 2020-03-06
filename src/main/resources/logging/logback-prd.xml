@@ -36,19 +36,9 @@
         </encoder>
     </appender>
 
-    <logger name="be.wouterversyck.shoppinglistapi" level="INFO" additivity="false">
-        <appender-ref ref="consoleAppender"/>
-        <appender-ref ref="fileAppender"/>
-    </logger>
-    <logger name="org.springframework" level="ERROR" additivity="false">
-        <appender-ref ref="consoleAppender"/>
-        <appender-ref ref="fileAppender"/>
-    </logger>
-    <logger name="org.springframework.web.filter.CommonsRequestLoggingFilter">
-        <level value="DEBUG" />
-        <appender-ref ref="consoleAppender"/>
-        <appender-ref ref="fileAppender"/>
-    </logger>
+    <logger name="be.wouterversyck.shoppinglistapi" level="INFO" />
+    <logger name="org.springframework" level="ERROR" />
+    <logger name="org.springframework.web.filter.CommonsRequestLoggingFilter" level="DEBUG" />
 
     <root level="INFO">
         <appender-ref ref="consoleAppender"/>
