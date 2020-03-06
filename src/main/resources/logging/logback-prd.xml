@@ -40,6 +40,8 @@
     <logger name="org.springframework" level="ERROR" />
     <logger name="org.springframework.web.filter.CommonsRequestLoggingFilter" level="DEBUG" />
 
+    <!-- other loggers will inherit appenders from root -->
+    <!-- add additivity='false' to override this -->
     <root level="INFO">
         <appender-ref ref="consoleAppender"/>
         <appender-ref ref="fileAppender"/>
