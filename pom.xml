@@ -19,6 +19,7 @@
         <java.version>13</java.version>
         <sentry.version>1.7.30</sentry.version>
         <jjwt.version>0.11.0</jjwt.version>
+        <google.oauth>1.30.8</google.oauth>
         <checkstyle-maven-plugin.version>3.1.0</checkstyle-maven-plugin.version>
     </properties>
 
@@ -99,7 +100,11 @@
             <artifactId>sentry-logback</artifactId>
             <version>${sentry.version}</version>
         </dependency>
-
+        <dependency>
+            <groupId>com.google.api-client</groupId>
+            <artifactId>google-api-client</artifactId>
+            <version>1.30.8</version>
+        </dependency>
 
         <dependency>
             <groupId>org.springframework.boot</groupId>

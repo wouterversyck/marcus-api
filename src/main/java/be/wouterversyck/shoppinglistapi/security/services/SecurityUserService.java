@@ -39,4 +39,14 @@ public class SecurityUserService implements UserDetailsService {
                 user.getPassword(),
                 Collections.singletonList(new SimpleGrantedAuthority(user.getRole().name())));
     }
+
+    public UserDetails loadUserByEmail(final String email) throws UserNotFoundException {
+        final var user = userService.getUserByEmail(email);
+
+        return new JwtUserDetails(
+                user.getId(),
+                user.getUsername(),
+                "",
+                Collections.singletonList(new SimpleGrantedAuthority(user.getRole().name())));
+    }
 }

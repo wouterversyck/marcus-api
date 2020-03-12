@@ -57,7 +57,7 @@
             <property name="tokens" value="COMMA, SEMI, TYPECAST, LITERAL_IF, LITERAL_ELSE, LITERAL_WHILE, LITERAL_DO, LITERAL_FOR, DO_WHILE"/>
         </module>
         <module name="ThrowsCount">
-            <property name="max" value="2"/>
+            <property name="max" value="3"/>
         </module>
         <module name="VisibilityModifier"/>
         <module name="FinalLocalVariable">

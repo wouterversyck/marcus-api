@@ -9,5 +9,6 @@ import java.util.Optional;
 
 public interface UserDao extends JpaRepository<User, Long> {
     <T> Optional<T> findByUsername(String username, Class<T> type);
+    <T> Optional<T> findByEmail(String email, Class<T> type);
     <T> Page<T> findAllProjectedBy(Pageable pageable, Class<T> type);
 }

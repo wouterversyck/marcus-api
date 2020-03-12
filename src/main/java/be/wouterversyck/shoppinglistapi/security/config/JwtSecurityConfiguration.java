@@ -4,6 +4,10 @@ import be.wouterversyck.shoppinglistapi.security.filters.JwtLoginFilter;
 import be.wouterversyck.shoppinglistapi.security.filters.JwtAuthenticationFilter;
 import be.wouterversyck.shoppinglistapi.security.handlers.JwtAuthenticationFailureHandler;
 import be.wouterversyck.shoppinglistapi.security.utils.JwtService;
+import com.google.api.client.googleapis.auth.oauth2.GoogleIdTokenVerifier;
+import com.google.api.client.http.HttpTransport;
+import com.google.api.client.http.javanet.NetHttpTransport;
+import com.google.api.client.json.jackson2.JacksonFactory;
 import lombok.AllArgsConstructor;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
@@ -18,6 +22,8 @@ import org.springframework.security.web.authentication.AuthenticationFailureHand
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.filter.OncePerRequestFilter;
 
+import java.util.Collections;
+
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 @AllArgsConstructor
@@ -30,7 +36,7 @@ public class JwtSecurityConfiguration extends WebSecurityConfigurerAdapter {
         http.cors().and()
                 .csrf().disable()
                 .authorizeRequests()
-                .antMatchers("/public/*").permitAll()
+                .antMatchers("/public/*", "/oauth/*").permitAll()
                 .anyRequest().authenticated()
                 .and()
                 .addFilter(getJwtLoginFilter())
@@ -65,5 +71,20 @@ public class JwtSecurityConfiguration extends WebSecurityConfigurerAdapter {
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
+    }
+
+    /**
+     * Google oauth stuff
+     */
+    @Bean
+    public GoogleIdTokenVerifier googleIdTokenVerifier() {
+        final HttpTransport httpTransport = new NetHttpTransport();
+        final JacksonFactory jacksonFactory = JacksonFactory.getDefaultInstance();
+
+        return new GoogleIdTokenVerifier.Builder(httpTransport, jacksonFactory)
+                .setAudience(Collections.singletonList(properties.getGoogleClientId()))
+                .setIssuer("accounts.google.com")
+                .build();
+
     }
 }

@@ -25,6 +25,7 @@ jwt:
   token-audience: secure-app
   # 12 hours in millis
   expiration: 43200000
+  google-client-id: 346054450113-nb0l4atr9h6r9s3rmfli7u75ep5pl3be.apps.googleusercontent.com
 
 mdc:
   correlation-id-header-key: x-correlation-id

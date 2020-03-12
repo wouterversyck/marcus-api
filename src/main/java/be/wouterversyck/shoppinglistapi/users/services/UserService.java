@@ -43,6 +43,11 @@ public class UserService {
                 .orElseThrow(() -> new UserNotFoundException(username));
     }
 
+    public SecureUserView getUserByEmail(final String email) throws UserNotFoundException {
+        return userDao.findByEmail(email, SecureUserView.class)
+                .orElseThrow(() -> new UserNotFoundException(email));
+    }
+
     public Page<SecureUserView> getAllUsers(final Pageable page) {
         return userDao.findAllProjectedBy(page, SecureUserView.class);
     }

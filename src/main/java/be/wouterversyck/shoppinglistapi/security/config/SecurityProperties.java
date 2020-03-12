@@ -19,4 +19,5 @@ public class SecurityProperties {
     private String tokenIssuer;
     private String tokenAudience;
     private long expiration;
+    private String googleClientId;
 }
