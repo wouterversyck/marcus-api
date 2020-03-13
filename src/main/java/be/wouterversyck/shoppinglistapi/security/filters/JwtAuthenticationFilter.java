@@ -30,7 +30,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         final var token = request.getHeader(properties.getTokenHeader());
 
         // Filter will always be called (even on anonymous endpoints, so skip auth for anonymous endpoints
-        if(token != null) {
+        if (token != null) {
             authenticateUser(token);
         }
 
@@ -39,7 +39,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private void authenticateUser(final String token) {
         try {
-            var authentication = jwtService.parseToken(token);
+            final var authentication = jwtService.parseToken(token);
 
             log.info("Authenticated request for user with username: [{}]", authentication.getPrincipal());
 
