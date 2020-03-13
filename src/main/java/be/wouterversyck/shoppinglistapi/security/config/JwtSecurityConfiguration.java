@@ -36,7 +36,7 @@ public class JwtSecurityConfiguration extends WebSecurityConfigurerAdapter {
         http.cors().and()
                 .csrf().disable()
                 .authorizeRequests()
-                .antMatchers("/public/*", "/oauth/*").permitAll()
+                .antMatchers("/public/**", "/oauth/**").permitAll()
                 .anyRequest().authenticated()
                 .and()
                 .addFilter(getJwtLoginFilter())

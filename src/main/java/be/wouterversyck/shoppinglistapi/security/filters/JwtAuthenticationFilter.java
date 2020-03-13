@@ -4,7 +4,6 @@ import be.wouterversyck.shoppinglistapi.security.config.SecurityProperties;
 import be.wouterversyck.shoppinglistapi.security.utils.JwtService;
 import io.jsonwebtoken.JwtException;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.OncePerRequestFilter;
 
@@ -28,22 +27,26 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(final HttpServletRequest request, final HttpServletResponse response,
                                     final FilterChain filterChain) throws IOException, ServletException {
-        try {
-            final var authenticationToken = getAuthentication(request);
-            log.info("Authenticated request for user with username: [{}]", authenticationToken.getPrincipal());
+        final var token = request.getHeader(properties.getTokenHeader());
 
-            SecurityContextHolder.getContext().setAuthentication(authenticationToken);
-        } catch(final JwtException ex) {
-            log.warn(ex.getMessage());
-            SecurityContextHolder.clearContext();
+        // Filter will always be called (even on anonymous endpoints, so skip auth for anonymous endpoints
+        if(token != null) {
+            authenticateUser(token);
         }
 
         filterChain.doFilter(request, response);
     }
 
-    private Authentication getAuthentication(final HttpServletRequest request) {
-        final var token = request.getHeader(properties.getTokenHeader());
+    private void authenticateUser(final String token) {
+        try {
+            var authentication = jwtService.parseToken(token);
 
-        return jwtService.parseToken(token);
+            log.info("Authenticated request for user with username: [{}]", authentication.getPrincipal());
+
+            SecurityContextHolder.getContext().setAuthentication(authentication);
+        } catch(final JwtException ex) {
+            log.info(ex.getMessage());
+            SecurityContextHolder.clearContext();
+        }
     }
 }

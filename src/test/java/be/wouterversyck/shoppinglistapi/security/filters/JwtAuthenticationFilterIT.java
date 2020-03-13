@@ -14,6 +14,7 @@ import java.util.Date;
 
 import static java.time.temporal.ChronoUnit.MILLIS;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 
 class JwtAuthenticationFilterIT extends AbstractIT {
 
@@ -29,6 +30,14 @@ class JwtAuthenticationFilterIT extends AbstractIT {
         getMvc()
                 .perform(
                         getWithToken("/admin/users?page=0&size=1", token))
+                .andExpect(status().isForbidden());
+    }
+
+    @Test
+    void shouldDenyAccess_WhenNoTokenIsProvided() throws Exception {
+        getMvc()
+                .perform(
+                        get("/admin/users?page=0&size=1"))
                 .andExpect(status().isForbidden());
     }
 
