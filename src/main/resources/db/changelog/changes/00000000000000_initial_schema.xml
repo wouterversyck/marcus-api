@@ -12,6 +12,7 @@
     <changeSet id="00000000000000" author="wouterv" context="default">
         <!-- Keep incrementBy at 50 to be able to run on remote postgres server -->
         <createSequence sequenceName="user_seq" startValue="1000" incrementBy="50"/>
+        <createSequence sequenceName="shopping_list_seq" startValue="1000" incrementBy="50"/>
     </changeSet>
 
     <!--
