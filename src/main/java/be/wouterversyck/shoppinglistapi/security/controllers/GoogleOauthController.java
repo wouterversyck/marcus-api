@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletResponse;
+import javax.validation.Valid;
 import java.io.IOException;
 import java.security.GeneralSecurityException;
 
@@ -33,13 +34,13 @@ public class GoogleOauthController {
 
     @PostMapping("google")
     public void signInWithGoogle(
-            @RequestBody final GoogleOauthRequest request,
+            @RequestBody @Valid final GoogleOauthRequest request,
             final HttpServletResponse response) throws GeneralSecurityException, IOException, UserNotFoundException {
         final var payload = googleIdTokenVerifier.verify(request.getIdToken()).getPayload();
-
         final var user = userService.loadUserByEmail(payload.getEmail());
-
         final var authentication = new UsernamePasswordAuthenticationToken(user, null);
+
+        log.info("Authenticated user {} with google oauth, creating token", user.getUsername());
         response.setHeader(securityProperties.getResponseTokenHeader(), jwtService.generateToken(authentication));
     }
 
