@@ -1,6 +1,7 @@
 <configuration>
     <property name="LOG_DIR" value="/app/java/shopping-list-api/logs"/>
     <property name="LOG_FILE_NAME" value="shopping-list-api.log"/>
+    <property name="REQUEST_TRACE_LOG_FILE_NAME" value="shopping-list-api.request-trace.log"/>
 
     <appender name="consoleAppender" class="ch.qos.logback.core.ConsoleAppender">
         <encoder>
@@ -25,6 +26,20 @@
         </rollingPolicy>
     </appender>
 
+    <appender name="requestTraceFileAppender" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${LOG_DIR}/${REQUEST_TRACE_LOG_FILE_NAME}</file>
+        <encoder>
+            <pattern>%d{HH:mm:ss.SSS} %-5level %logger{36} | %X{user} : %X{correlationId} | - %msg%n</pattern>
+        </encoder>
+        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+            <level>TRACE</level>
+        </filter>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <!-- daily rollover -->
+            <fileNamePattern>${LOG_DIR}/${REQUEST_TRACE_LOG_FILE_NAME}.%d{yyyy-MM-dd}</fileNamePattern>
+        </rollingPolicy>
+    </appender>
+
     <!-- Configure the Sentry appender, overriding the logging threshold to the WARN level -->
     <appender name="sentry" class="io.sentry.logback.SentryAppender">
         <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
@@ -38,10 +53,13 @@
 
     <logger name="be.wouterversyck.shoppinglistapi" level="INFO" />
     <logger name="org.springframework" level="ERROR" />
-    <logger name="org.springframework.web.filter.CommonsRequestLoggingFilter" level="DEBUG" />
+
+    <logger name="org.springframework.web.filter.CommonsRequestLoggingFilter" level="DEBUG" additivity="false">
+        <appender-ref ref="requestTraceFileAppender" />
+    </logger>
 
     <!-- other loggers will inherit appenders from root -->
-    <!-- add additivity='false' to override this -->
+    <!-- add additivity='false' to override this (like the request trace logger)-->
     <root level="INFO">
         <appender-ref ref="consoleAppender"/>
         <appender-ref ref="fileAppender"/>
