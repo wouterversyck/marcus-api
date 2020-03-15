@@ -9,9 +9,11 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Value;
 
 import java.time.Instant;
+import java.util.Base64;
 import java.util.Collections;
 import java.util.Date;
 
+import static java.lang.String.format;
 import static java.time.temporal.ChronoUnit.MILLIS;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -51,6 +53,15 @@ class JwtAuthenticationFilterIT extends AbstractIT {
     }
 
     @Test
+    void shouldDenyAccess_WhenValidTokenIsProvidedButTokenHasBeenTamperedWith() throws Exception {
+        String token = buildTamperedToken();
+        getMvc()
+                .perform(
+                        getWithToken("/admin/users?page=0&size=1", token))
+                .andExpect(status().isForbidden());
+    }
+
+    @Test
     void shouldAllowAccess_WhenValidTokenIsProvided() throws Exception {
         String token = buildValidToken();
         getMvc()
@@ -66,6 +77,18 @@ class JwtAuthenticationFilterIT extends AbstractIT {
                         Instant.now()
                                 .plus(43200000, MILLIS)))
                 .compact();
+    }
+
+    private String buildTamperedToken() {
+        String token = buildValidToken();
+        String[] jwtArray = token.split("\\.");
+        String middle = jwtArray[1];
+
+        String middleDecoded = new String(Base64.getDecoder().decode(middle));
+        middleDecoded = middleDecoded.replace("admin", "user");
+
+        String result = Base64.getEncoder().withoutPadding().encodeToString(middleDecoded.getBytes());
+        return format("%s.%s.%s", jwtArray[0], result, jwtArray[2]);
     }
 
     private String buildExpiredToken() {
