@@ -1,5 +1,6 @@
 package be.wouterversyck.shoppinglistapi.admin.controllers;
 
+import be.wouterversyck.shoppinglistapi.security.models.JwtUserPrincipal;
 import be.wouterversyck.shoppinglistapi.users.exceptions.UserNotFoundException;
 import be.wouterversyck.shoppinglistapi.users.models.RoleEntity;
 import be.wouterversyck.shoppinglistapi.users.models.SecureUserView;
@@ -14,6 +15,7 @@ import org.springframework.data.web.SortDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -58,6 +60,14 @@ public class AdminController {
                     .status(HttpStatus.MULTI_STATUS)
                     .body(userResult);
         }
+    }
+
+    @DeleteMapping("users/{id}")
+    public void deleteUser(@PathVariable final long id, final JwtUserPrincipal principal) {
+        if (id == principal.getId()) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "You cannot delete a the user you are logged in with");
+        }
+        userService.deleteUser(id);
     }
 
     @GetMapping("users/passwordSet/{id}")
