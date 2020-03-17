@@ -11,7 +11,6 @@ import be.wouterversyck.shoppinglistapi.users.persistence.RolesDao;
 import be.wouterversyck.shoppinglistapi.users.persistence.UserDao;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.ExampleMatcher;
@@ -64,7 +63,6 @@ public class UserService {
                 .build();
     }
 
-    @CacheEvict(value = "be.wouterversyck.shoppinglistapi.users.role")
     public void deleteUser(final long id) {
         userDao.deleteById(id);
     }

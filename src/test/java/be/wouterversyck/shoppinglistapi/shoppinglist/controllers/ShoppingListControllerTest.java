@@ -31,7 +31,7 @@ class ShoppingListControllerTest {
     @Test
     void shouldReturnLists_WhenUserIsSetInContext() {
 
-        when(shoppingListService.getShoppingListsForUser(USER_ID)).thenReturn(getShoppingLists());
+        when(shoppingListService.getShoppingListsForContributor(USER_ID)).thenReturn(getShoppingLists());
 
         List<ShoppingListView> items = shoppingListController.getShoppingLists(new JwtUserPrincipal(USER_ID, USERNAME, null, true));
 

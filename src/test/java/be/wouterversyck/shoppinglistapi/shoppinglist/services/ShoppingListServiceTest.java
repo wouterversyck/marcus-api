@@ -33,9 +33,9 @@ class ShoppingListServiceTest {
 
     @Test
     void shouldReturnShoppingList_WhenUserIsPassed() {
-        when(shoppingListDao.findAllByOwner(USERID)).thenReturn(getShoppingLists());
+        when(shoppingListDao.findAllByContributor(USERID)).thenReturn(getShoppingLists());
 
-        List<ShoppingListView> result = shoppingListService.getShoppingListsForUser(USERID);
+        List<ShoppingListView> result = shoppingListService.getShoppingListsForContributor(USERID);
 
         assertThat(result.size()).isEqualTo(2);
         assertThat(result).extracting("name")

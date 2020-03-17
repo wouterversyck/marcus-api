@@ -57,6 +57,18 @@
             </column>
         </createTable>
 
+        <createTable tableName="wv_shopping_list_user">
+            <column name="id" type="bigint" autoIncrement="${autoIncrement}">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="shopping_list_id" type="bigint">
+                <constraints nullable="false" />
+            </column>
+            <column name="user_id" type="bigint">
+                <constraints nullable="false" />
+            </column>
+        </createTable>
+
         <createTable tableName="wv_shopping_list_items">
             <column name="id" type="bigint" autoIncrement="${autoIncrement}">
                 <constraints primaryKey="true" nullable="false"/>
@@ -80,6 +92,18 @@
                                  constraintName="fk_user_role"
                                  referencedColumnNames="id"
                                  referencedTableName="wv_role"/>
+
+        <addForeignKeyConstraint baseColumnNames="user_id"
+                                 baseTableName="wv_shopping_list_user"
+                                 constraintName="fk_contributor_shopping_list"
+                                 referencedColumnNames="id"
+                                 referencedTableName="wv_user"/>
+
+        <addForeignKeyConstraint baseColumnNames="shopping_list_id"
+                                 baseTableName="wv_shopping_list_user"
+                                 constraintName="fk_shopping_list_contributor"
+                                 referencedColumnNames="id"
+                                 referencedTableName="wv_shopping_list"/>
 
         <addForeignKeyConstraint baseColumnNames="shopping_list_id"
                                  baseTableName="wv_shopping_list_items"
@@ -107,6 +131,10 @@
         <loadData file="db/changelog/seed_data/shoppinglistitems.csv"
                   separator=";"
                   tableName="wv_shopping_list_items">
+        </loadData>
+        <loadData file="db/changelog/seed_data/shoppinglistuser.csv"
+                  separator=";"
+                  tableName="wv_shopping_list_user">
         </loadData>
     </changeSet>
 </databaseChangeLog>

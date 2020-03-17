@@ -27,7 +27,7 @@ public class ShoppingListController {
 
     @GetMapping("all")
     public List<ShoppingListView> getShoppingLists(final JwtUserPrincipal principal) {
-        return shoppingListService.getShoppingListsForUser(principal.getId());
+        return shoppingListService.getShoppingListsForContributor(principal.getId());
     }
 
     @GetMapping("{id}")

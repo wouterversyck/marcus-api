@@ -4,7 +4,6 @@ import be.wouterversyck.shoppinglistapi.shoppinglist.exceptions.ShoppingListNotF
 import be.wouterversyck.shoppinglistapi.shoppinglist.daos.ShoppingListDao;
 import be.wouterversyck.shoppinglistapi.shoppinglist.models.ShoppingListView;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -19,15 +18,18 @@ public class ShoppingListService {
         this.shoppingListDao = shoppingListDao;
     }
 
-    @Cacheable("be.wouterversyck.shoppinglistapi.shoppinglist.findforuser")
-    public List<ShoppingListView> getShoppingListsForUser(final long userId) {
-        log.info("Fetching shopping lists form db (cache miss)");
+    public List<ShoppingListView> getShoppingListsForOwner(final long userId) {
+        log.info("Fetching shopping lists by owner");
         return shoppingListDao.findAllByOwner(userId);
     }
 
-    @Cacheable(value = "be.wouterversyck.shoppinglistapi.shoppinglist.findbyid")
+    public List<ShoppingListView> getShoppingListsForContributor(final long userId) {
+        log.info("Fetching shopping lists by user");
+        return shoppingListDao.findAllByContributor(userId);
+    }
+
     public ShoppingListView getShoppingListById(final long id, final long userId) throws ShoppingListNotFoundException {
-        log.info("Fetching shopping lists form db (cache miss)");
+        log.info("Fetching shopping lists with id: {} for user", id);
         return shoppingListDao.findByIdAndOwner(id, userId).orElseThrow(
                 () -> new ShoppingListNotFoundException(id)
         );
