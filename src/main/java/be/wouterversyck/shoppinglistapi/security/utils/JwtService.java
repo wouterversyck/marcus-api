@@ -3,6 +3,7 @@ package be.wouterversyck.shoppinglistapi.security.utils;
 import be.wouterversyck.shoppinglistapi.security.config.SecurityProperties;
 import be.wouterversyck.shoppinglistapi.security.models.JwtUserDetails;
 import be.wouterversyck.shoppinglistapi.security.models.JwtUserPrincipal;
+import be.wouterversyck.shoppinglistapi.users.models.User;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.Jwts;
@@ -36,7 +37,7 @@ public class JwtService {
 
         final var user = (JwtUserDetails) authentication.getPrincipal();
 
-        final var roles = authentication.getAuthorities()
+        final var roles = user.getAuthorities()
                 .stream()
                 .map(GrantedAuthority::getAuthority)
                 .collect(Collectors.toList());
@@ -57,13 +58,7 @@ public class JwtService {
     }
 
     public Authentication parseToken(final String token) {
-        if (StringUtils.isEmpty(token)) {
-            throw new MalformedJwtException("Token was empty");
-        }
-
-        if (!token.startsWith(format("%s ", properties.getTokenPrefix()))) {
-            throw new MalformedJwtException(format("Token must start with %s", properties.getTokenPrefix()));
-        }
+        validateTokenString(token);
 
         final var signingKey = properties.getSecretKey().getBytes();
 
@@ -74,6 +69,33 @@ public class JwtService {
 
         final var authorities = getAuthorities(parsedToken);
         return new JwtUserPrincipal(getId(parsedToken), getUsername(parsedToken), authorities, true);
+    }
+
+    public String generatePasswordResetToken(final User user) {
+        final var key = createPasswordKey(user.getPassword());
+        return Jwts.builder()
+                .signWith(Keys.hmacShaKeyFor(key), SignatureAlgorithm.HS512)
+                .setSubject(String.valueOf(user.getUsername()))
+                .setIssuer(properties.getTokenIssuer())
+                .setAudience(properties.getTokenAudience())
+                .setId(UUID.randomUUID().toString())
+                .setExpiration(Date.from(
+                        Instant.now()
+                                .plus(properties.getExpiration(), MILLIS)))
+                .compact();
+    }
+
+    public String validatePasswordResetToken(final String token, final String previousPassword) {
+        validateTokenString(token);
+
+        final var key = createPasswordKey(previousPassword);
+
+        final var parsedToken = Jwts.parserBuilder()
+                .setSigningKey(key)
+                .build()
+                .parseClaimsJws(token.replace(format("%s ", properties.getTokenPrefix()), ""));
+
+        return parsedToken.getBody().getId();
     }
 
     private long getId(final Jws<Claims> parsedToken) {
@@ -93,5 +115,19 @@ public class JwtService {
                 .get("roles")).stream()
                 .map(authority -> new SimpleGrantedAuthority((String) authority))
                 .collect(Collectors.toList());
+    }
+
+    private void validateTokenString(final String token) {
+        if (StringUtils.isEmpty(token)) {
+            throw new MalformedJwtException("Token was empty");
+        }
+
+        if (!token.startsWith(format("%s ", properties.getTokenPrefix()))) {
+            throw new MalformedJwtException(format("Token must start with %s", properties.getTokenPrefix()));
+        }
+    }
+
+    private byte[] createPasswordKey(final String password) {
+        return ((password == null ? "" : password) + properties.getSecretKey()).getBytes();
     }
 }

@@ -22,7 +22,7 @@ class JwtAuthenticationFilterIT extends AbstractIT {
 
     private String signingKey;
 
-    public JwtAuthenticationFilterIT(@Value("${JWT_SECRET}") final String signingKey) {
+    public JwtAuthenticationFilterIT(@Value("${jwt.secret}") final String signingKey) {
         this.signingKey = signingKey;
     }
 

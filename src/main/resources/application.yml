@@ -15,7 +15,7 @@ server:
     include-stacktrace: on_trace_param
 
 jwt:
-  secret-key: ${JWT_SECRET}
+  secret-key: ${jwt.secret}
   auth-login-url: /login
   token-header: Authorization
   response-token-header: x-token
@@ -33,8 +33,8 @@ mdc:
   correlation-id-mdc-key: correlationId
 
 mail:
-  smtp-username: ${MAIL_USER}
-  smtp-password: ${MAIL_PWD}
+  smtp-username: ${mail.user}
+  smtp-password: ${mail.pwd}
   smtp-host: smtp.gmail.com
   smtp-port: 587
   smtp-auth: true

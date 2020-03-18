@@ -1,6 +1,7 @@
 package be.wouterversyck.shoppinglistapi.users.services;
 
 import be.wouterversyck.shoppinglistapi.mail.services.MailService;
+import be.wouterversyck.shoppinglistapi.security.utils.JwtService;
 import be.wouterversyck.shoppinglistapi.shoppinglist.daos.ShoppingListDao;
 import be.wouterversyck.shoppinglistapi.users.exceptions.UserNotFoundException;
 import be.wouterversyck.shoppinglistapi.users.models.DangerUserView;
@@ -43,6 +44,7 @@ class UserServiceTest {
     private static final String USERNAME_2 = "USERNAME_2";
     private static final String PASSWORD = "PASSWORD";
     private static final String ROLE_NAME = "USER";
+    private static final String TOKEN = "TOKEN";
 
     @Mock
     private UserDao userDao;
@@ -50,12 +52,14 @@ class UserServiceTest {
     private RolesDao rolesDao;
     @Mock
     private MailService mailService;
+    @Mock
+    private JwtService jwtService;
 
     private UserService userService;
 
     @BeforeEach
     void setup() {
-        userService = new UserService(userDao, rolesDao, mailService);
+        userService = new UserService(userDao, rolesDao, mailService, jwtService);
     }
 
     @Test
@@ -141,11 +145,13 @@ class UserServiceTest {
         var user = new User();
         user.setId(1);
         user.setEmail(EMAIL);
+        user.setPassword(PASSWORD);
         when(userDao.findById(1L)).thenReturn(Optional.of(user));
+        when(jwtService.generatePasswordResetToken(user)).thenReturn(TOKEN);
 
         userService.sendPasswordSetMailForUser(1L);
 
-        verify(mailService).sendPasswordSetMail(EMAIL);
+        verify(mailService).sendPasswordSetMail(EMAIL, TOKEN);
     }
 
     @Test

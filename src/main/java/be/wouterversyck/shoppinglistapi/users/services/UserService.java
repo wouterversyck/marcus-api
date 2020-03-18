@@ -1,6 +1,7 @@
 package be.wouterversyck.shoppinglistapi.users.services;
 
 import be.wouterversyck.shoppinglistapi.mail.services.MailService;
+import be.wouterversyck.shoppinglistapi.security.utils.JwtService;
 import be.wouterversyck.shoppinglistapi.users.exceptions.UserNotFoundException;
 import be.wouterversyck.shoppinglistapi.users.models.RoleEntity;
 import be.wouterversyck.shoppinglistapi.users.models.SecureUserView;
@@ -30,6 +31,7 @@ public class UserService {
     private UserDao userDao;
     private RolesDao rolesDao;
     private MailService mailService;
+    private JwtService jwtService;
 
     // only for internal use
     public DangerUserView getSecurityUserByUsername(final String username) throws UserNotFoundException {
@@ -64,6 +66,7 @@ public class UserService {
     }
 
     public void deleteUser(final long id) {
+        log.info("Deleting user with user id: {}", id);
         userDao.deleteById(id);
     }
 
@@ -99,7 +102,7 @@ public class UserService {
         final var user = userDao.findById(id).orElseThrow(() -> new UserNotFoundException(id));
 
         log.info("sending email for userId {}, user exists [username: {}] -> sending email", id, user.getUsername());
-        mailService.sendPasswordSetMail(user.getEmail());
+        mailService.sendPasswordSetMail(user.getEmail(), jwtService.generatePasswordResetToken(user));
 
         log.info("mail sent for [userId: {}, username: {}]", user.getId(), user.getUsername());
     }

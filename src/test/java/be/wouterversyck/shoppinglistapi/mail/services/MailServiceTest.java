@@ -19,6 +19,7 @@ import static org.mockito.Mockito.when;
 class MailServiceTest {
 
     private static final String EMAIL = "EMAIL";
+    private static final String TOKEN = "TOKEN";
 
     @Mock
     private JavaMailSender mailSender;
@@ -30,7 +31,7 @@ class MailServiceTest {
     void shouldSendMail_WhenPasswordSetMailIsRequested() throws MessagingException {
         when(mailSender.createMimeMessage()).thenReturn(
                 new MimeMessage((Session)null));
-        mailService.sendPasswordSetMail(EMAIL);
+        mailService.sendPasswordSetMail(EMAIL, TOKEN);
 
         verify(mailSender).send(any(MimeMessage.class));
     }
