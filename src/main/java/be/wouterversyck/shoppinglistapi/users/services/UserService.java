@@ -102,7 +102,7 @@ public class UserService {
         final var user = userDao.findById(id).orElseThrow(() -> new UserNotFoundException(id));
 
         log.info("sending email for userId {}, user exists [username: {}] -> sending email", id, user.getUsername());
-        mailService.sendPasswordSetMail(user.getEmail(), jwtService.generatePasswordResetToken(user));
+        mailService.sendPasswordSetMail(user.getUsername(), user.getEmail(), jwtService.generatePasswordResetToken(user));
 
         log.info("mail sent for [userId: {}, username: {}]", user.getId(), user.getUsername());
     }

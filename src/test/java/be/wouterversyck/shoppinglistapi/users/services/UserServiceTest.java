@@ -145,13 +145,14 @@ class UserServiceTest {
         var user = new User();
         user.setId(1);
         user.setEmail(EMAIL);
+        user.setUsername(USERNAME);
         user.setPassword(PASSWORD);
         when(userDao.findById(1L)).thenReturn(Optional.of(user));
         when(jwtService.generatePasswordResetToken(user)).thenReturn(TOKEN);
 
         userService.sendPasswordSetMailForUser(1L);
 
-        verify(mailService).sendPasswordSetMail(EMAIL, TOKEN);
+        verify(mailService).sendPasswordSetMail(USERNAME, EMAIL, TOKEN);
     }
 
     @Test
