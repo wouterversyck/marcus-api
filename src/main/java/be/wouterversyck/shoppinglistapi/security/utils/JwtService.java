@@ -85,17 +85,21 @@ public class JwtService {
                 .compact();
     }
 
-    public String validatePasswordResetToken(final String token, final String previousPassword) {
-        validateTokenString(token);
-
+    public void validatePasswordResetToken(final String token, final String previousPassword) {
         final var key = createPasswordKey(previousPassword);
 
-        final var parsedToken = Jwts.parserBuilder()
+        Jwts.parserBuilder()
                 .setSigningKey(key)
                 .build()
                 .parseClaimsJws(token.replace(format("%s ", properties.getTokenPrefix()), ""));
+    }
 
-        return parsedToken.getBody().getId();
+    public String getUsernameWithoutValidationSignature(final String token) {
+        final String[] splitToken = token.split("\\.");
+        return Jwts.parserBuilder()
+                .build()
+                .parseClaimsJwt(splitToken[0] + "." + splitToken[1] + ".")
+                .getBody().getSubject();
     }
 
     private long getId(final Jws<Claims> parsedToken) {

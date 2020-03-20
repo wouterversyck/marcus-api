@@ -69,6 +69,13 @@ class JwtServiceTest {
     }
 
     @Test
+    void shouldThrowUnsupportedJwtException_WhenTokenIsHasNoSignature() {
+        String token = generateValidToken();
+        final String[] splitToken = token.split("\\.");
+        assertThrows(UnsupportedJwtException.class, () -> jwtService.parseToken(splitToken[0] + "." + splitToken[1] + "."));
+    }
+
+    @Test
     void shouldCreateCorrectPrincipal_WhenTokenStringIsPassed() {
         String token = generateValidToken();
 

@@ -40,6 +40,11 @@ public class UserService {
                 .orElseThrow(() -> new UserNotFoundException(username));
     }
 
+    public User getUserModelByUsername(final String username) throws UserNotFoundException {
+        return userDao.findByUsername(username, User.class)
+                .orElseThrow(() -> new UserNotFoundException(username));
+    }
+
     public SecureUserView getUserByUsername(final String username) throws UserNotFoundException {
         return userDao.findByUsername(username, SecureUserView.class)
                 .orElseThrow(() -> new UserNotFoundException(username));
@@ -52,6 +57,10 @@ public class UserService {
 
     public Page<SecureUserView> getAllUsers(final Pageable page) {
         return userDao.findAllProjectedBy(page, SecureUserView.class);
+    }
+
+    public User updateUser(final User user) {
+       return userDao.save(user);
     }
 
     public SecureUserView addUser(final User user) {
