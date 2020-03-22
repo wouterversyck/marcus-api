@@ -76,6 +76,14 @@ class JwtServiceTest {
     }
 
     @Test
+    void shouldReturnUsername_WhenGetUsernameMethodIsCalled() {
+        var token = generateRawToken();
+        var result = jwtService.getUsernameWithoutValidationSignature(token);
+
+        assertThat(result).isEqualTo("1");
+    }
+
+    @Test
     void shouldCreateCorrectPrincipal_WhenTokenStringIsPassed() {
         String token = generateValidToken();
 

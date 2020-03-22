@@ -49,7 +49,7 @@ class JwtAuthenticationFilterTest {
         jwtAuthenticationFilter = new JwtAuthenticationFilter(jwtService, properties);
 
         httpServletRequest = MockMvcRequestBuilders
-                .get("test")
+                .get("http://test.be")
                 .header("Authorization", "token")
                 .buildRequest(new MockServletContext());
 

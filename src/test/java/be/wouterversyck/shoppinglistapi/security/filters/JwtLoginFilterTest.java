@@ -53,12 +53,12 @@ class JwtLoginFilterTest {
     void setup() {
         properties = new SecurityProperties();
         properties.setResponseTokenHeader("x-token");
-        properties.setAuthLoginUrl("login");
+        properties.setAuthLoginUrl("http://login.be");
         jwtLoginFilter = new JwtLoginFilter(authenticationManager,jwtService,
                 authenticationFailureHandler, properties);
 
         httpServletRequest = MockMvcRequestBuilders
-                .get("login")
+                .get("http://login.be")
                 .content("{\"username\": \"user\",\"password\": \"password\"}")
                 .buildRequest(new MockServletContext());
 

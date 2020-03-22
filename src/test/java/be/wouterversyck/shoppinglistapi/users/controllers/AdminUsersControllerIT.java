@@ -1,4 +1,4 @@
-package be.wouterversyck.shoppinglistapi.admin.controllers;
+package be.wouterversyck.shoppinglistapi.users.controllers;
 
 import be.wouterversyck.shoppinglistapi.AbstractIT;
 import org.junit.jupiter.api.Test;
@@ -8,7 +8,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-class AdminControllerIT extends AbstractIT {
+class AdminUsersControllerIT extends AbstractIT {
 
     @Test
     void shouldDenyAccess_WhenNotLoggedInAsAdmin() throws Exception {
@@ -16,7 +16,7 @@ class AdminControllerIT extends AbstractIT {
 
         getMvc()
                 .perform(
-                    getWithToken("/admin/users", token))
+                        getWithToken("/admin/users", token))
                 .andExpect(status().isForbidden());
     }
 

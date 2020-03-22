@@ -1,26 +1,18 @@
 package be.wouterversyck.shoppinglistapi.users.services;
 
-import be.wouterversyck.shoppinglistapi.mail.services.MailService;
-import be.wouterversyck.shoppinglistapi.security.utils.JwtService;
 import be.wouterversyck.shoppinglistapi.users.exceptions.UserNotFoundException;
-import be.wouterversyck.shoppinglistapi.users.models.RoleEntity;
 import be.wouterversyck.shoppinglistapi.users.models.SecureUserView;
 import be.wouterversyck.shoppinglistapi.users.models.DangerUserView;
 import be.wouterversyck.shoppinglistapi.users.models.SecureUserViewImpl;
 import be.wouterversyck.shoppinglistapi.users.models.User;
-import be.wouterversyck.shoppinglistapi.users.persistence.RolesDao;
 import be.wouterversyck.shoppinglistapi.users.persistence.UserDao;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.ExampleMatcher;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-
-import javax.mail.MessagingException;
-import java.util.List;
 
 import static org.springframework.data.domain.ExampleMatcher.GenericPropertyMatchers.ignoreCase;
 
@@ -29,15 +21,17 @@ import static org.springframework.data.domain.ExampleMatcher.GenericPropertyMatc
 @Slf4j
 public class UserService {
     private UserDao userDao;
-    private RolesDao rolesDao;
-    private MailService mailService;
-    private JwtService jwtService;
 
     // only for internal use
     public DangerUserView getSecurityUserByUsername(final String username) throws UserNotFoundException {
         log.info("retrieving user model with password, use only internally");
         return userDao.findByUsername(username, DangerUserView.class)
                 .orElseThrow(() -> new UserNotFoundException(username));
+    }
+
+    public User getUserById(final long id) throws UserNotFoundException {
+        return userDao.findById(id)
+                .orElseThrow(() -> new UserNotFoundException(id));
     }
 
     public User getUserModelByUsername(final String username) throws UserNotFoundException {
@@ -79,11 +73,6 @@ public class UserService {
         userDao.deleteById(id);
     }
 
-    @Cacheable(value = "be.wouterversyck.shoppinglistapi.users.role")
-    public List<RoleEntity> getRoles() {
-        return rolesDao.findAll();
-    }
-
     public boolean userExistsByUsername(final String username) {
         final var user = new User();
         user.setUsername(username);
@@ -106,13 +95,4 @@ public class UserService {
                                 .withMatcher("email", ignoreCase())));
     }
 
-    public void sendPasswordSetMailForUser(final long id) throws MessagingException, UserNotFoundException {
-        log.info("sending email for userId {}, verifying user exists", id);
-        final var user = userDao.findById(id).orElseThrow(() -> new UserNotFoundException(id));
-
-        log.info("sending email for userId {}, user exists [username: {}] -> sending email", id, user.getUsername());
-        mailService.sendPasswordSetMail(user.getUsername(), user.getEmail(), jwtService.generatePasswordResetToken(user));
-
-        log.info("mail sent for [userId: {}, username: {}]", user.getId(), user.getUsername());
-    }
 }

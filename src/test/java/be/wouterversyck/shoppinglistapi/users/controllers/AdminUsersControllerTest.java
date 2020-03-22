@@ -1,10 +1,11 @@
-package be.wouterversyck.shoppinglistapi.admin.controllers;
+package be.wouterversyck.shoppinglistapi.users.controllers;
 
 import be.wouterversyck.shoppinglistapi.users.exceptions.UserNotFoundException;
 import be.wouterversyck.shoppinglistapi.users.models.RoleEntity;
 import be.wouterversyck.shoppinglistapi.users.models.SecureUserView;
 import be.wouterversyck.shoppinglistapi.users.models.User;
-import be.wouterversyck.shoppinglistapi.users.services.UserService;
+import be.wouterversyck.shoppinglistapi.users.services.RolesService;
+import be.wouterversyck.shoppinglistapi.users.services.UserFacade;
 import be.wouterversyck.shoppinglistapi.users.testmodels.SecureUserImpl;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -22,13 +23,13 @@ import java.util.Collections;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-class AdminControllerTest {
+class AdminUsersControllerTest {
 
     private static final String USERNAME_1 = "USERNAME_1";
     private static final String USERNAME_2 = "USERNAME_2";
@@ -36,15 +37,17 @@ class AdminControllerTest {
     private static final String ROLE_NAME = "USER";
 
     @Mock
-    private UserService userService;
+    private UserFacade userFacade;
+    @Mock
+    private RolesService rolesService;
 
     @InjectMocks
-    private AdminController adminController;
+    private AdminUsersController adminController;
 
     @Test
     void shouldReturnUsersPage_WhenControllerMethodIsCalled() {
         var page = PageRequest.of(0, 20);
-        when(userService.getAllUsers(page))
+        when(userFacade.getAllUsers(page))
                 .thenReturn(createUserPage());
 
         Page<SecureUserView> result = adminController.getUsers(page);
@@ -56,37 +59,37 @@ class AdminControllerTest {
     }
 
     @Test
-    void shouldDelegateToUserServiceAndReturnProperResponse_WhenUserIsAdded() throws UserNotFoundException, MessagingException {
+    void shouldDelegateToUserFacadeAndReturnProperResponse_WhenUserIsAdded() throws UserNotFoundException, MessagingException {
         var user = new User();
         user.setUsername(USERNAME_1);
-        when(userService.addUser(user)).thenReturn(
+        when(userFacade.addUser(user)).thenReturn(
                 SecureUserImpl.builder()
                         .id(1)
                         .username(USERNAME_1).build());
 
         var result = adminController.addUser(user);
 
-        verify(userService).sendPasswordSetMailForUser(1);
-        verify(userService).addUser(user);
+        verify(userFacade).sendPasswordSetMailForUser(1);
+        verify(userFacade).addUser(user);
 
         assertThat(result.getStatusCode()).isEqualTo(HttpStatus.OK);
         assertThat(result.getBody().getUsername()).isEqualTo(USERNAME_1);
     }
 
     @Test
-    void shouldDelegateToUserServiceAndReturnProperResponse_WhenUserIsAddedButEmailSendingFailed() throws UserNotFoundException, MessagingException {
+    void shouldDelegateToUserFacadeAndReturnProperResponse_WhenUserIsAddedButEmailSendingFailed() throws UserNotFoundException, MessagingException {
         var user = new User();
         user.setUsername(USERNAME_1);
-        when(userService.addUser(user)).thenReturn(
+        when(userFacade.addUser(user)).thenReturn(
                 SecureUserImpl.builder()
                         .id(1)
                         .username(USERNAME_1).build());
-        doThrow(new MessagingException("test")).when(userService).sendPasswordSetMailForUser(1);
+        doThrow(new MessagingException("test")).when(userFacade).sendPasswordSetMailForUser(1);
 
         var result = adminController.addUser(user);
 
-        verify(userService).sendPasswordSetMailForUser(1);
-        verify(userService).addUser(user);
+        verify(userFacade).sendPasswordSetMailForUser(1);
+        verify(userFacade).addUser(user);
 
         assertThat(result.getStatusCode()).isEqualTo(HttpStatus.MULTI_STATUS);
         assertThat(result.getBody().getUsername()).isEqualTo(USERNAME_1);
@@ -97,7 +100,7 @@ class AdminControllerTest {
         var role = new RoleEntity();
         role.setName(ROLE_NAME);
 
-        when(userService.getRoles()).thenReturn(Collections.singletonList(role));
+        when(rolesService.getRoles()).thenReturn(Collections.singletonList(role));
 
         var roles = adminController.getRoles();
 
@@ -110,7 +113,7 @@ class AdminControllerTest {
     void shouldDelegateToService_WhenPasswordSetMailRequestIsMade() throws MessagingException, UserNotFoundException {
         adminController.sendPasswordSetMail(1);
 
-        verify(userService).sendPasswordSetMailForUser(1);
+        verify(userFacade).sendPasswordSetMailForUser(1);
     }
 
     @Test
@@ -121,21 +124,21 @@ class AdminControllerTest {
     @Test
     void shouldDelegateToService_WhenUsernameIsProvidedToExistsMethod() {
         adminController.doesUserExist(USERNAME_1, null);
-        verify(userService).userExistsByUsername(USERNAME_1);
+        verify(userFacade).userExistsByUsername(USERNAME_1);
     }
 
     @Test
     void shouldDelegateToService_WhenEmailIsProvidedToExistsMethod() {
         adminController.doesUserExist(null, EMAIL);
-        verify(userService).userExistsByEmail(EMAIL);
+        verify(userFacade).userExistsByEmail(EMAIL);
     }
 
     private Page<SecureUserView> createUserPage() {
         return new PageImpl<>(List.of(
                 SecureUserImpl.builder()
-                    .username(USERNAME_1).build(),
+                        .username(USERNAME_1).build(),
                 SecureUserImpl.builder()
-                    .username(USERNAME_2).build()
+                        .username(USERNAME_2).build()
         ));
     }
 }

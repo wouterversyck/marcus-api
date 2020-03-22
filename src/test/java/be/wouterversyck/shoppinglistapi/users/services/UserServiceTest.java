@@ -2,20 +2,17 @@ package be.wouterversyck.shoppinglistapi.users.services;
 
 import be.wouterversyck.shoppinglistapi.mail.services.MailService;
 import be.wouterversyck.shoppinglistapi.security.utils.JwtService;
-import be.wouterversyck.shoppinglistapi.shoppinglist.daos.ShoppingListDao;
 import be.wouterversyck.shoppinglistapi.users.exceptions.UserNotFoundException;
 import be.wouterversyck.shoppinglistapi.users.models.DangerUserView;
 import be.wouterversyck.shoppinglistapi.users.models.Role;
-import be.wouterversyck.shoppinglistapi.users.models.RoleEntity;
 import be.wouterversyck.shoppinglistapi.users.models.SecureUserView;
 import be.wouterversyck.shoppinglistapi.users.models.User;
-import be.wouterversyck.shoppinglistapi.users.persistence.RolesDao;
 import be.wouterversyck.shoppinglistapi.users.persistence.UserDao;
 import be.wouterversyck.shoppinglistapi.users.testmodels.DangerUserImpl;
 import be.wouterversyck.shoppinglistapi.users.testmodels.SecureUserImpl;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.Example;
@@ -25,8 +22,6 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 
-import javax.mail.MessagingException;
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -43,24 +38,13 @@ class UserServiceTest {
     private static final String NOT_KNOWN = "NOT_KNOWN";
     private static final String USERNAME_2 = "USERNAME_2";
     private static final String PASSWORD = "PASSWORD";
-    private static final String ROLE_NAME = "USER";
     private static final String TOKEN = "TOKEN";
 
     @Mock
     private UserDao userDao;
-    @Mock
-    private RolesDao rolesDao;
-    @Mock
-    private MailService mailService;
-    @Mock
-    private JwtService jwtService;
 
+    @InjectMocks
     private UserService userService;
-
-    @BeforeEach
-    void setup() {
-        userService = new UserService(userDao, rolesDao, mailService, jwtService);
-    }
 
     @Test
     void shouldReturnUser_WhenUsernameIsPassed() throws UserNotFoundException {
@@ -124,44 +108,6 @@ class UserServiceTest {
         assertThat(result.getEmail()).isEqualTo(EMAIL);
         assertThat(result.getId()).isEqualTo(1);
         assertThat(result.getRole()).isEqualTo(Role.USER);
-    }
-
-    @Test
-    void shouldReturnRoles_WhenRolesAreRequested() {
-        var role = new RoleEntity();
-        role.setName(ROLE_NAME);
-
-        when(rolesDao.findAll()).thenReturn(Collections.singletonList(role));
-
-        var roles = userService.getRoles();
-
-        assertThat(roles.size()).isEqualTo(1);
-        assertThat(roles).extracting("name")
-                .contains(ROLE_NAME);
-    }
-
-    @Test
-    void shouldSendPasswordSetMail_WhenMethodIsCalled() throws MessagingException, UserNotFoundException {
-        var user = new User();
-        user.setId(1);
-        user.setEmail(EMAIL);
-        user.setUsername(USERNAME);
-        user.setPassword(PASSWORD);
-        when(userDao.findById(1L)).thenReturn(Optional.of(user));
-        when(jwtService.generatePasswordResetToken(user)).thenReturn(TOKEN);
-
-        userService.sendPasswordSetMailForUser(1L);
-
-        verify(mailService).sendPasswordSetMail(USERNAME, EMAIL, TOKEN);
-    }
-
-    @Test
-    void shouldNotSendPasswordSetMail_WhenUserIsNotFound() {
-        when(userDao.findById(1L)).thenReturn(Optional.empty());
-
-        assertThrows(UserNotFoundException.class, () -> userService.sendPasswordSetMailForUser(1L));
-
-        verifyNoInteractions(mailService);
     }
 
     @Test

@@ -96,6 +96,8 @@ public class JwtService {
 
     public String getUsernameWithoutValidationSignature(final String token) {
         final String[] splitToken = token.split("\\.");
+
+        // When no signingKey is set, the library will allows us to parse a token without a key
         return Jwts.parserBuilder()
                 .build()
                 .parseClaimsJwt(splitToken[0] + "." + splitToken[1] + ".")
