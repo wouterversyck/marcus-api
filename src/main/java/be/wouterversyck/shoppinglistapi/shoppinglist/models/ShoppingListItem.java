@@ -27,6 +27,9 @@ public class ShoppingListItem {
     @Column
     private String name;
 
+    @Column
+    private boolean checked;
+
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
     @JoinColumn(name = "shopping_list_id")
     private ShoppingList shoppingList;

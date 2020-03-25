@@ -1,7 +1,8 @@
-package be.wouterversyck.shoppinglistapi.security.services;
+package be.wouterversyck.shoppinglistapi.users.services;
 
 import be.wouterversyck.shoppinglistapi.users.exceptions.UserNotFoundException;
 import be.wouterversyck.shoppinglistapi.users.models.Role;
+import be.wouterversyck.shoppinglistapi.users.services.SecurityUserService;
 import be.wouterversyck.shoppinglistapi.users.services.UserService;
 import be.wouterversyck.shoppinglistapi.users.testmodels.DangerUserImpl;
 import org.junit.jupiter.api.Test;
@@ -27,6 +28,7 @@ class SecurityUserServiceTest {
 
     private static final String USERNAME = "USERNAME";
     private static final String PASSWORD = "PASSWORD";
+    private static final String EMAIL = "user@test.be";
 
     @Test
     void shouldReturnCorrectUserDetails_WhenUserIsFound() throws UserNotFoundException {
@@ -39,6 +41,22 @@ class SecurityUserServiceTest {
         when(userService.getSecurityUserByUsername(USERNAME)).thenReturn(user);
 
         UserDetails result = securityUserService.loadUserByUsername(USERNAME);
+
+        assertThat(result.getPassword()).isEqualTo(PASSWORD);
+        assertThat(result.getUsername()).isEqualTo(USERNAME);
+    }
+
+    @Test
+    void shouldReturnCorrectUserDetails_WhenEmailIsFound() throws UserNotFoundException {
+        var user = DangerUserImpl.builder()
+                .password(PASSWORD)
+                .username(USERNAME)
+                .role(Role.USER)
+                .build();
+
+        when(userService.getSecurityUserByEmail(EMAIL)).thenReturn(user);
+
+        UserDetails result = securityUserService.loadUserByUsername(EMAIL);
 
         assertThat(result.getPassword()).isEqualTo(PASSWORD);
         assertThat(result.getUsername()).isEqualTo(USERNAME);

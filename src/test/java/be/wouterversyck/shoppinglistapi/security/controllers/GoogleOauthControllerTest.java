@@ -3,7 +3,7 @@ package be.wouterversyck.shoppinglistapi.security.controllers;
 import be.wouterversyck.shoppinglistapi.security.config.SecurityProperties;
 import be.wouterversyck.shoppinglistapi.security.models.GoogleOauthRequest;
 import be.wouterversyck.shoppinglistapi.security.models.JwtUserDetails;
-import be.wouterversyck.shoppinglistapi.security.services.SecurityUserService;
+import be.wouterversyck.shoppinglistapi.users.services.SecurityUserService;
 import be.wouterversyck.shoppinglistapi.security.utils.JwtService;
 import be.wouterversyck.shoppinglistapi.users.exceptions.UserNotFoundException;
 import com.google.api.client.googleapis.auth.oauth2.GoogleIdToken;
@@ -11,7 +11,6 @@ import com.google.api.client.googleapis.auth.oauth2.GoogleIdTokenVerifier;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.mock.web.MockHttpServletResponse;
@@ -69,7 +68,7 @@ class GoogleOauthControllerTest {
 
         when(googleIdToken.getPayload()).thenReturn(createGoogleIdToken(EMAIL));
         when(googleIdTokenVerifier.verify(ID_TOKEN)).thenReturn(googleIdToken);
-        when(userService.loadUserByEmail(EMAIL)).thenReturn(userDetails);
+        when(userService.loadUserByUsername(EMAIL)).thenReturn(userDetails);
         when(jwtService.generateToken(createAuthentication(userDetails))).thenReturn(JWT_TOKEN);
 
         googleOauthController.signInWithGoogle(request, response);

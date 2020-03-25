@@ -19,6 +19,9 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Column;
+import javax.validation.constraints.Email;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Pattern;
 import java.util.List;
 
 @Data
@@ -32,9 +35,12 @@ public class User {
     private long id;
 
     @Column(nullable = false, unique = true)
+    @NotBlank
+    @Pattern(regexp = "^[a-zA-Z0-9]{1,25}$")
     private String username;
 
     @Column(nullable = false, unique = true)
+    @Email
     private String email;
 
     @Column
@@ -42,6 +48,7 @@ public class User {
 
     @Convert(converter = RoleConverter.class)
     @Column(name = "role_id")
+    @NotBlank
     private Role role;
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "owner", cascade = CascadeType.ALL, orphanRemoval = true)

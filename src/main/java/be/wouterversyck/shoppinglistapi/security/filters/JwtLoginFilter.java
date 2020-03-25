@@ -42,7 +42,7 @@ public class JwtLoginFilter extends UsernamePasswordAuthenticationFilter {
     public Authentication attemptAuthentication(final HttpServletRequest request, final HttpServletResponse response) throws AuthenticationException {
         final LoginRequest loginRequest = getLoginRequestFromHttpRequest(request);
 
-        log.info(format("Attempting login for user: %s", loginRequest.getUsername()));
+        log.info(format("Attempting login with username or email: %s", loginRequest.getUsername()));
 
         return getAuthenticationManager().authenticate(
                 new UsernamePasswordAuthenticationToken(

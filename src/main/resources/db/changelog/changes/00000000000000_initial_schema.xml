@@ -76,6 +76,9 @@
             <column name="name" type="varchar(50)">
                 <constraints nullable="false" />
             </column>
+            <column name="checked" type="boolean">
+                <constraints nullable="false" />
+            </column>
             <column name="shopping_list_id" type="bigint">
                 <constraints nullable="false" />
             </column>

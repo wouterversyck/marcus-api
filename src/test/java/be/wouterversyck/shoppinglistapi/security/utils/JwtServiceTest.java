@@ -1,8 +1,7 @@
-package be.wouterversyck.shoppinglistapi.security.services;
+package be.wouterversyck.shoppinglistapi.security.utils;
 
 import be.wouterversyck.shoppinglistapi.security.models.JwtUserDetails;
 import be.wouterversyck.shoppinglistapi.security.models.JwtUserPrincipal;
-import be.wouterversyck.shoppinglistapi.security.utils.JwtService;
 import be.wouterversyck.shoppinglistapi.security.config.SecurityProperties;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;

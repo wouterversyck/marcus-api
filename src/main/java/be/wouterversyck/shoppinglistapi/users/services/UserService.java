@@ -29,6 +29,12 @@ public class UserService {
                 .orElseThrow(() -> new UserNotFoundException(username));
     }
 
+    public DangerUserView getSecurityUserByEmail(final String email) throws UserNotFoundException {
+        log.info("retrieving user model with password, use only internally");
+        return userDao.findByEmail(email, DangerUserView.class)
+                .orElseThrow(() -> new UserNotFoundException(email));
+    }
+
     public User getUserById(final long id) throws UserNotFoundException {
         return userDao.findById(id)
                 .orElseThrow(() -> new UserNotFoundException(id));

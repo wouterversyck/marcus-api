@@ -1,9 +1,9 @@
-package be.wouterversyck.shoppinglistapi.security.services;
+package be.wouterversyck.shoppinglistapi.users.services;
 
 import be.wouterversyck.shoppinglistapi.security.models.JwtUserDetails;
 import be.wouterversyck.shoppinglistapi.users.exceptions.UserNotFoundException;
 import be.wouterversyck.shoppinglistapi.users.models.DangerUserView;
-import be.wouterversyck.shoppinglistapi.users.services.UserService;
+import org.apache.commons.validator.routines.EmailValidator;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -25,10 +25,15 @@ public class SecurityUserService implements UserDetailsService {
     }
 
     @Override
-    public UserDetails loadUserByUsername(final String username) throws UsernameNotFoundException {
+    public UserDetails loadUserByUsername(final String usernameOrEmail) throws UsernameNotFoundException {
         final DangerUserView user;
+
         try {
-            user = userService.getSecurityUserByUsername(username);
+            if (EmailValidator.getInstance().isValid(usernameOrEmail)){
+                user = userService.getSecurityUserByEmail(usernameOrEmail);
+            } else {
+                user = userService.getSecurityUserByUsername(usernameOrEmail);
+            }
         } catch (final UserNotFoundException e) {
             throw new UsernameNotFoundException(e.getMessage());
         }
@@ -37,16 +42,6 @@ public class SecurityUserService implements UserDetailsService {
                 user.getId(),
                 user.getUsername(),
                 user.getPassword(),
-                Collections.singletonList(new SimpleGrantedAuthority(user.getRole().name())));
-    }
-
-    public UserDetails loadUserByEmail(final String email) throws UserNotFoundException {
-        final var user = userService.getUserByEmail(email);
-
-        return new JwtUserDetails(
-                user.getId(),
-                user.getUsername(),
-                "",
                 Collections.singletonList(new SimpleGrantedAuthority(user.getRole().name())));
     }
 }

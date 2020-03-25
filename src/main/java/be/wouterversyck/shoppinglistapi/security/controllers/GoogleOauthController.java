@@ -2,7 +2,6 @@ package be.wouterversyck.shoppinglistapi.security.controllers;
 
 import be.wouterversyck.shoppinglistapi.security.config.SecurityProperties;
 import be.wouterversyck.shoppinglistapi.security.models.GoogleOauthRequest;
-import be.wouterversyck.shoppinglistapi.security.services.SecurityUserService;
 import be.wouterversyck.shoppinglistapi.security.utils.JwtService;
 import be.wouterversyck.shoppinglistapi.users.exceptions.UserNotFoundException;
 import com.google.api.client.googleapis.auth.oauth2.GoogleIdTokenVerifier;
@@ -10,6 +9,7 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -28,7 +28,7 @@ import java.security.GeneralSecurityException;
 @RequestMapping("oauth")
 public class GoogleOauthController {
     private GoogleIdTokenVerifier googleIdTokenVerifier;
-    private SecurityUserService userService;
+    private UserDetailsService userService;
     private JwtService jwtService;
     private SecurityProperties securityProperties;
 
@@ -37,7 +37,7 @@ public class GoogleOauthController {
             @RequestBody @Valid final GoogleOauthRequest request,
             final HttpServletResponse response) throws GeneralSecurityException, IOException, UserNotFoundException {
         final var payload = googleIdTokenVerifier.verify(request.getIdToken()).getPayload();
-        final var user = userService.loadUserByEmail(payload.getEmail());
+        final var user = userService.loadUserByUsername(payload.getEmail());
         final var authentication = new UsernamePasswordAuthenticationToken(user, null);
 
         log.info("Authenticated user {} with google oauth, creating token", user.getUsername());

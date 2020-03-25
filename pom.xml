@@ -19,7 +19,8 @@
         <java.version>13</java.version>
         <sentry.version>1.7.30</sentry.version>
         <jjwt.version>0.11.0</jjwt.version>
-        <google.oauth>1.30.8</google.oauth>
+        <google.api.client.version>1.30.8</google.api.client.version>
+        <commons.validator.version>1.6</commons.validator.version>
         <checkstyle-maven-plugin.version>3.1.0</checkstyle-maven-plugin.version>
     </properties>
 
@@ -103,7 +104,13 @@
         <dependency>
             <groupId>com.google.api-client</groupId>
             <artifactId>google-api-client</artifactId>
-            <version>1.30.8</version>
+            <version>${google.api.client.version}</version>
+        </dependency>
+        <!-- https://mvnrepository.com/artifact/commons-validator/commons-validator -->
+        <dependency>
+            <groupId>commons-validator</groupId>
+            <artifactId>commons-validator</artifactId>
+            <version>${commons.validator.version}</version>
         </dependency>
 
         <dependency>
