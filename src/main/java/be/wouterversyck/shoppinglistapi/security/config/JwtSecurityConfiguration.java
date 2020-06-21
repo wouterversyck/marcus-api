@@ -1,7 +1,7 @@
 package be.wouterversyck.shoppinglistapi.security.config;
 
-import be.wouterversyck.shoppinglistapi.security.filters.JwtLoginFilter;
 import be.wouterversyck.shoppinglistapi.security.filters.JwtAuthenticationFilter;
+import be.wouterversyck.shoppinglistapi.security.filters.JwtAuthorizationFilter;
 import be.wouterversyck.shoppinglistapi.security.handlers.JwtAuthenticationFailureHandler;
 import be.wouterversyck.shoppinglistapi.security.utils.JwtService;
 import com.google.api.client.googleapis.auth.oauth2.GoogleIdTokenVerifier;
@@ -39,20 +39,20 @@ public class JwtSecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .antMatchers("/public/**", "/oauth/**", "/pwd/**").permitAll()
                 .anyRequest().authenticated()
                 .and()
-                .addFilter(getJwtLoginFilter())
-                .addFilterAfter(getAuthenticationFilter(), JwtLoginFilter.class)
+                .addFilter(getJwtAuthenticationFilter())
+                .addFilterAfter(getAuthorizationFilter(), JwtAuthenticationFilter.class)
                 .sessionManagement()
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS);
     }
 
     @Bean
-    public UsernamePasswordAuthenticationFilter getJwtLoginFilter() throws Exception {
-        return new JwtLoginFilter(authenticationManager(), getJwtService(), getFailureHandler(), properties);
+    public UsernamePasswordAuthenticationFilter getJwtAuthenticationFilter() throws Exception {
+        return new JwtAuthenticationFilter(authenticationManager(), getJwtService(), getFailureHandler(), properties);
     }
 
     @Bean
-    public OncePerRequestFilter getAuthenticationFilter() {
-        return new JwtAuthenticationFilter(getJwtService(), properties);
+    public OncePerRequestFilter getAuthorizationFilter() {
+        return new JwtAuthorizationFilter(getJwtService(), properties);
     }
 
     @Bean

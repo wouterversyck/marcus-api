@@ -1,52 +1,73 @@
 package be.wouterversyck.shoppinglistapi.security.filters;
 
+import be.wouterversyck.shoppinglistapi.security.models.LoginRequest;
 import be.wouterversyck.shoppinglistapi.security.config.SecurityProperties;
+import be.wouterversyck.shoppinglistapi.security.models.JwtUserDetails;
 import be.wouterversyck.shoppinglistapi.security.utils.JwtService;
-import io.jsonwebtoken.JwtException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.web.filter.OncePerRequestFilter;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.web.authentication.AuthenticationFailureHandler;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 import javax.servlet.FilterChain;
-import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
+import static java.lang.String.format;
+
 @Slf4j
-public class JwtAuthenticationFilter extends OncePerRequestFilter {
+public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
 
     private final JwtService jwtService;
     private final SecurityProperties properties;
 
-    public JwtAuthenticationFilter(final JwtService jwtService, final SecurityProperties properties) {
+    public JwtAuthenticationFilter(final AuthenticationManager authenticationManager, final JwtService jwtService,
+                                   final AuthenticationFailureHandler failureHandler,
+                                   final SecurityProperties properties) {
+        setFilterProcessesUrl(properties.getAuthLoginUrl());
+        setAuthenticationManager(authenticationManager);
+        setAuthenticationFailureHandler(failureHandler);
+        setPostOnly(true);
+
         this.jwtService = jwtService;
         this.properties = properties;
     }
 
     @Override
-    protected void doFilterInternal(final HttpServletRequest request, final HttpServletResponse response,
-                                    final FilterChain filterChain) throws IOException, ServletException {
-        final var token = request.getHeader(properties.getTokenHeader());
+    public Authentication attemptAuthentication(final HttpServletRequest request, final HttpServletResponse response) throws AuthenticationException {
+        final LoginRequest loginRequest = getLoginRequestFromHttpRequest(request);
 
-        // Filter will always be called (even on anonymous endpoints, so skip auth for anonymous endpoints
-        if (token != null) {
-            authenticateUser(token);
-        }
+        log.info(format("Attempting login with username or email: %s", loginRequest.getUsername()));
 
-        filterChain.doFilter(request, response);
+        return getAuthenticationManager().authenticate(
+                new UsernamePasswordAuthenticationToken(
+                        loginRequest.getUsername(),
+                        loginRequest.getPassword())
+        );
     }
 
-    private void authenticateUser(final String token) {
+    @Override
+    protected void successfulAuthentication(final HttpServletRequest request, final HttpServletResponse response,
+                                            final FilterChain filterChain, final Authentication authentication) {
+        final var user = ((JwtUserDetails) authentication.getPrincipal());
+
+        log.info(format("User %s logged in", user.getUsername()));
+
+        final String token = jwtService.generateToken(authentication);
+        response.addHeader(properties.getResponseTokenHeader(), token);
+    }
+
+    private LoginRequest getLoginRequestFromHttpRequest(final HttpServletRequest request) {
         try {
-            final var authentication = jwtService.parseToken(token);
-
-            log.info("Authenticated request for user with username: [{}]", authentication.getPrincipal());
-
-            SecurityContextHolder.getContext().setAuthentication(authentication);
-        } catch(final JwtException ex) {
-            log.info(ex.getMessage());
-            SecurityContextHolder.clearContext();
+            return new ObjectMapper()
+                    .readValue(request.getInputStream(), LoginRequest.class);
+        } catch (final IOException e) {
+            throw new RuntimeException(e);
         }
     }
 }
