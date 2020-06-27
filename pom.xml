@@ -5,7 +5,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>2.3.0.RELEASE</version>
+        <version>2.3.1.RELEASE</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
 
@@ -21,6 +21,7 @@
         <jjwt.version>0.11.0</jjwt.version>
         <google.api.client.version>1.30.8</google.api.client.version>
         <commons.validator.version>1.6</commons.validator.version>
+        <jacoco.maven.version>0.8.5</jacoco.maven.version>
         <checkstyle-maven-plugin.version>3.1.0</checkstyle-maven-plugin.version>
     </properties>
 
@@ -153,7 +154,7 @@
             <plugin>
                 <groupId>org.jacoco</groupId>
                 <artifactId>jacoco-maven-plugin</artifactId>
-                <version>0.8.4</version>
+                <version>${jacoco.maven.version}</version>
                 <executions>
                     <execution>
                         <goals>
