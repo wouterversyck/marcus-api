@@ -1,6 +1,7 @@
-id;name;checked;shopping_list_id
-1;test;0;1
-2;test2;1;1
-3;sldkfjqskdf;0;2
-4;ok yes;0;3
-5; hell yes;0;3
+id;contents;checked;entry_type_id;parent_entry_id;shopping_list_id
+1;test;0;1;;3
+2;test2;1;2;1;
+3;sldkfjqskdf;0;2;1;
+4;ok yes;0;2;1;
+5;hell yes;0;2;1;
+6;<p>I'm a rich text field</p>;0;4;;3

@@ -1,7 +1,7 @@
-package be.wouterversyck.shoppinglistapi.shoppinglist.daos;
+package be.wouterversyck.shoppinglistapi.notes.persistence;
 
-import be.wouterversyck.shoppinglistapi.shoppinglist.models.ShoppingList;
-import be.wouterversyck.shoppinglistapi.shoppinglist.models.ShoppingListView;
+import be.wouterversyck.shoppinglistapi.notes.models.ShoppingList;
+import be.wouterversyck.shoppinglistapi.notes.models.ShoppingListView;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 

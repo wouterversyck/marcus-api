@@ -1,4 +1,4 @@
-package be.wouterversyck.shoppinglistapi.shoppinglist.controllers;
+package be.wouterversyck.shoppinglistapi.notes.controllers;
 
 import be.wouterversyck.shoppinglistapi.AbstractIT;
 import org.junit.jupiter.api.Test;
@@ -7,7 +7,7 @@ import static java.lang.String.format;
 import static org.hamcrest.Matchers.is;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-class ShoppingListControllerIT extends AbstractIT {
+class NotesControllerIT extends AbstractIT {
 
     private static final String SHOPPING_LIST_URL = "/shoppinglist/";
 

@@ -1,9 +1,9 @@
-package be.wouterversyck.shoppinglistapi.shoppinglist.controllers;
+package be.wouterversyck.shoppinglistapi.notes.controllers;
 
 import be.wouterversyck.shoppinglistapi.security.models.JwtUserPrincipal;
-import be.wouterversyck.shoppinglistapi.shoppinglist.exceptions.ShoppingListNotFoundException;
-import be.wouterversyck.shoppinglistapi.shoppinglist.models.ShoppingListView;
-import be.wouterversyck.shoppinglistapi.shoppinglist.services.ShoppingListService;
+import be.wouterversyck.shoppinglistapi.notes.exceptions.ShoppingListNotFoundException;
+import be.wouterversyck.shoppinglistapi.notes.models.ShoppingListView;
+import be.wouterversyck.shoppinglistapi.notes.services.ShoppingListService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -18,10 +18,10 @@ import java.util.List;
 @Slf4j
 @RestController
 @RequestMapping("shoppinglist")
-public class ShoppingListController {
+public class NotesController {
     private final ShoppingListService shoppingListService;
 
-    public ShoppingListController(final ShoppingListService shoppingListService) {
+    public NotesController(final ShoppingListService shoppingListService) {
         this.shoppingListService = shoppingListService;
     }
 

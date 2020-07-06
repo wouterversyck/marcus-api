@@ -73,14 +73,29 @@
             <column name="id" type="bigint" autoIncrement="${autoIncrement}">
                 <constraints primaryKey="true" nullable="false"/>
             </column>
-            <column name="name" type="varchar(50)">
+            <column name="contents" type="varchar(500)">
                 <constraints nullable="false" />
             </column>
             <column name="checked" type="boolean">
                 <constraints nullable="false" />
             </column>
-            <column name="shopping_list_id" type="bigint">
+            <column name="entry_type_id" type="bigint">
                 <constraints nullable="false" />
+            </column>
+            <column name="parent_entry_id" type="bigint">
+                <constraints nullable="true" />
+            </column>
+            <column name="shopping_list_id" type="bigint">
+                <constraints nullable="true" />
+            </column>
+        </createTable>
+
+        <createTable tableName="wv_entry_types">
+            <column name="id" type="bigint" autoIncrement="${autoIncrement}">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="name" type="varchar(50)">
+                <constraints nullable="false" unique="true"/>
             </column>
         </createTable>
 
@@ -95,6 +110,18 @@
                                  constraintName="fk_user_role"
                                  referencedColumnNames="id"
                                  referencedTableName="wv_role"/>
+
+        <addForeignKeyConstraint baseColumnNames="entry_type_id"
+                                 baseTableName="wv_shopping_list_items"
+                                 constraintName="fk_shopping_list_items_entry_types"
+                                 referencedColumnNames="id"
+                                 referencedTableName="wv_entry_types"/>
+
+        <addForeignKeyConstraint baseColumnNames="parent_entry_id"
+                                 baseTableName="wv_shopping_list_items"
+                                 constraintName="fk_shopping_list_items_shopping_list_items"
+                                 referencedColumnNames="id"
+                                 referencedTableName="wv_shopping_list_items"/>
 
         <addForeignKeyConstraint baseColumnNames="user_id"
                                  baseTableName="wv_shopping_list_user"
@@ -119,6 +146,11 @@
         <loadData file="db/changelog/seed_data/roles.csv"
                   separator=";"
                   tableName="wv_role">
+        </loadData>
+
+        <loadData file="db/changelog/seed_data/entrytypes.csv"
+                  separator=";"
+                  tableName="wv_entry_types">
         </loadData>
 
         <loadData file="db/changelog/seed_data/users.csv"

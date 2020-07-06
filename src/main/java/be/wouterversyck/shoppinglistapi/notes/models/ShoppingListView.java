@@ -1,4 +1,4 @@
-package be.wouterversyck.shoppinglistapi.shoppinglist.models;
+package be.wouterversyck.shoppinglistapi.notes.models;
 
 import java.util.List;
 

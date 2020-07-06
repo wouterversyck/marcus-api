@@ -1,8 +1,8 @@
-package be.wouterversyck.shoppinglistapi.shoppinglist.services;
+package be.wouterversyck.shoppinglistapi.notes.services;
 
-import be.wouterversyck.shoppinglistapi.shoppinglist.exceptions.ShoppingListNotFoundException;
-import be.wouterversyck.shoppinglistapi.shoppinglist.daos.ShoppingListDao;
-import be.wouterversyck.shoppinglistapi.shoppinglist.models.ShoppingListView;
+import be.wouterversyck.shoppinglistapi.notes.exceptions.ShoppingListNotFoundException;
+import be.wouterversyck.shoppinglistapi.notes.persistence.ShoppingListDao;
+import be.wouterversyck.shoppinglistapi.notes.models.ShoppingListView;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 

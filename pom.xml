@@ -182,6 +182,7 @@
                                 <exclude>**/*Properties.class</exclude>
                                 <exclude>**/models/**</exclude>
                                 <exclude>be/wouterversyck/shoppinglistapi/users/persistence/RoleConverter.class</exclude>
+                                <exclude>be/wouterversyck/shoppinglistapi/notes/persistence/EntryTypeConverter.class</exclude>
                                 <exclude>be/wouterversyck/shoppinglistapi/mail/services/StubbedMailSender.class</exclude>
                             </excludes>
                             <rules>

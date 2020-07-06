@@ -1,7 +1,7 @@
-package be.wouterversyck.shoppinglistapi.shoppinglist.testmodels;
+package be.wouterversyck.shoppinglistapi.notes.testmodels;
 
-import be.wouterversyck.shoppinglistapi.shoppinglist.models.ShoppingListItemView;
-import be.wouterversyck.shoppinglistapi.shoppinglist.models.ShoppingListView;
+import be.wouterversyck.shoppinglistapi.notes.models.ShoppingListItemView;
+import be.wouterversyck.shoppinglistapi.notes.models.ShoppingListView;
 import lombok.Builder;
 
 import java.util.List;

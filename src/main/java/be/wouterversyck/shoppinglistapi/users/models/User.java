@@ -1,6 +1,6 @@
 package be.wouterversyck.shoppinglistapi.users.models;
 
-import be.wouterversyck.shoppinglistapi.shoppinglist.models.ShoppingList;
+import be.wouterversyck.shoppinglistapi.notes.models.ShoppingList;
 import be.wouterversyck.shoppinglistapi.users.persistence.RoleConverter;
 import lombok.Data;
 import lombok.EqualsAndHashCode;

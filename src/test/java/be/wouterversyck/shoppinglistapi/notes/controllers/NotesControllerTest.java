@@ -1,9 +1,9 @@
-package be.wouterversyck.shoppinglistapi.shoppinglist.controllers;
+package be.wouterversyck.shoppinglistapi.notes.controllers;
 
 import be.wouterversyck.shoppinglistapi.security.models.JwtUserPrincipal;
-import be.wouterversyck.shoppinglistapi.shoppinglist.models.ShoppingListView;
-import be.wouterversyck.shoppinglistapi.shoppinglist.services.ShoppingListService;
-import be.wouterversyck.shoppinglistapi.shoppinglist.testmodels.ShoppingListImpl;
+import be.wouterversyck.shoppinglistapi.notes.models.ShoppingListView;
+import be.wouterversyck.shoppinglistapi.notes.services.ShoppingListService;
+import be.wouterversyck.shoppinglistapi.notes.testmodels.ShoppingListImpl;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -17,13 +17,13 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-class ShoppingListControllerTest {
+class NotesControllerTest {
 
     @Mock
     private ShoppingListService shoppingListService;
 
     @InjectMocks
-    private ShoppingListController shoppingListController;
+    private NotesController shoppingListController;
 
     private static final String USERNAME = "USERNAME";
     private static final long USER_ID = 1;
