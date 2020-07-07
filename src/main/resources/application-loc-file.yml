@@ -1,0 +1,17 @@
+logging:
+  config: classpath:logging/logback-loc.xml
+
+spring:
+  datasource:
+    driver-class-name: org.h2.Driver
+    hikari:
+      jdbc-url: jdbc:h2:file:./db/testDb;AUTO_SERVER=TRUE
+      username: test
+      password: password
+  h2:
+    console:
+      enabled: true
+  jpa:
+    show-sql: true
+  liquibase:
+    contexts: loc,default
