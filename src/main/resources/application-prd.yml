@@ -1,6 +1,10 @@
 logging:
   config: classpath:logging/logback-prd.xml
 
+server:
+  servlet:
+    context-path: /marcus/api
+
 spring:
   datasource:
     driverClassName: org.postgresql.Driver
