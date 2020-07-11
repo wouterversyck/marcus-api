@@ -1,18 +1,11 @@
 package be.wouterversyck.shoppinglistapi.users.models;
 
-import be.wouterversyck.shoppinglistapi.notes.models.ShoppingList;
 import be.wouterversyck.shoppinglistapi.users.persistence.RoleConverter;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Convert;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
-import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Id;
 import javax.persistence.GeneratedValue;
@@ -23,7 +16,6 @@ import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
-import java.util.List;
 
 @Data
 @Entity
@@ -51,14 +43,4 @@ public class User {
     @Column(name = "role_id")
     @NotNull
     private Role role;
-
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "owner", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<ShoppingList> ownedLists;
-
-    @ManyToMany(fetch = FetchType.LAZY)
-    @JoinTable(
-            name = "wv_shopping_list_user",
-            joinColumns = @JoinColumn(name = "user_id"),
-            inverseJoinColumns = @JoinColumn(name = "shopping_list_id"))
-    private List<ShoppingList> contributionLists;
 }

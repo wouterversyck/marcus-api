@@ -1,9 +1,8 @@
 package be.wouterversyck.shoppinglistapi.notes.services;
 
 import be.wouterversyck.shoppinglistapi.notes.exceptions.ShoppingListNotFoundException;
+import be.wouterversyck.shoppinglistapi.notes.models.ShoppingList;
 import be.wouterversyck.shoppinglistapi.notes.persistence.ShoppingListDao;
-import be.wouterversyck.shoppinglistapi.notes.models.ShoppingListView;
-import be.wouterversyck.shoppinglistapi.notes.testmodels.ShoppingListImpl;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -11,6 +10,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -33,9 +33,9 @@ class ShoppingListServiceTest {
 
     @Test
     void shouldReturnShoppingList_WhenUserIsPassed() {
-        when(shoppingListDao.findAllByContributor(USERID)).thenReturn(getShoppingLists());
+        when(shoppingListDao.findAllByContributors(USERID)).thenReturn(getShoppingLists());
 
-        List<ShoppingListView> result = shoppingListService.getShoppingListsForContributor(USERID);
+        List<ShoppingList> result = shoppingListService.getShoppingListsForContributor(USERID);
 
         assertThat(result.size()).isEqualTo(2);
         assertThat(result).extracting("name")
@@ -44,9 +44,9 @@ class ShoppingListServiceTest {
 
     @Test
     void shouldReturnShoppingList_WhenIdIsPassed() throws ShoppingListNotFoundException {
-        when(shoppingListDao.findByIdAndOwner(1L, USERID)).thenReturn(Optional.of(getShoppingList()));
+        when(shoppingListDao.findByIdAndOwner("1", USERID)).thenReturn(Optional.of(getShoppingList()));
 
-        ShoppingListView result = shoppingListService.getShoppingListById(1L, USERID);
+        ShoppingList result = shoppingListService.getShoppingListById("1", USERID);
 
         assertThat(result).extracting("name")
                 .isEqualTo(SHOPPING_LIST_NAME_A);
@@ -54,26 +54,47 @@ class ShoppingListServiceTest {
 
     @Test
     void shouldThrowException_WhenShoppingListIsNotFound() {
-        when(shoppingListDao.findByIdAndOwner(1L, USERID)).thenReturn(Optional.empty());
+        when(shoppingListDao.findByIdAndOwner("1", USERID)).thenReturn(Optional.empty());
 
-        assertThrows(ShoppingListNotFoundException.class, () -> shoppingListService.getShoppingListById(1L, USERID));
+        assertThrows(ShoppingListNotFoundException.class, () -> shoppingListService.getShoppingListById("1", USERID));
     }
 
-    private ShoppingListView getShoppingList() {
-        return ShoppingListImpl.builder()
-                .id(1)
+    @Test
+    void shouldSetOwnerAndContributor_WhenShoppingListIsSaved() {
+        ShoppingList shoppingList = getShoppingList();
+        shoppingListService.saveShoppingList(shoppingList, USERID);
+
+        assertThat(shoppingList.getContributors()).contains(USERID);
+        assertThat(shoppingList.getOwner()).isEqualTo(USERID);
+    }
+
+    @Test
+    void shouldNotAddContributorAgain_WhenShoppingListIsSaved() {
+        ShoppingList shoppingList = getShoppingList();
+        shoppingList.setContributors(Collections.singletonList(USERID));
+
+        shoppingListService.saveShoppingList(shoppingList, USERID);
+
+        assertThat(shoppingList.getContributors()).contains(USERID);
+        assertThat(shoppingList.getContributors()).hasSize(1);
+        assertThat(shoppingList.getOwner()).isEqualTo(USERID);
+    }
+
+    private ShoppingList getShoppingList() {
+        return ShoppingList.builder()
+                .id("1")
                 .name(SHOPPING_LIST_NAME_A)
                 .build();
     }
 
-    private List<ShoppingListView> getShoppingLists() {
+    private List<ShoppingList> getShoppingLists() {
         return Arrays.asList(
-                ShoppingListImpl.builder()
-                        .id(1)
+                ShoppingList.builder()
+                        .id("1")
                         .name(SHOPPING_LIST_NAME_A)
                         .build(),
-                ShoppingListImpl.builder()
-                        .id(2)
+                ShoppingList.builder()
+                        .id("2")
                         .name(SHOPPING_LIST_NAME_B)
                         .build()
         );

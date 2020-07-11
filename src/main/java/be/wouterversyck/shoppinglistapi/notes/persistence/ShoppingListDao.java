@@ -1,23 +1,14 @@
 package be.wouterversyck.shoppinglistapi.notes.persistence;
 
 import be.wouterversyck.shoppinglistapi.notes.models.ShoppingList;
-import be.wouterversyck.shoppinglistapi.notes.models.ShoppingListView;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.mongodb.repository.MongoRepository;
 
 import java.util.List;
 import java.util.Optional;
 
-public interface ShoppingListDao extends JpaRepository<ShoppingList, Long> {
-    @Query("select s from ShoppingList s join s.owner o where o.id = :#{#userId}")
-    List<ShoppingListView> findAllByOwner(long userId);
-
-    @Query("select s from ShoppingList s join s.owner o where o.id = :#{#userId}")
-    List<ShoppingList> findAllEntitiesByOwner(long userId);
-
-    @Query("select s from ShoppingList s join s.contributors c where c.id = :#{#contributorId}")
-    List<ShoppingListView> findAllByContributor(long contributorId);
-
-    @Query("select s from ShoppingList s join s.owner o where o.id = :#{#ownerId} and s.id = :#{#shoppingListId}")
-    Optional<ShoppingListView> findByIdAndOwner(long shoppingListId, long ownerId);
+public interface ShoppingListDao extends MongoRepository<ShoppingList, Long> {
+    List<ShoppingList> findAllByOwner(long userId);
+    List<ShoppingList> findAllByContributors(long contributorId);
+    ShoppingList findByIdAndContributors(String shoppingListId, long contributorId);
+    Optional<ShoppingList> findByIdAndOwner(String shoppingListId, long ownerId);
 }

@@ -1,9 +1,8 @@
 package be.wouterversyck.shoppinglistapi.notes.controllers;
 
+import be.wouterversyck.shoppinglistapi.notes.models.ShoppingList;
 import be.wouterversyck.shoppinglistapi.security.models.JwtUserPrincipal;
-import be.wouterversyck.shoppinglistapi.notes.models.ShoppingListView;
 import be.wouterversyck.shoppinglistapi.notes.services.ShoppingListService;
-import be.wouterversyck.shoppinglistapi.notes.testmodels.ShoppingListImpl;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -33,23 +32,23 @@ class NotesControllerTest {
 
         when(shoppingListService.getShoppingListsForContributor(USER_ID)).thenReturn(getShoppingLists());
 
-        List<ShoppingListView> items = shoppingListController.getShoppingLists(new JwtUserPrincipal(USER_ID, USERNAME, null, true));
+        List<ShoppingList> items = shoppingListController.getShoppingLists(new JwtUserPrincipal(USER_ID, USERNAME, null, true));
 
         assertThat(items).hasSize(2);
         assertThat(items).extracting("name")
                 .contains("test", "test2");
         assertThat(items).extracting("id")
-                .contains(1L, 2L);
+                .contains("1", "2");
     }
 
-    private List<ShoppingListView> getShoppingLists() {
+    private List<ShoppingList> getShoppingLists() {
         return Arrays.asList(
-                ShoppingListImpl.builder()
-                        .id(1)
+                ShoppingList.builder()
+                        .id("1")
                         .name("test")
                         .build(),
-                ShoppingListImpl.builder()
-                        .id(2)
+                ShoppingList.builder()
+                        .id("2")
                         .name("test2")
                         .build()
         );

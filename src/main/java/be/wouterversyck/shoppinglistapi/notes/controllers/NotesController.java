@@ -1,14 +1,16 @@
 package be.wouterversyck.shoppinglistapi.notes.controllers;
 
+import be.wouterversyck.shoppinglistapi.notes.models.ShoppingList;
 import be.wouterversyck.shoppinglistapi.security.models.JwtUserPrincipal;
 import be.wouterversyck.shoppinglistapi.notes.exceptions.ShoppingListNotFoundException;
-import be.wouterversyck.shoppinglistapi.notes.models.ShoppingListView;
 import be.wouterversyck.shoppinglistapi.notes.services.ShoppingListService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
@@ -26,16 +28,23 @@ public class NotesController {
     }
 
     @GetMapping("all")
-    public List<ShoppingListView> getShoppingLists(final JwtUserPrincipal principal) {
+    public List<ShoppingList> getShoppingLists(final JwtUserPrincipal principal) {
         return shoppingListService.getShoppingListsForContributor(principal.getId());
     }
 
     @GetMapping("{id}")
-    public ShoppingListView getShoppingList(
-            @PathVariable final long id,
+    public ShoppingList getShoppingList(
+            @PathVariable final String id,
             final JwtUserPrincipal principal) throws ShoppingListNotFoundException {
 
         return shoppingListService.getShoppingListById(id, principal.getId());
+    }
+
+    @PostMapping("save")
+    public void saveShoppingList(
+            @RequestBody final ShoppingList request,
+            final JwtUserPrincipal principal) {
+        this.shoppingListService.saveShoppingList(request, principal.getId());
     }
 
     @ExceptionHandler(ShoppingListNotFoundException.class)
