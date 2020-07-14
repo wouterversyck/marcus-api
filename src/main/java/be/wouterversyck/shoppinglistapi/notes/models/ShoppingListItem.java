@@ -10,7 +10,7 @@ import java.util.List;
 public class ShoppingListItem {
     private String contents;
 
-    private String entryType;
+    private EntryType entryType;
 
     private boolean checked;
     private List<ShoppingListItem> children;
