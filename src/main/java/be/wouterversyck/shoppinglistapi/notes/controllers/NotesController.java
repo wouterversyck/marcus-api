@@ -6,6 +6,7 @@ import be.wouterversyck.shoppinglistapi.notes.exceptions.ShoppingListNotFoundExc
 import be.wouterversyck.shoppinglistapi.notes.services.ShoppingListService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -27,7 +28,7 @@ public class NotesController {
         this.shoppingListService = shoppingListService;
     }
 
-    @GetMapping("all")
+    @GetMapping
     public List<ShoppingList> getShoppingLists(final JwtUserPrincipal principal) {
         return shoppingListService.getShoppingListsForContributor(principal.getId());
     }
@@ -40,11 +41,16 @@ public class NotesController {
         return shoppingListService.getShoppingListById(id, principal.getId());
     }
 
-    @PostMapping("save")
-    public void saveShoppingList(
+    @PostMapping
+    public ShoppingList saveShoppingList(
             @RequestBody final ShoppingList request,
             final JwtUserPrincipal principal) {
-        this.shoppingListService.saveShoppingList(request, principal.getId());
+        return this.shoppingListService.saveShoppingList(request, principal.getId());
+    }
+
+    @DeleteMapping("{id}")
+    public void deleteNote(@PathVariable("id") final String id) {
+        this.shoppingListService.delete(id);
     }
 
     @ExceptionHandler(ShoppingListNotFoundException.class)

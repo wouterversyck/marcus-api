@@ -29,7 +29,15 @@ public class ShoppingListService {
         );
     }
 
-    public void saveShoppingList(
+    public void delete(final String id) {
+        shoppingListDao.deleteById(id);
+    }
+
+    public void deleteAllByOwner(final long userId) {
+        shoppingListDao.deleteAllByOwner(userId);
+    }
+
+    public ShoppingList saveShoppingList(
             final ShoppingList request, final long ownerId) {
         log.info("Saving shopping list with id {}", request.getId());
 
@@ -43,6 +51,6 @@ public class ShoppingListService {
         }
 
         request.setContributors(contributors);
-        shoppingListDao.save(request);
+        return shoppingListDao.save(request);
     }
 }

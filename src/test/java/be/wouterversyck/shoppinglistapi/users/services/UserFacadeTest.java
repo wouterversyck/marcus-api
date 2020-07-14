@@ -1,6 +1,7 @@
 package be.wouterversyck.shoppinglistapi.users.services;
 
 import be.wouterversyck.shoppinglistapi.mail.services.MailService;
+import be.wouterversyck.shoppinglistapi.notes.services.ShoppingListService;
 import be.wouterversyck.shoppinglistapi.security.utils.JwtService;
 import be.wouterversyck.shoppinglistapi.users.exceptions.UserNotFoundException;
 import be.wouterversyck.shoppinglistapi.users.models.User;
@@ -24,6 +25,7 @@ import static org.mockito.Mockito.when;
 @ExtendWith(MockitoExtension.class)
 class UserFacadeTest {
     private static final String USERNAME = "USERNAME";
+    private static final long USER_ID = 1L;
     private static final String OLD_PASSWORD = "OLD_PASSWORD";
     private static final String NEW_PASSWORD = "NEW_PASSWORD";
     private static final String ENCRYPTED_PASSWORD = "ENCRYPTED_PASSWORD";
@@ -39,6 +41,8 @@ class UserFacadeTest {
     private JwtService jwtService;
     @Mock
     private UserService userService;
+    @Mock
+    private ShoppingListService shoppingListService;
     @InjectMocks
     private UserFacade userFacade;
 
@@ -87,6 +91,14 @@ class UserFacadeTest {
         userFacade.sendPasswordSetMailForUser(1L);
 
         verify(mailService).sendPasswordSetMail(USERNAME, EMAIL, TOKEN);
+    }
+
+    @Test
+    public void shouldDeleteNotes_WhenUserIsDeleted() {
+        userFacade.deleteUser(USER_ID);
+
+        verify(shoppingListService).deleteAllByOwner(USER_ID);
+        verify(userService).deleteUser(USER_ID);
     }
 
     private User createUser() {
