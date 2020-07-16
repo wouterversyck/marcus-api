@@ -10,7 +10,6 @@ public interface ShoppingListDao extends MongoRepository<ShoppingList, Long> {
     List<ShoppingList> findAllByOwner(long userId);
     List<ShoppingList> findAllByContributors(long contributorId);
     void deleteAllByOwner(long userId);
-    ShoppingList findByIdAndContributors(String shoppingListId, long contributorId);
-    Optional<ShoppingList> findByIdAndOwner(String shoppingListId, long ownerId);
-    void deleteById(String id);
+    Optional<ShoppingList> findByIdAndContributors(String shoppingListId, long contributorId);
+    void deleteByIdAndContributors(String id, long contributorId);
 }

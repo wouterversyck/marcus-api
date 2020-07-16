@@ -30,7 +30,7 @@ public class NotesController {
 
     @GetMapping
     public List<ShoppingList> getShoppingLists(final JwtUserPrincipal principal) {
-        return shoppingListService.getShoppingListsForContributor(principal.getId());
+        return shoppingListService.getShoppingListsForUser(principal.getId());
     }
 
     @GetMapping("{id}")
@@ -38,7 +38,7 @@ public class NotesController {
             @PathVariable final String id,
             final JwtUserPrincipal principal) throws ShoppingListNotFoundException {
 
-        return shoppingListService.getShoppingListById(id, principal.getId());
+        return shoppingListService.getShoppingListByIdForUser(id, principal.getId());
     }
 
     @PostMapping
@@ -49,8 +49,9 @@ public class NotesController {
     }
 
     @DeleteMapping("{id}")
-    public void deleteNote(@PathVariable("id") final String id) {
-        this.shoppingListService.delete(id);
+    public void deleteNote(@PathVariable("id") final String id,
+                           final JwtUserPrincipal principal) {
+        this.shoppingListService.deleteForUser(id, principal.getId());
     }
 
     @ExceptionHandler(ShoppingListNotFoundException.class)

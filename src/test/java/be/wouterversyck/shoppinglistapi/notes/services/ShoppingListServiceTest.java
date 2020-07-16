@@ -35,7 +35,7 @@ class ShoppingListServiceTest {
     void shouldReturnShoppingList_WhenUserIsPassed() {
         when(shoppingListDao.findAllByContributors(USERID)).thenReturn(getShoppingLists());
 
-        List<ShoppingList> result = shoppingListService.getShoppingListsForContributor(USERID);
+        List<ShoppingList> result = shoppingListService.getShoppingListsForUser(USERID);
 
         assertThat(result.size()).isEqualTo(2);
         assertThat(result).extracting("name")
@@ -44,9 +44,10 @@ class ShoppingListServiceTest {
 
     @Test
     void shouldReturnShoppingList_WhenIdIsPassed() throws ShoppingListNotFoundException {
-        when(shoppingListDao.findByIdAndOwner("1", USERID)).thenReturn(Optional.of(getShoppingList()));
+        when(shoppingListDao.findByIdAndContributors("1", USERID))
+                .thenReturn(Optional.of(getShoppingList()));
 
-        ShoppingList result = shoppingListService.getShoppingListById("1", USERID);
+        ShoppingList result = shoppingListService.getShoppingListByIdForUser("1", USERID);
 
         assertThat(result).extracting("name")
                 .isEqualTo(SHOPPING_LIST_NAME_A);
@@ -54,9 +55,9 @@ class ShoppingListServiceTest {
 
     @Test
     void shouldThrowException_WhenShoppingListIsNotFound() {
-        when(shoppingListDao.findByIdAndOwner("1", USERID)).thenReturn(Optional.empty());
+        when(shoppingListDao.findByIdAndContributors("1", USERID)).thenReturn(Optional.empty());
 
-        assertThrows(ShoppingListNotFoundException.class, () -> shoppingListService.getShoppingListById("1", USERID));
+        assertThrows(ShoppingListNotFoundException.class, () -> shoppingListService.getShoppingListByIdForUser("1", USERID));
     }
 
     @Test

@@ -17,20 +17,20 @@ public class ShoppingListService {
 
     private final ShoppingListDao shoppingListDao;
 
-    public List<ShoppingList> getShoppingListsForContributor(final long userId) {
+    public List<ShoppingList> getShoppingListsForUser(final long userId) {
         log.info("Fetching shopping lists by user");
         return shoppingListDao.findAllByContributors(userId);
     }
 
-    public ShoppingList getShoppingListById(final String id, final long userId) throws ShoppingListNotFoundException {
+    public ShoppingList getShoppingListByIdForUser(final String id, final long userId) throws ShoppingListNotFoundException {
         log.info("Fetching shopping lists with id: {} for user", id);
-        return shoppingListDao.findByIdAndOwner(id, userId).orElseThrow(
+        return shoppingListDao.findByIdAndContributors(id, userId).orElseThrow(
                 () -> new ShoppingListNotFoundException(id)
         );
     }
 
-    public void delete(final String id) {
-        shoppingListDao.deleteById(id);
+    public void deleteForUser(final String id, final long userId) {
+        shoppingListDao.deleteByIdAndContributors(id, userId);
     }
 
     public void deleteAllByOwner(final long userId) {
@@ -38,16 +38,16 @@ public class ShoppingListService {
     }
 
     public ShoppingList saveShoppingList(
-            final ShoppingList request, final long ownerId) {
+            final ShoppingList request, final long userId) {
         log.info("Saving shopping list with id {}", request.getId());
 
-        request.setOwner(ownerId);
+        request.setOwner(userId);
         List<Long> contributors = request.getContributors();
         if (contributors == null) {
             contributors = new ArrayList<>();
         }
-        if (!contributors.contains(ownerId)) {
-            contributors.add(ownerId);
+        if (!contributors.contains(userId)) {
+            contributors.add(userId);
         }
 
         request.setContributors(contributors);

@@ -11,6 +11,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 
 import static java.lang.String.format;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 
@@ -33,6 +34,12 @@ public class AbstractIT {
 
     protected MockHttpServletRequestBuilder getWithToken(String url, String token) {
         return get(url)
+                .accept(MediaType.APPLICATION_JSON)
+                .header("Authorization", format("Bearer %s", token));
+    }
+
+    protected MockHttpServletRequestBuilder deleteWithToken(String url, String token) {
+        return delete(url)
                 .accept(MediaType.APPLICATION_JSON)
                 .header("Authorization", format("Bearer %s", token));
     }

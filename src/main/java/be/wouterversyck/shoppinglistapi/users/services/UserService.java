@@ -19,51 +19,51 @@ import static org.springframework.data.domain.ExampleMatcher.GenericPropertyMatc
 @Service
 @AllArgsConstructor
 @Slf4j
-public class UserService {
+class UserService {
     private UserDao userDao;
 
     // only for internal use
-    public DangerUserView getSecurityUserByUsername(final String username) throws UserNotFoundException {
+    DangerUserView getSecurityUserByUsername(final String username) throws UserNotFoundException {
         log.info("retrieving user model with password, use only internally");
         return userDao.findByUsername(username, DangerUserView.class)
                 .orElseThrow(() -> new UserNotFoundException(username));
     }
 
-    public DangerUserView getSecurityUserByEmail(final String email) throws UserNotFoundException {
+    DangerUserView getSecurityUserByEmail(final String email) throws UserNotFoundException {
         log.info("retrieving user model with password, use only internally");
         return userDao.findByEmail(email, DangerUserView.class)
                 .orElseThrow(() -> new UserNotFoundException(email));
     }
 
-    public User getUserById(final long id) throws UserNotFoundException {
+    User getUserById(final long id) throws UserNotFoundException {
         return userDao.findById(id)
                 .orElseThrow(() -> new UserNotFoundException(id));
     }
 
-    public User getUserModelByUsername(final String username) throws UserNotFoundException {
+    User getUserModelByUsername(final String username) throws UserNotFoundException {
         return userDao.findByUsername(username, User.class)
                 .orElseThrow(() -> new UserNotFoundException(username));
     }
 
-    public SecureUserView getUserByUsername(final String username) throws UserNotFoundException {
+    SecureUserView getUserByUsername(final String username) throws UserNotFoundException {
         return userDao.findByUsername(username, SecureUserView.class)
                 .orElseThrow(() -> new UserNotFoundException(username));
     }
 
-    public SecureUserView getUserByEmail(final String email) throws UserNotFoundException {
+    SecureUserView getUserByEmail(final String email) throws UserNotFoundException {
         return userDao.findByEmail(email, SecureUserView.class)
                 .orElseThrow(() -> new UserNotFoundException(email));
     }
 
-    public Page<SecureUserView> getAllUsers(final Pageable page) {
+    Page<SecureUserView> getAllUsers(final Pageable page) {
         return userDao.findAllProjectedBy(page, SecureUserView.class);
     }
 
-    public User updateUser(final User user) {
+    User updateUser(final User user) {
        return userDao.save(user);
     }
 
-    public SecureUserView addUser(final User user) {
+    SecureUserView addUser(final User user) {
         final var userResult = userDao.save(user);
         log.info("user {} added, sending mail", user.getUsername());
         return SecureUserViewImpl.builder()
@@ -74,12 +74,12 @@ public class UserService {
                 .build();
     }
 
-    public void deleteUser(final long id) {
+    void deleteUser(final long id) {
         log.info("Deleting user with user id: {}", id);
         userDao.deleteById(id);
     }
 
-    public boolean userExistsByUsername(final String username) {
+    boolean userExistsByUsername(final String username) {
         final var user = new User();
         user.setUsername(username);
         return userDao.exists(
@@ -90,7 +90,7 @@ public class UserService {
                                 .withMatcher("username", ignoreCase())));
     }
 
-    public boolean userExistsByEmail(final String email) {
+    boolean userExistsByEmail(final String email) {
         final var user = new User();
         user.setEmail(email);
         return userDao.exists(

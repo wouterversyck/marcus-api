@@ -9,9 +9,7 @@ import java.util.List;
 @EqualsAndHashCode
 public class ShoppingListItem {
     private String contents;
-
     private EntryType entryType;
-
     private boolean checked;
     private List<ShoppingListItem> children;
 }
