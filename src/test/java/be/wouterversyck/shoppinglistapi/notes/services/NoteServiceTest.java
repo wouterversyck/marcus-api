@@ -1,8 +1,8 @@
 package be.wouterversyck.shoppinglistapi.notes.services;
 
 import be.wouterversyck.shoppinglistapi.notes.exceptions.ShoppingListNotFoundException;
-import be.wouterversyck.shoppinglistapi.notes.models.ShoppingList;
-import be.wouterversyck.shoppinglistapi.notes.persistence.ShoppingListDao;
+import be.wouterversyck.shoppinglistapi.notes.models.Note;
+import be.wouterversyck.shoppinglistapi.notes.persistence.NotesDao;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -19,23 +19,23 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-class ShoppingListServiceTest {
+class NoteServiceTest {
 
     private static final long USERID = 1;
     private static final String SHOPPING_LIST_NAME_A = "SHOPPING_LIST_NAME_A";
     private static final String SHOPPING_LIST_NAME_B = "SHOPPING_LIST_NAME_B";
 
     @Mock
-    private ShoppingListDao shoppingListDao;
+    private NotesDao notesDao;
 
     @InjectMocks
-    private ShoppingListService shoppingListService;
+    private NoteService noteService;
 
     @Test
     void shouldReturnShoppingList_WhenUserIsPassed() {
-        when(shoppingListDao.findAllByContributors(USERID)).thenReturn(getShoppingLists());
+        when(notesDao.findAllByContributors(USERID)).thenReturn(getChecklists());
 
-        List<ShoppingList> result = shoppingListService.getShoppingListsForUser(USERID);
+        List<Note> result = noteService.getAllForUser(USERID);
 
         assertThat(result.size()).isEqualTo(2);
         assertThat(result).extracting("name")
@@ -44,10 +44,10 @@ class ShoppingListServiceTest {
 
     @Test
     void shouldReturnShoppingList_WhenIdIsPassed() throws ShoppingListNotFoundException {
-        when(shoppingListDao.findByIdAndContributors("1", USERID))
-                .thenReturn(Optional.of(getShoppingList()));
+        when(notesDao.findByIdAndContributors("1", USERID))
+                .thenReturn(Optional.of(getChecklist()));
 
-        ShoppingList result = shoppingListService.getShoppingListByIdForUser("1", USERID);
+        Note result = noteService.getByIdForUser("1", USERID);
 
         assertThat(result).extracting("name")
                 .isEqualTo(SHOPPING_LIST_NAME_A);
@@ -55,46 +55,46 @@ class ShoppingListServiceTest {
 
     @Test
     void shouldThrowException_WhenShoppingListIsNotFound() {
-        when(shoppingListDao.findByIdAndContributors("1", USERID)).thenReturn(Optional.empty());
+        when(notesDao.findByIdAndContributors("1", USERID)).thenReturn(Optional.empty());
 
-        assertThrows(ShoppingListNotFoundException.class, () -> shoppingListService.getShoppingListByIdForUser("1", USERID));
+        assertThrows(ShoppingListNotFoundException.class, () -> noteService.getByIdForUser("1", USERID));
     }
 
     @Test
     void shouldSetOwnerAndContributor_WhenShoppingListIsSaved() {
-        ShoppingList shoppingList = getShoppingList();
-        shoppingListService.saveShoppingList(shoppingList, USERID);
+        Note note = getChecklist();
+        noteService.saveForUser(note, USERID);
 
-        assertThat(shoppingList.getContributors()).contains(USERID);
-        assertThat(shoppingList.getOwner()).isEqualTo(USERID);
+        assertThat(note.getContributors()).contains(USERID);
+        assertThat(note.getOwner()).isEqualTo(USERID);
     }
 
     @Test
     void shouldNotAddContributorAgain_WhenShoppingListIsSaved() {
-        ShoppingList shoppingList = getShoppingList();
-        shoppingList.setContributors(Collections.singletonList(USERID));
+        Note note = getChecklist();
+        note.setContributors(Collections.singletonList(USERID));
 
-        shoppingListService.saveShoppingList(shoppingList, USERID);
+        noteService.saveForUser(note, USERID);
 
-        assertThat(shoppingList.getContributors()).contains(USERID);
-        assertThat(shoppingList.getContributors()).hasSize(1);
-        assertThat(shoppingList.getOwner()).isEqualTo(USERID);
+        assertThat(note.getContributors()).contains(USERID);
+        assertThat(note.getContributors()).hasSize(1);
+        assertThat(note.getOwner()).isEqualTo(USERID);
     }
 
-    private ShoppingList getShoppingList() {
-        return ShoppingList.builder()
+    private Note getChecklist() {
+        return Note.builder()
                 .id("1")
                 .name(SHOPPING_LIST_NAME_A)
                 .build();
     }
 
-    private List<ShoppingList> getShoppingLists() {
+    private List<Note> getChecklists() {
         return Arrays.asList(
-                ShoppingList.builder()
+                Note.builder()
                         .id("1")
                         .name(SHOPPING_LIST_NAME_A)
                         .build(),
-                ShoppingList.builder()
+                Note.builder()
                         .id("2")
                         .name(SHOPPING_LIST_NAME_B)
                         .build()

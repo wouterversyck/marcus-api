@@ -258,7 +258,7 @@
                         <configuration>
                             <forkCount>1</forkCount>
                             <reuseForks>true</reuseForks>
-                            <argLine>@{argLine} -Dspring.profiles.active=loc,stubs -Dmail.pwd=NOMAILINTESTS -Dmail.user=NOMAIL@gmail.com -Djwt.secret=ddddddddddddddddddddddddddddddddddddddfffffffffffffffffffffffffffffffffffffffffffffffeeeeeeeeeeeeeeeeeeeeeeeeeee</argLine>
+                            <argLine>@{argLine} -Dlink-preview.token=atoken -Dspring.profiles.active=loc,stubs -Dmail.pwd=NOMAILINTESTS -Dmail.user=NOMAIL@gmail.com -Djwt.secret=ddddddddddddddddddddddddddddddddddddddfffffffffffffffffffffffffffffffffffffffffffffffeeeeeeeeeeeeeeeeeeeeeeeeeee</argLine>
                         </configuration>
                     </plugin>
                 </plugins>

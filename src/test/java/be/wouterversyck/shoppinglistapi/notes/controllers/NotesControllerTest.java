@@ -1,9 +1,9 @@
 package be.wouterversyck.shoppinglistapi.notes.controllers;
 
 import be.wouterversyck.shoppinglistapi.notes.exceptions.ShoppingListNotFoundException;
-import be.wouterversyck.shoppinglistapi.notes.models.ShoppingList;
+import be.wouterversyck.shoppinglistapi.notes.models.Note;
 import be.wouterversyck.shoppinglistapi.security.models.JwtUserPrincipal;
-import be.wouterversyck.shoppinglistapi.notes.services.ShoppingListService;
+import be.wouterversyck.shoppinglistapi.notes.services.NoteService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -14,7 +14,6 @@ import java.util.Arrays;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.useDefaultDateFormatsOnly;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -22,7 +21,7 @@ import static org.mockito.Mockito.when;
 class NotesControllerTest {
 
     @Mock
-    private ShoppingListService shoppingListService;
+    private NoteService noteService;
 
     @InjectMocks
     private NotesController shoppingListController;
@@ -34,9 +33,9 @@ class NotesControllerTest {
     @Test
     void shouldReturnNote_WhenProperPrincipalAndNoteIdIsProvided() {
 
-        when(shoppingListService.getShoppingListsForUser(USER_ID)).thenReturn(getShoppingLists());
+        when(noteService.getAllForUser(USER_ID)).thenReturn(getShoppingLists());
 
-        List<ShoppingList> items = shoppingListController.getShoppingLists(createPrincipal());
+        List<Note> items = shoppingListController.getShoppingLists(createPrincipal());
 
         assertThat(items).hasSize(2);
         assertThat(items).extracting("name")
@@ -47,8 +46,8 @@ class NotesControllerTest {
 
     @Test
     void shouldReturnSingleNote_WhenProperPrincipalAndNoteIdIsProvided() throws ShoppingListNotFoundException {
-        when(shoppingListService.getShoppingListByIdForUser(NOTE_ID, USER_ID)).thenReturn(
-                ShoppingList.builder()
+        when(noteService.getByIdForUser(NOTE_ID, USER_ID)).thenReturn(
+                Note.builder()
                         .id("1")
                         .name("test")
                         .build());
@@ -58,30 +57,30 @@ class NotesControllerTest {
 
     @Test
     void shouldSaveNote_WhenProperPrincipalAndNoteIdIsProvided() throws ShoppingListNotFoundException {
-        var note = ShoppingList.builder()
+        var note = Note.builder()
                 .id("1")
                 .name("test")
                 .build();
 
         shoppingListController.saveShoppingList(note, createPrincipal());
 
-        verify(shoppingListService).saveShoppingList(note, USER_ID);
+        verify(noteService).saveForUser(note, USER_ID);
     }
 
     @Test
     void shouldDeleteLists_WhenProperPrincipalAndNoteIdIsProvided() {
         shoppingListController.deleteNote(NOTE_ID, createPrincipal());
 
-        verify(shoppingListService).deleteForUser(NOTE_ID, USER_ID);
+        verify(noteService).deleteForUser(NOTE_ID, USER_ID);
     }
 
-    private List<ShoppingList> getShoppingLists() {
+    private List<Note> getShoppingLists() {
         return Arrays.asList(
-                ShoppingList.builder()
+                Note.builder()
                         .id("1")
                         .name("test")
                         .build(),
-                ShoppingList.builder()
+                Note.builder()
                         .id("2")
                         .name("test2")
                         .build()

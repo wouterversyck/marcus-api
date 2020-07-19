@@ -1,7 +1,7 @@
 package be.wouterversyck.shoppinglistapi.notes.controllers;
 
 import be.wouterversyck.shoppinglistapi.AbstractIT;
-import be.wouterversyck.shoppinglistapi.notes.models.ShoppingList;
+import be.wouterversyck.shoppinglistapi.notes.models.Note;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -22,7 +22,7 @@ class NotesControllerIT extends AbstractIT {
     @Test
     void shouldSee404_WhenITryToSeeAnotherUsersNotes() throws Exception {
         String token = login("user", "password");
-        var list = ShoppingList.builder()
+        var list = Note.builder()
                 .id("3")
                 .contributors(Collections.singletonList(2L))
                 .name("NOTE_NAME").build();
@@ -39,7 +39,7 @@ class NotesControllerIT extends AbstractIT {
     void shouldSeeMyList_WhenImLoggedIn() throws Exception {
         String token = login("admin", "secure");
 
-        var list = ShoppingList.builder()
+        var list = Note.builder()
                 .id("3")
                 .contributors(Collections.singletonList(2L))
                 .name("NOTE_NAME").build();
@@ -56,7 +56,7 @@ class NotesControllerIT extends AbstractIT {
     @Test
     void shouldNotBeAbleToRemoveAnotherUsersLists() throws Exception {
         String token = login("user", "password");
-        var noteBeforeRequest = ShoppingList.builder()
+        var noteBeforeRequest = Note.builder()
                 .id("3")
                 .contributors(Collections.singletonList(2L))
                 .name("NOTE_NAME").build();
@@ -68,14 +68,14 @@ class NotesControllerIT extends AbstractIT {
                         deleteWithToken(SHOPPING_LIST_URL + 3, token))
                 .andExpect(status().isOk());
 
-        var noteAfterRequest = mongoTemplate.findById("3", ShoppingList.class);
+        var noteAfterRequest = mongoTemplate.findById("3", Note.class);
         assertThat(noteAfterRequest.getName()).isEqualTo("NOTE_NAME");
     }
 
     @Test
     void shouldBeAbleToRemoveMyOwnLists() throws Exception {
         String token = login("admin", "secure");
-        var noteBeforeRequest = ShoppingList.builder()
+        var noteBeforeRequest = Note.builder()
                 .id("3")
                 .contributors(Collections.singletonList(2L))
                 .name("NOTE_NAME").build();
@@ -87,7 +87,7 @@ class NotesControllerIT extends AbstractIT {
                         deleteWithToken(SHOPPING_LIST_URL + 3, token))
                 .andExpect(status().isOk());
 
-        var noteAfterRequest = mongoTemplate.findById("3", ShoppingList.class);
+        var noteAfterRequest = mongoTemplate.findById("3", Note.class);
 
         assertThat(noteAfterRequest).isNull();
     }

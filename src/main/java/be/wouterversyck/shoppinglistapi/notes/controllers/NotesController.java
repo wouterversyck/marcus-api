@@ -1,9 +1,9 @@
 package be.wouterversyck.shoppinglistapi.notes.controllers;
 
-import be.wouterversyck.shoppinglistapi.notes.models.ShoppingList;
+import be.wouterversyck.shoppinglistapi.notes.models.Note;
 import be.wouterversyck.shoppinglistapi.security.models.JwtUserPrincipal;
 import be.wouterversyck.shoppinglistapi.notes.exceptions.ShoppingListNotFoundException;
-import be.wouterversyck.shoppinglistapi.notes.services.ShoppingListService;
+import be.wouterversyck.shoppinglistapi.notes.services.NoteService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -22,36 +22,36 @@ import java.util.List;
 @RestController
 @RequestMapping("shoppinglist")
 public class NotesController {
-    private final ShoppingListService shoppingListService;
+    private final NoteService noteService;
 
-    public NotesController(final ShoppingListService shoppingListService) {
-        this.shoppingListService = shoppingListService;
+    public NotesController(final NoteService noteService) {
+        this.noteService = noteService;
     }
 
     @GetMapping
-    public List<ShoppingList> getShoppingLists(final JwtUserPrincipal principal) {
-        return shoppingListService.getShoppingListsForUser(principal.getId());
+    public List<Note> getShoppingLists(final JwtUserPrincipal principal) {
+        return noteService.getAllForUser(principal.getId());
     }
 
     @GetMapping("{id}")
-    public ShoppingList getShoppingList(
+    public Note getShoppingList(
             @PathVariable final String id,
             final JwtUserPrincipal principal) throws ShoppingListNotFoundException {
 
-        return shoppingListService.getShoppingListByIdForUser(id, principal.getId());
+        return noteService.getByIdForUser(id, principal.getId());
     }
 
     @PostMapping
-    public ShoppingList saveShoppingList(
-            @RequestBody final ShoppingList request,
+    public Note saveShoppingList(
+            @RequestBody final Note request,
             final JwtUserPrincipal principal) {
-        return this.shoppingListService.saveShoppingList(request, principal.getId());
+        return this.noteService.saveForUser(request, principal.getId());
     }
 
     @DeleteMapping("{id}")
     public void deleteNote(@PathVariable("id") final String id,
                            final JwtUserPrincipal principal) {
-        this.shoppingListService.deleteForUser(id, principal.getId());
+        this.noteService.deleteForUser(id, principal.getId());
     }
 
     @ExceptionHandler(ShoppingListNotFoundException.class)

@@ -1,7 +1,7 @@
 package be.wouterversyck.shoppinglistapi.users.services;
 
 import be.wouterversyck.shoppinglistapi.mail.services.MailService;
-import be.wouterversyck.shoppinglistapi.notes.services.ShoppingListService;
+import be.wouterversyck.shoppinglistapi.notes.services.NoteService;
 import be.wouterversyck.shoppinglistapi.security.utils.JwtService;
 import be.wouterversyck.shoppinglistapi.users.exceptions.UserNotFoundException;
 import be.wouterversyck.shoppinglistapi.users.models.SecureUserView;
@@ -22,7 +22,7 @@ public class UserFacade {
     private PasswordEncoder passwordEncoder;
     private MailService mailService;
     private JwtService jwtService;
-    private ShoppingListService notesService;
+    private NoteService notesService;
     private UserService userService;
 
     public SecureUserView addUser(final User user) {

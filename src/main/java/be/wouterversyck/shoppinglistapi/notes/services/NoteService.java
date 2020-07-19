@@ -1,8 +1,8 @@
 package be.wouterversyck.shoppinglistapi.notes.services;
 
 import be.wouterversyck.shoppinglistapi.notes.exceptions.ShoppingListNotFoundException;
-import be.wouterversyck.shoppinglistapi.notes.models.ShoppingList;
-import be.wouterversyck.shoppinglistapi.notes.persistence.ShoppingListDao;
+import be.wouterversyck.shoppinglistapi.notes.models.Note;
+import be.wouterversyck.shoppinglistapi.notes.persistence.NotesDao;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -13,32 +13,32 @@ import java.util.List;
 @AllArgsConstructor
 @Slf4j
 @Service
-public class ShoppingListService {
+public class NoteService {
 
-    private final ShoppingListDao shoppingListDao;
+    private final NotesDao notesDao;
 
-    public List<ShoppingList> getShoppingListsForUser(final long userId) {
+    public List<Note> getAllForUser(final long userId) {
         log.info("Fetching shopping lists by user");
-        return shoppingListDao.findAllByContributors(userId);
+        return notesDao.findAllByContributors(userId);
     }
 
-    public ShoppingList getShoppingListByIdForUser(final String id, final long userId) throws ShoppingListNotFoundException {
+    public Note getByIdForUser(final String id, final long userId) throws ShoppingListNotFoundException {
         log.info("Fetching shopping lists with id: {} for user", id);
-        return shoppingListDao.findByIdAndContributors(id, userId).orElseThrow(
+        return notesDao.findByIdAndContributors(id, userId).orElseThrow(
                 () -> new ShoppingListNotFoundException(id)
         );
     }
 
     public void deleteForUser(final String id, final long userId) {
-        shoppingListDao.deleteByIdAndContributors(id, userId);
+        notesDao.deleteByIdAndContributors(id, userId);
     }
 
     public void deleteAllByOwner(final long userId) {
-        shoppingListDao.deleteAllByOwner(userId);
+        notesDao.deleteAllByOwner(userId);
     }
 
-    public ShoppingList saveShoppingList(
-            final ShoppingList request, final long userId) {
+    public Note saveForUser(
+            final Note request, final long userId) {
         log.info("Saving shopping list with id {}", request.getId());
 
         request.setOwner(userId);
@@ -51,6 +51,6 @@ public class ShoppingListService {
         }
 
         request.setContributors(contributors);
-        return shoppingListDao.save(request);
+        return notesDao.save(request);
     }
 }

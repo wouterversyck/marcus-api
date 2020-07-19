@@ -16,11 +16,11 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class ShoppingList {
+public class Note {
     @Id
     private String id;
     private String name;
     private long owner;
     private List<Long> contributors;
-    private List<ShoppingListItem> items;
+    private List<NoteEntry> items;
 }

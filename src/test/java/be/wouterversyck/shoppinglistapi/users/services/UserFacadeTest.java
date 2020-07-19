@@ -1,7 +1,7 @@
 package be.wouterversyck.shoppinglistapi.users.services;
 
 import be.wouterversyck.shoppinglistapi.mail.services.MailService;
-import be.wouterversyck.shoppinglistapi.notes.services.ShoppingListService;
+import be.wouterversyck.shoppinglistapi.notes.services.NoteService;
 import be.wouterversyck.shoppinglistapi.security.utils.JwtService;
 import be.wouterversyck.shoppinglistapi.users.exceptions.UserNotFoundException;
 import be.wouterversyck.shoppinglistapi.users.models.User;
@@ -42,7 +42,7 @@ class UserFacadeTest {
     @Mock
     private UserService userService;
     @Mock
-    private ShoppingListService shoppingListService;
+    private NoteService noteService;
     @InjectMocks
     private UserFacade userFacade;
 
@@ -97,7 +97,7 @@ class UserFacadeTest {
     public void shouldDeleteNotes_WhenUserIsDeleted() {
         userFacade.deleteUser(USER_ID);
 
-        verify(shoppingListService).deleteAllByOwner(USER_ID);
+        verify(noteService).deleteAllByOwner(USER_ID);
         verify(userService).deleteUser(USER_ID);
     }
 
