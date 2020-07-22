@@ -37,15 +37,14 @@ public class NotesController {
     public Note getShoppingList(
             @PathVariable final String id,
             final JwtUserPrincipal principal) throws ShoppingListNotFoundException {
-
         return noteService.getByIdForUser(id, principal.getId());
     }
 
     @PostMapping
     public Note saveShoppingList(
-            @RequestBody final Note request,
+            @RequestBody final Note note,
             final JwtUserPrincipal principal) {
-        return this.noteService.saveForUser(request, principal.getId());
+        return this.noteService.saveForUser(note, principal.getId());
     }
 
     @DeleteMapping("{id}")

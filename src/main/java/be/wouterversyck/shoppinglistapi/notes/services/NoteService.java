@@ -18,31 +18,33 @@ public class NoteService {
     private final NotesDao notesDao;
 
     public List<Note> getAllForUser(final long userId) {
-        log.info("Fetching shopping lists by user");
+        log.info("Fetching note lists of user {}", userId);
         return notesDao.findAllByContributors(userId);
     }
 
     public Note getByIdForUser(final String id, final long userId) throws ShoppingListNotFoundException {
-        log.info("Fetching shopping lists with id: {} for user", id);
+        log.info("Fetching note lists with id {} for user {}", id, userId);
         return notesDao.findByIdAndContributors(id, userId).orElseThrow(
                 () -> new ShoppingListNotFoundException(id)
         );
     }
 
     public void deleteForUser(final String id, final long userId) {
+        log.info("Deleting note with id {} for user {}", id, userId);
         notesDao.deleteByIdAndContributors(id, userId);
     }
 
     public void deleteAllByOwner(final long userId) {
+        log.info("Deleting all notes for user {}", userId);
         notesDao.deleteAllByOwner(userId);
     }
 
     public Note saveForUser(
-            final Note request, final long userId) {
-        log.info("Saving shopping list with id {}", request.getId());
+            final Note note, final long userId) {
+        log.info("Saving shopping list with id {}", note.getId());
 
-        request.setOwner(userId);
-        List<Long> contributors = request.getContributors();
+        note.setOwner(userId);
+        List<Long> contributors = note.getContributors();
         if (contributors == null) {
             contributors = new ArrayList<>();
         }
@@ -50,7 +52,7 @@ public class NoteService {
             contributors.add(userId);
         }
 
-        request.setContributors(contributors);
-        return notesDao.save(request);
+        note.setContributors(contributors);
+        return notesDao.save(note);
     }
 }
