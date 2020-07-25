@@ -4,7 +4,7 @@ public class Link extends NoteEntry {
     private String url;
     private String title;
     private String description;
-    private String imageUrl;
+    private String image;
 
     public Link() {
         super(EntryType.LINK);
@@ -34,11 +34,11 @@ public class Link extends NoteEntry {
         this.description = description;
     }
 
-    public String getImageUrl() {
-        return imageUrl;
+    public String getImage() {
+        return image;
     }
 
-    public void setImageUrl(final String imageUrl) {
-        this.imageUrl = imageUrl;
+    public void setImage(final String imageUrl) {
+        this.image = imageUrl;
     }
 }
