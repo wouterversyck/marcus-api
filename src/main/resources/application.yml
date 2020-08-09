@@ -1,7 +1,7 @@
 logging:
   level:
     org.springframework.web: INFO
-    be.wouterversyck.shoppinglistapi: INFO
+    be.wouterversyck.marcusapi: INFO
 
 spring:
   jpa:

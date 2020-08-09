@@ -10,10 +10,10 @@
     </parent>
 
     <groupId>be.wouterversyck</groupId>
-    <artifactId>shopping-list-api</artifactId>
+    <artifactId>marcus-api</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>shopping-list-api</name>
-    <description>Shopping list api</description>
+    <name>marcus-api</name>
+    <description>Marcus api</description>
 
     <properties>
         <java.version>13</java.version>
@@ -141,7 +141,7 @@
                 <artifactId>spring-boot-maven-plugin</artifactId>
                 <!-- create executable version less jar -->
                 <configuration>
-                    <finalName>shopping-list-api</finalName>
+                    <finalName>marcus-api</finalName>
                     <executable>true</executable>
                 </configuration>
                 <executions>
@@ -189,9 +189,9 @@
                                 <exclude>**/*Configuration.class</exclude>
                                 <exclude>**/*Properties.class</exclude>
                                 <exclude>**/models/**</exclude>
-                                <exclude>be/wouterversyck/shoppinglistapi/users/persistence/RoleConverter.class</exclude>
-                                <exclude>be/wouterversyck/shoppinglistapi/notes/persistence/EntryTypeConverter.class</exclude>
-                                <exclude>be/wouterversyck/shoppinglistapi/mail/services/StubbedMailSender.class</exclude>
+                                <exclude>be/wouterversyck/marcusapi/users/persistence/RoleConverter.class</exclude>
+                                <exclude>be/wouterversyck/marcusapi/notes/persistence/EntryTypeConverter.class</exclude>
+                                <exclude>be/wouterversyck/marcusapi/mail/services/StubbedMailSender.class</exclude>
                             </excludes>
                             <rules>
                                 <rule implementation="org.jacoco.maven.RuleConfiguration">

@@ -1,7 +1,7 @@
 <configuration>
-    <property name="LOG_DIR" value="/app/java/shopping-list-api/logs"/>
-    <property name="LOG_FILE_NAME" value="shopping-list-api.log"/>
-    <property name="REQUEST_TRACE_LOG_FILE_NAME" value="shopping-list-api.request-trace.log"/>
+    <property name="LOG_DIR" value="/app/java/marcus-api/logs"/>
+    <property name="LOG_FILE_NAME" value="marcus-api.log"/>
+    <property name="REQUEST_TRACE_LOG_FILE_NAME" value="marcus-api.request-trace.log"/>
 
     <appender name="consoleAppender" class="ch.qos.logback.core.ConsoleAppender">
         <encoder>
@@ -51,7 +51,7 @@
         </encoder>
     </appender>
 
-    <logger name="be.wouterversyck.shoppinglistapi" level="INFO" />
+    <logger name="be.wouterversyck.marcusapi" level="INFO" />
     <logger name="org.springframework" level="ERROR" />
 
     <logger name="org.springframework.web.filter.CommonsRequestLoggingFilter" level="DEBUG" additivity="false">
