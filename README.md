@@ -1,4 +1,4 @@
-shopping-list-api
+marcus-api
 
 secure
 password
